@@ -18,13 +18,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user'] = [
-                'user_id'    => $user['user_id'],
-                'first_name' => $user['first_name'],
-                'last_name'  => $user['last_name'],
-                'email'      => $user['email'],
-                'role'       => $user['role']
-            ];
+            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['first_name'] = $user['first_name'];
+            $_SESSION['last_name'] = $user['last_name'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
 
             // Redirect based on role
             if ($user['role'] === 'Admin') {
