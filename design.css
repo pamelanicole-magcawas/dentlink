@@ -1,0 +1,267 @@
+/* =============================
+   GENERAL STYLES
+============================= */
+body {
+    font-family: Cambria, serif;
+    color: #333;
+    background-color: #fff;
+    transition: background-color 0.4s ease, color 0.4s ease;
+    scroll-behavior: smooth;
+}
+
+h1, h2, h5, p, a {
+    transition: color 0.4s ease, background-color 0.4s ease;
+}
+
+/* =============================
+   SECTION OFFSET FIX FOR NAVBAR
+============================= */
+section {
+    scroll-margin-top: 100px;
+}
+
+/* =============================
+   HERO SECTION
+============================= */
+.hero {
+    background: linear-gradient(to bottom right, #e8f1ff, #ffffff);
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    animation: fadeIn 1.2s ease-in-out;
+}
+.hero h1 {
+    color: #002b5b;
+}
+.hero p {
+    color: #555;
+}
+
+/* =============================
+   ABOUT SECTION
+============================= */
+#about {
+    background: linear-gradient(to bottom right, #f8faff, #eef3ff);
+    padding: 80px 20px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    margin-top: 50px;
+    animation: fadeUp 1s ease-in-out;
+}
+#about h2 {
+    color: #002b5b;
+    font-weight: 700;
+}
+#about p {
+    color: #555;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+/* =============================
+   SERVICES
+============================= */
+.service-card {
+    border: none;
+    border-radius: 15px;
+    background-color: #fff;
+    color: #333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease, transform 0.4s ease;
+    animation: fadeUp 1s ease-in-out;
+}
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+.text-muted {
+    color: #666 !important;
+}
+
+/* =============================
+   CONTACT SECTION (Light + Dark)
+============================= */
+#contact {
+    background-color: #f8f9fa;
+    color: #333;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+#contact h2 {
+    color: #002b5b;
+}
+
+#contact p {
+    color: #555;
+}
+
+#contact i {
+    color: #0d6efd;
+    margin-right: 8px;
+}
+
+/* Dark mode fix for Contact section */
+.dark-mode #contact {
+    background-color: #1e1e1e !important;
+    color: #eaeaea !important;
+}
+
+.dark-mode #contact h2 {
+    color: #70b0ff !important;
+}
+
+.dark-mode #contact p {
+    color: #ccc !important;
+}
+
+.dark-mode #contact i {
+    color: #70b0ff !important;
+}
+
+
+/* =============================
+   NAVBAR
+============================= */
+.navbar {
+    transition: all 0.4s ease;
+}
+.nav-link {
+    font-weight: 500;
+    color: #333 !important;
+    transition: color 0.3s ease;
+}
+.nav-link:hover {
+    color: #0d6efd !important;
+}
+
+/* =============================
+   BUTTONS
+============================= */
+.btn-primary {
+    background-color: #0d6efd;
+    border: none;
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #0a58ca;
+    transform: translateY(-3px);
+}
+.btn-outline-primary {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+/* =============================
+   FOOTER
+============================= */
+footer {
+    background-color: #0d6efd;
+    color: #fff;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* =============================
+   ANIMATIONS
+============================= */
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.8s ease;
+}
+section {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================
+   DARK MODE
+============================= */
+.dark-mode {
+    background-color: #121212;
+    color: #eaeaea;
+}
+
+/* Navbar */
+.dark-mode .navbar {
+    background-color: #1f1f1f !important;
+}
+.dark-mode .nav-link {
+    color: #eaeaea !important;
+}
+.dark-mode .nav-link:hover {
+    color: #70b0ff !important;
+}
+
+/* Hero */
+.dark-mode .hero {
+    background: linear-gradient(to bottom right, #1b1b1b, #222);
+}
+.dark-mode .hero h1 {
+    color: #70b0ff;
+}
+.dark-mode .hero p {
+    color: #ccc;
+}
+
+/* About Section */
+.dark-mode #about {
+    background: linear-gradient(to bottom right, #1e1e1e, #292929);
+    color: #eaeaea;
+    box-shadow: 0 4px 20px rgba(255,255,255,0.05);
+}
+.dark-mode #about h2 {
+    color: #70b0ff;
+}
+.dark-mode #about p {
+    color: #ccc;
+}
+
+/* Services */
+.dark-mode .service-card {
+    background-color: #222;
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.05);
+}
+.dark-mode .service-card:hover {
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.15);
+}
+.dark-mode .text-muted {
+    color: #cfcfcf !important;
+}
+
+/* Footer */
+.dark-mode footer {
+    background-color: #1f1f1f;
+    color: #eaeaea;
+}
+
+/* =============================
+   RESPONSIVE
+============================= */
+@media (max-width: 768px) {
+    .hero {
+        height: auto;
+        padding: 80px 0;
+    }
+    .hero h1 {
+        font-size: 2rem;
+    }
+}
