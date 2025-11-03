@@ -60,7 +60,7 @@ $result = $conn->query("SELECT * FROM appointments ORDER BY id DESC");
 <?php } ?>
 </table>
 
-<h3>Google Calendar (Approved Appointments)</h3>
+<h3>📅 Google Calendar (Approved Appointments)</h3>
 <iframe src="https://calendar.google.com/calendar/embed?src=allimagcawas%40gmail.com&ctz=Asia%2FManila"></iframe>
 
 </body>

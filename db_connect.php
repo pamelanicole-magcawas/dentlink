@@ -1,11 +1,24 @@
 <?php
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db = "dental_clinic"; // change to your DB name
+class Database {
+    private $host = "localhost";
+    private $username = "root";
+    private $password = "";
+    private $dbname = "dental_clinic";
+    private $conn;
 
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    public function __construct() {
+        $this->connect();
+    }
+
+    private function connect() {
+        $this->conn = new mysqli($this->host, $this->username, $this->password, $this->dbname);
+        if ($this->conn->connect_error) {
+            die("❌ Connection failed: " . $this->conn->connect_error);
+        }
+    }
+
+    public function getConnect() {
+        return $this->conn;
+    }
 }
 ?>
