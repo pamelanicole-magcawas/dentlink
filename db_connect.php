@@ -1,5 +1,6 @@
 <?php
 class Database {
+
     private $host = "localhost";     
     private $db_name = "dental_clinic"; 
     private $username = "root";       
