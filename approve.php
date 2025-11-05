@@ -34,7 +34,7 @@ if (!$appointment) {
 }
 
 // 2) Mark appointment approved
-$updateStmt = $conn->prepare("UPDATE appointments SET status = 'approved', updated_at = NOW() WHERE id = ?");
+$updateStmt = $conn->prepare("UPDATE appointments SET status = 'approved' WHERE id = ?");
 if (!$updateStmt) {
     die("<pre>Prepare failed (update): " . htmlspecialchars($conn->error) . "</pre>");
 }
@@ -262,8 +262,3 @@ if (!$saveStmt) {
 </div>
 </body>
 </html>
-
-} else {
-    echo "<div style='text-align:center;'><h2>⚠️ Invalid request.</h2></div>";
-}
-?>
