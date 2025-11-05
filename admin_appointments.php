@@ -21,6 +21,9 @@ $result = $conn->query("SELECT * FROM appointments ORDER BY id DESC");
 </head>
 <body>
 
+<h3>📅 Google Calendar (Full Details View - Admin Only)</h3>
+<iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=1&bgcolor=%23ffffff&ctz=Asia%2FManila&showTitle=1&showNav=1&showDate=1&showPrint=0&showTabs=1&showCalendars=0&showTz=0&mode=MONTH&src=c2dkZW50YWxjbGluaWNjY0BnbWFpbC5jb20&color=%234CAF50" style="border:solid 1px #777; width:100%; height:600px;" frameborder="0" scrolling="no"></iframe>
+  
 <h2>🦷 Admin Appointment Requests</h2>
 
 <table>
@@ -61,7 +64,7 @@ $result = $conn->query("SELECT * FROM appointments ORDER BY id DESC");
 </table>
 
 <h3>📅 Google Calendar (Approved Appointments)</h3>
-<iframe src="https://calendar.google.com/calendar/embed?src=allimagcawas%40gmail.com&ctz=Asia%2FManila"></iframe>
+<iframe src="https://calendar.google.com/calendar/embed?src=sgdentalcliniccc%40gmail.com&ctz=Asia%2FManila"></iframe>
 
 </body>
 </html>

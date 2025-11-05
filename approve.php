@@ -1,106 +1,141 @@
 <?php
-require_once 'config/db_connect.php';
+require_once 'db_connect.php';
 date_default_timezone_set('Asia/Manila');
+
+// Replace with your actual site URL (used for QR scanning)
+$qrLinkBase = "https://yourdomain.com/view_qr.php?id=";
 
 if (isset($_POST['id'])) {
     $id = intval($_POST['id']);
 
-    // 🔹 Get appointment info + user details
-    $sql = "
-        SELECT a.*, u.email, CONCAT(u.first_name, ' ', u.last_name) AS patient_name
+    // 1️⃣ Fetch appointment and user info
+    $stmt = $conn->prepare("
+        SELECT a.*, u.email AS user_email, CONCAT(u.first_name, ' ', u.last_name) AS patient_name
         FROM appointments a
-        LEFT JOIN users u ON a.user_id = u.id
+        LEFT JOIN users u ON a.user_id = u.user_id
         WHERE a.id = ?
-    ";
-    $stmt = $conn->prepare($sql);
+    ");
     $stmt->bind_param("i", $id);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $appointment = $result->fetch_assoc();
+    $appointment = $stmt->get_result()->fetch_assoc();
 
     if (!$appointment) {
-        die("❌ Appointment not found.");
+        die("<h2 style='color:red;text-align:center;'>❌ Appointment not found.</h2>");
     }
 
-    // 🔹 Update status to approved
-    $update = $conn->prepare("UPDATE appointments SET status='approved' WHERE id=?");
-    $update->bind_param("i", $id);
-    $update->execute();
+    // 2️⃣ Mark appointment as approved
+    $updateStmt = $conn->prepare("UPDATE appointments SET status='approved' WHERE id=?");
+    $updateStmt->bind_param("i", $id);
+    $updateStmt->execute();
 
-    // 🔹 Prepare QR data (for NoCodeAPI)
-    $qrData = [
-        "appointmentId" => $appointment['id'],
-        "patientName"   => $appointment['patient_name'],
-        "service"       => $appointment['description'],
-        "date"          => $appointment['date'],
-        "time"          => $appointment['start_time'],
-        "location"      => $appointment['location'],
-        "status"        => "approved"
+    // 3️⃣ Prepare Google Calendar event data
+    $start = new DateTime($appointment['date'] . ' ' . $appointment['start_time'], new DateTimeZone('Asia/Manila'));
+    $end = clone $start;
+    $end->modify('+1 hour');
+
+    $eventData = [
+        "summary" => "🦷 {$appointment['description']} - {$appointment['patient_name']}",
+        "description" => "Patient: {$appointment['patient_name']}\nService: {$appointment['description']}\nLocation: {$appointment['location']}\nStatus: Approved",
+        "start" => [
+            "dateTime" => $start->format(DateTime::RFC3339),
+            "timeZone" => "Asia/Manila"
+        ],
+        "end" => [
+            "dateTime" => $end->format(DateTime::RFC3339),
+            "timeZone" => "Asia/Manila"
+        ],
+        "attendees" => [
+            ["email" => $appointment['user_email']],
+            ["email" => "sgdentalcliniccc@gmail.com"]
+        ]
     ];
 
-    // 🔹 Generate QR code via NoCodeAPI
-    $ch = curl_init("https://v1.nocodeapi.com/jimae/qrCode/PJMrLDGrQIFIfWEW/qrimage");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Content-Type: application/json"]);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($qrData));
-    $qrResponse = curl_exec($ch);
+    // 4️⃣ Create event in Google Calendar (NoCodeAPI)
+    $calendarUrl = "https://v1.nocodeapi.com/sgdentalclinic/calendar/BjRLPQRVQhlpwKXa/event";
+    $ch = curl_init($calendarUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => ["Content-Type: application/json"],
+        CURLOPT_POSTFIELDS => json_encode($eventData)
+    ]);
+    $calendarResponse = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    $qr = json_decode($qrResponse, true);
-    $qrUrl = $qr['data'] ?? '';
+    $calendarData = json_decode($calendarResponse, true);
+    $calendarLink = $calendarData['htmlLink'] ?? '';
+    $calendarSuccess = ($httpCode == 200 && !empty($calendarLink));
 
-    // 🔹 Save QR URL to database if generated
-    if (!empty($qrUrl)) {
-        $saveQr = $conn->prepare("UPDATE appointments SET qr_code_url = ? WHERE id = ?");
-        $saveQr->bind_param("si", $qrUrl, $id);
-        $saveQr->execute();
-        $saveQr->close();
-        echo "<p style='color:green;font-weight:bold;'>✅ Appointment approved! QR code saved to database.</p>";
-    } else {
-        echo "<p style='color:orange;font-weight:bold;'>⚠️ Appointment approved but QR code not generated.</p>";
+    // 5️⃣ Generate QR code that links to appointment details
+    $qrLink = $qrLinkBase . $appointment['id']; // e.g. https://yourdomain.com/view_qr.php?id=12
+    $qrPayload = ["data" => $qrLink];
+
+    $qrCurl = curl_init("https://v1.nocodeapi.com/sgdentalclinic/qrCode/WVWWQXdPMxuoPhnV/qrimage");
+    curl_setopt_array($qrCurl, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => ["Content-Type: application/json"],
+        CURLOPT_POSTFIELDS => json_encode($qrPayload)
+    ]);
+    $qrResponse = curl_exec($qrCurl);
+    $qrHttp = curl_getinfo($qrCurl, CURLINFO_HTTP_CODE);
+    curl_close($qrCurl);
+
+    $qrResult = json_decode($qrResponse, true);
+    $qrData = $qrResult['blob']['data'] ?? null;
+    $qrUrl = '';
+
+    if ($qrHttp === 200 && $qrData) {
+        $uploadDir = __DIR__ . "/uploads";
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+        $fileName = "qr_appointment_{$appointment['id']}.png";
+        file_put_contents("$uploadDir/$fileName", base64_decode($qrData));
+        $qrUrl = "uploads/$fileName";
     }
 
-    // 🔹 Email setup
-    $to = $appointment['email'];
-    $subject = "DentLink Appointment Approved";
-    $message = "
-        <html>
-        <body style='font-family: Arial, sans-serif; background: #f7f9fa; padding: 20px;'>
-            <div style='background: #fff; padding: 20px; border-radius: 8px;'>
-                <h2 style='color:#4CAF50;'>DentLink Appointment Confirmation</h2>
-                <p>Dear <strong>{$appointment['patient_name']}</strong>,</p>
-                <p>Your dental appointment has been <strong style='color:green;'>approved</strong>.</p>
-                <p><b>Date:</b> {$appointment['date']}<br>
-                <b>Time:</b> {$appointment['start_time']}<br>
-                <b>Service:</b> {$appointment['description']}<br>
-                <b>Location:</b> {$appointment['location']}</p>
+    // 6️⃣ Save QR URL + Calendar Link
+    $saveStmt = $conn->prepare("UPDATE appointments SET qr_code_url=?, calendar_link=? WHERE id=?");
+    $saveStmt->bind_param("ssi", $qrUrl, $calendarLink, $id);
+    $saveStmt->execute();
+
+    // 7️⃣ Send confirmation email via NoCodeAPI Gmail
+    $emailBody = "
+        <h2>🦷 DentLink Appointment Approved</h2>
+        <p>Hello <strong>{$appointment['patient_name']}</strong>,</p>
+        <p>Your dental appointment has been <strong>approved</strong>.</p>
+        <ul>
+            <li><b>Service:</b> {$appointment['description']}</li>
+            <li><b>Date:</b> {$appointment['date']}</li>
+            <li><b>Time:</b> {$appointment['start_time']}</li>
+            <li><b>Location:</b> {$appointment['location']}</li>
+        </ul>
+        <p>You can check your appointment on Google Calendar <a href='{$calendarLink}'>here</a>.</p>
+        <p>Scan your QR code for quick check-in at the clinic.</p>
+        <br>
+        <p>🦷 <strong>DentLink Dental Clinic</strong></p>
     ";
 
-    if (!empty($qrUrl)) {
-        $message .= "
-            <p>Please present this QR code at the clinic for verification:</p>
-            <img src='{$qrUrl}' alt='Appointment QR' width='200' style='border:1px solid #ccc; padding:10px; border-radius:8px;'><br><br>
-        ";
-    }
+    $emailPayload = [
+        "to" => $appointment['user_email'],
+        "subject" => "DentLink Appointment Approved",
+        "html" => $emailBody
+    ];
 
-    $message .= "
-                <p>Thank you,<br><strong>DentLink Team</strong></p>
-            </div>
-        </body>
-        </html>
-    ";
+    $emailCurl = curl_init("https://v1.nocodeapi.com/sgdentalclinic/gmail/BjRLPQRVQhlpwKXa/sendEmail");
+    curl_setopt_array($emailCurl, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => ["Content-Type: application/json"],
+        CURLOPT_POSTFIELDS => json_encode($emailPayload)
+    ]);
+    $emailResponse = curl_exec($emailCurl);
+    curl_close($emailCurl);
 
-    $headers = "MIME-Version: 1.0" . "\r\n";
-    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-    $headers .= "From: DentLink <no-reply@dentlink.com>";
-
-    // Send email (optional)
-    @mail($to, $subject, $message, $headers);
-
-    echo "<a href='admin_appointments.php' style='text-decoration:none; display:inline-block; margin-top:20px; background:#4CAF50; color:white; padding:8px 16px; border-radius:4px;'>Back to Dashboard</a>";
+    // 8️⃣ Done — Show confirmation page
+    include 'approve_success_view.php';
 
 } else {
-    echo "<p style='color:red;'>⚠️ Invalid request.</p>";
+    echo "<div style='text-align:center;'><h2>⚠️ Invalid request.</h2></div>";
 }
 ?>
