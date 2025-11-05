@@ -1,5 +1,8 @@
 <?php
 require_once 'db_connect.php';
+require_once __DIR__ . '\twilio-php-main\src\Twilio\autoload.php';
+use Twilio\Rest\Client;
+
 session_start();
 $message = "";
 
@@ -13,39 +16,42 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $role       = "Patient";
 
     if ($first_name && $last_name && $email && $phone && $address && $password) {
+        // Save registration data temporarily in session (not yet in DB)
+        $_SESSION['pending_user'] = [
+            'first_name' => $first_name,
+            'last_name'  => $last_name,
+            'email'      => $email,
+            'phone'      => $phone,
+            'address'    => $address,
+            'role'       => $role,
+            'password'   => $password
+        ];
+
+        // Send OTP via Twilio Verify
+        $sid = "AC9c75d0e89a750bdc4ff2f0c894326a16";
+        $token = "a7baaa3371668f5864cf6f74f7724a24";
+        $verify_sid = "VA30a9bde26a895cd8b4b664d328a9a55d";
+
+        $client = new Client($sid, $token);
+        $to = '+63' . ltrim($phone, '0'); // convert 09... → +639...
+
         try {
-            $db   = new Database();
-            $conn = $db->getConnect();
+            $client->verify->v2->services($verify_sid)
+                ->verifications
+                ->create($to, 'sms');
 
-            // Stored procedure or direct insert
-            $stmt = $conn->prepare("
-                INSERT INTO users (first_name, last_name, email, phone, address, role, password)
-                VALUES (:first_name, :last_name, :email, :phone, :address, :role, :password)
-            ");
-            $stmt->execute([
-                ':first_name' => $first_name,
-                ':last_name'  => $last_name,
-                ':email'      => $email,
-                ':phone'      => $phone,
-                ':address'    => $address,
-                ':role'       => $role,
-                ':password'   => $password
-            ]);
-
-            header("Location: login.php");
+            // Redirect to verification page
+            header("Location: verify_code.php");
             exit();
-        } catch (PDOException $e) {
-            if (str_contains($e->getMessage(), 'Duplicate')) {
-                $message = "This email is already registered.";
-            } else {
-                $message = "Error: " . $e->getMessage();
-            }
+        } catch (Exception $e) {
+            $message = "Error sending OTP: " . $e->getMessage();
         }
     } else {
         $message = "Please fill in all fields.";
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
