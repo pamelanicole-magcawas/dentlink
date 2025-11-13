@@ -107,14 +107,14 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-md-6">
                     <div class="card text-start shadow-lg border-0 h-100">
                         <div class="card-body" style="border-left: 6px solid #0d6efd; border-radius: 6px;">
-                            <h5 class="card-title text-primary"><i class="bi bi-clipboard-check-fill text-danger"></i> General Procedures</h5>
+                            <h5 class="card-title text-primary"><i class="bi bi-clipboard-check-fill text-warning"></i> General Procedures</h5>
                             <ul class="service-list">
-                                <li>• Consultation Fee — <strong>₱700</strong></li>
-                                <li>• Oral Prophylaxis — <strong>₱1,200</strong></li>
-                                <li>• Tooth Extraction — <strong>₱1,200</strong></li>
-                                <li>• Fluoride Treatment — <strong>₱600</strong></li>
-                                <li>• Periapical X-ray — <strong>₱500</strong></li>
-                                <li>• Panoramic X-ray — <strong>₱1,000</strong></li>
+                                <li>Consultation Fee — <strong>₱700</strong></li>
+                                <li>Oral Prophylaxis — <strong>₱1,200</strong></li>
+                                <li>Tooth Extraction — <strong>₱1,200</strong></li>
+                                <li>Fluoride Treatment — <strong>₱600</strong></li>
+                                <li>Periapical X-ray — <strong>₱500</strong></li>
+                                <li>Panoramic X-ray — <strong>₱1,000</strong></li>
                             </ul>
                         </div>
                     </div>
@@ -124,14 +124,14 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-md-6">
                     <div class="card text-start shadow-lg border-0 h-100">
                         <div class="card-body" style="border-left: 6px solid #0d6efd; border-radius: 6px;">
-                            <h5 class="card-title text-primary"><i class="bi bi-person-hearts text-danger"></i> Prosthodontics & Aesthetic Dentistry</h5>
+                            <h5 class="card-title text-primary"><i class="bi bi-person-hearts text-warning"></i> Prosthodontics & Aesthetic Dentistry</h5>
                             <ul class="service-list">
-                                <li>• Complete Denture — <strong>₱8,000 / arch</strong></li>
-                                <li>• Removable Partial Dentures — <strong>₱10,000</strong></li>
-                                <li>• Flexible Dentures — <strong>₱20,000 / arch</strong></li>
-                                <li>• Fixed Bridge — <strong>₱8,000 / unit</strong></li>
-                                <li>• Dental Crowns — <strong>₱9,000 / tooth</strong></li>
-                                <li>• Veneers — <strong>₱15,000 / unit</strong></li>
+                                <li>Complete Denture — <strong>₱8,000 / arch</strong></li>
+                                <li>Removable Partial Dentures — <strong>₱10,000</strong></li>
+                                <li>Flexible Dentures — <strong>₱20,000 / arch</strong></li>
+                                <li>Fixed Bridge — <strong>₱8,000 / unit</strong></li>
+                                <li>Dental Crowns — <strong>₱9,000 / tooth</strong></li>
+                                <li>Veneers — <strong>₱15,000 / unit</strong></li>
                             </ul>
                         </div>
                     </div>
@@ -141,12 +141,12 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-md-6">
                     <div class="card text-start shadow-lg border-0 h-100">
                         <div class="card-body" style="border-left: 6px solid #0d6efd; border-radius: 6px;">
-                            <h5 class="card-title text-primary"><i class="bi bi-bandaid-fill text-danger"></i> Endodontics & Surgery</h5>
+                            <h5 class="card-title text-primary"><i class="bi bi-bandaid-fill text-warning"></i> Endodontics & Surgery</h5>
                             <ul class="service-list">
-                                <li>• Root Canal Treatment — <strong>₱8,000 / canal</strong></li>
-                                <li>• Odontectomy — <strong>₱10,000</strong></li>
-                                <li>• Wisdom Tooth Extraction — <strong>₱4,500</strong></li>
-                                <li>• Gingivectomy — <strong>₱3,000 / area</strong></li>
+                                <li>Root Canal Treatment — <strong>₱8,000 / canal</strong></li>
+                                <li>Odontectomy — <strong>₱10,000</strong></li>
+                                <li>Wisdom Tooth Extraction — <strong>₱4,500</strong></li>
+                                <li>Gingivectomy — <strong>₱3,000 / area</strong></li>
                             </ul>
                         </div>
                     </div>
@@ -156,12 +156,12 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-md-6">
                     <div class="card text-start shadow-lg border-0 h-100">
                         <div class="card-body" style="border-left: 6px solid #0d6efd; border-radius: 6px;">
-                            <h5 class="card-title text-primary"><i class="bi bi-emoji-heart-eyes-fill text-danger"></i> Orthodontics</h5>
+                            <h5 class="card-title text-primary"><i class="bi bi-emoji-heart-eyes-fill text-warning"></i> Orthodontics</h5>
                             <ul class="service-list">
-                                <li>• Metal Braces — <strong>₱45,000–₱60,000</strong></li>
-                                <li>• Ceramic Braces — <strong>₱70,000–₱90,000</strong></li>
-                                <li>• Self-ligating Braces — <strong>₱80,000+</strong></li>
-                                <li>• Retainers/Arch (Hawley's) — <strong>₱6,000 / arch</strong></li>
+                                <li>Metal Braces — <strong>₱45,000–₱60,000</strong></li>
+                                <li>Ceramic Braces — <strong>₱70,000–₱90,000</strong></li>
+                                <li>Self-ligating Braces — <strong>₱80,000+</strong></li>
+                                <li>Retainers/Arch (Hawley's) — <strong>₱6,000 / arch</strong></li>
                             </ul>
                         </div>
                     </div>
@@ -173,13 +173,12 @@ if (!isset($_SESSION['user_id'])) {
     <!-- Footer -->
     <footer class="text-center mt-auto">
         <div class="container">
-            <p class="mb-2">© 2025 SG Dental Clinic. All Rights Reserved.</p>
+            <p class="mb-2">© 2025 DentLink. All Rights Reserved.</p>
             <div class="d-flex justify-content-center gap-3">
                 <a href="#"><i class="bi bi-facebook fs-4"></i></a>
                 <a href="#"><i class="bi bi-instagram fs-4"></i></a>
                 <a href="#"><i class="bi bi-envelope fs-4"></i></a>
             </div>
-            <p class="mt-2">Developed by <strong>Clinic System Team</strong></p>
         </div>
     </footer>
 

@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['last_name'] = $user['last_name'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['role'] = $user['role'];
-                $_SESSION['profile_pic'] = $user['profile_pic']; 
+                $_SESSION['profile_pic'] = $user['profile_pic'];
 
                 if ($user['role'] === 'Admin') {
                     header("Location: admin_dashboard.php");
@@ -74,10 +74,18 @@ $conn->close();
     <div class="container-fluid login-container d-flex flex-column flex-lg-row min-vh-100 p-0">
         <div class="left-side d-flex flex-column justify-content-center align-items-center text-center p-5">
             <img src="dentlink-logo.png" alt="DentLink Logo">
-            <p class="mt-3"><strong>DentLink: Dental Clinic Digital Appointment and Patient Records Management System</strong></p>
-            <div class="info-box mt-3">
-                <p><strong>DentLink</strong> simplifies dental appointment scheduling and patient record management. Patients can book online, check time slots, and get email notifications.</p>
-                <p>The system ensures accurate record-keeping by tracking treatment histories and identifying new or returning patients for reliable dental services.</p>
+            <p><strong>DentLink: Dental Clinic Digital Appointment and Patient Records Management System</strong></p>
+            <div class="info-box">
+                <p>
+                    <strong>DentLink</strong> is a web-based platform that simplifies dental appointment scheduling and
+                    patient record management. Patients can easily book appointments online, view available time slots,
+                    and receive email notifications for confirmations and reminders.
+                </p>
+                <br>
+                <p>
+                    The system ensures accurate record-keeping by tracking treatment histories and identifying new or returning patients,
+                    resulting in efficient and reliable dental services.
+                </p>
             </div>
         </div>
 

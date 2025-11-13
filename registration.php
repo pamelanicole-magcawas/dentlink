@@ -65,16 +65,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $errors['email'] = "Email already registered";
                 unlink($target_file);
             } else {
-                $stmt = $conn->prepare("INSERT INTO users (first_name,last_name,email,phone,address,password,role,profile_pic) VALUES (?,?,?,?,?,?,?,?)");
-                $stmt->bind_param("ssssssss", $first_name, $last_name, $email, $phone, $address, $hashed_password, $role, $file_name);
-
-                if ($stmt->execute()) {
-                    $success = "Registration successful! You can now log in.";
-                } else {
-                    $errors['general'] = "Database error: " . $stmt->error;
-                    unlink($target_file);
-                }
-                $stmt->close();
+                // Save user temporarily in session before OTP verification
+                $_SESSION['pending_user'] = [
+                    'first_name' => $first_name,
+                    'last_name'  => $last_name,
+                    'email'      => $email,
+                    'phone'      => $phone,
+                    'address'    => $address,
+                    'password'   => $hashed_password,
+                    'role'       => $role,
+                    'profile_pic' => $file_name
+                ];
+                $_SESSION['otp_resend_count'] = 0; // reset resend attempts
+                header("Location: send_otp.php");
+                exit();
             }
             $check->close();
         } else {
@@ -88,9 +92,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DentLink Registration</title>
     <link href="bootstrap-5.3.3-dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="credential.css">
@@ -100,23 +104,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="container-fluid login-container d-flex flex-column flex-lg-row min-vh-100 p-0">
         <div class="left-side d-flex flex-column justify-content-center align-items-center text-center p-5">
             <img src="dentlink-logo.png" alt="DentLink Logo">
-            <p class="mt-3"><strong>DentLink: Dental Clinic Digital Appointment and Patient Records Management System</strong></p>
-            <div class="info-box mt-3">
-                <p><strong>DentLink</strong> simplifies dental appointment scheduling and patient record management. Patients can book online, check time slots, and get email notifications.</p>
-                <p>The system ensures accurate record-keeping by tracking treatment histories and identifying new or returning patients for reliable dental services.</p>
+            <p><strong>DentLink: Dental Clinic Digital Appointment and Patient Records Management System</strong></p>
+            <div class="info-box">
+                <p>
+                    <strong>DentLink</strong> is a web-based platform that simplifies dental appointment scheduling and
+                    patient record management. Patients can easily book appointments online, view available time slots,
+                    and receive email notifications for confirmations and reminders.
+                </p>
+                <br>
+                <p>
+                    The system ensures accurate record-keeping by tracking treatment histories and identifying new or returning patients,
+                    resulting in efficient and reliable dental services.
+                </p>
             </div>
         </div>
 
         <div class="right-side d-flex justify-content-center align-items-center p-5">
             <div class="form-box w-100" style="max-width:400px;">
                 <h2 class="mb-4 text-center">Registration Form</h2>
+
                 <?php if (!empty($errors['general'])): ?>
                     <p class="message text-center"><?= htmlspecialchars($errors['general']); ?></p>
-                <?php elseif (!empty($success)): ?>
-                    <p class="success"><?= htmlspecialchars($success); ?></p>
                 <?php endif; ?>
 
-                <form method="POST" action="" enctype="multipart/form-data">
+                <form method="POST" enctype="multipart/form-data">
                     <div class="row mb-3">
                         <div class="col">
                             <input type="text" name="first_name" class="form-control <?= isset($errors['first_name']) ? 'is-invalid' : '' ?>" placeholder="First Name" value="<?= htmlspecialchars($first_name); ?>">
@@ -178,11 +189,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script>
         const fileInput = document.getElementById('profile_pic');
         const fileChosen = document.getElementById('file-chosen');
-
         fileInput.addEventListener('change', function() {
             fileChosen.textContent = this.files[0] ? this.files[0].name : "No file chosen";
         });
     </script>
-
 </body>
+
 </html>
