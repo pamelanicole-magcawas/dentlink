@@ -5,8 +5,8 @@ $message = "If you receive this, your email setup works!";
 $headers = "From: sgdentalcliniccc@gmail.com";
 
 if(mail($to, $subject, $message, $headers)){
-    echo "✅ Email sent successfully!";
+    echo "Email sent successfully!";
 } else {
-    echo "❌ Email sending failed.";
+    echo "Email sending failed.";
 }
 ?>

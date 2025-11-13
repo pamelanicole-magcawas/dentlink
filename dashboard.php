@@ -17,61 +17,42 @@ if (!isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="dashboard.css">
     <title>DentLink - Clinic System</title>
-
 </head>
 
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold text-primary" href="#">
-                <img src="dentlink-logo.png" alt="Logo" width="70" height="60" class="me-2">
+<body style="font-family: Cambria, serif; color: #333;">
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary d-flex align-items-center" href="#">
+                <img src="dentlink-logo.png" alt="DentLink" width="35" class="me-2">
                 DentLink
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarScroll">
-                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#home">
-                            <i class="bi bi-house-door-fill"></i> Home
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.php"><i class="bi bi-house-door-fill"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#services"><i class="bi bi-clipboard2-pulse-fill"></i> Services</a></li>
+                    <li class="nav-item d-flex align-items-center">
+                        <a href="profile.php" class="d-flex align-items-center text-decoration-none text-dark">
+                            <img src="upload/<?= htmlspecialchars($_SESSION['profile_pic']); ?>"
+                                alt="Profile Picture"
+                                style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                            <span class="me-2"><?= htmlspecialchars($_SESSION['first_name']); ?></span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#services">
-                            <i class="bi bi-clipboard2-pulse-fill"></i> Services
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
                 </ul>
-
-                <ul class="navbar-nav me-3">
-                    <li class="nav-item">
-                        <a class="nav-link" href="profile.php">
-                            <i class="bi bi-person-fill"></i>
-                            <?php echo htmlspecialchars($_SESSION['first_name']); ?>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-danger" href="logout.php">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </a>
-                    </li>
-                </ul>
-
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-primary" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>
 
     <!-- Home Section -->
-    <section id="home" class="vh-100 d-flex align-items-center justify-content-center text-center">
-        <div class="container" style="margin-top: -50px;">
-            <h2 class="fw-bold mb-4">Welcome to DentLink Clinic System</h2>
+    <section id="home" class="min-vh-100 py-5 d-flex align-items-center justify-content-center text-center">
+        <div class="container">
+            <h2 class="fw-bold mb-5">Welcome to DentLink Clinic System</h2>
             <p class="text-muted mb-5">Manage your dental appointments and records easily.</p>
 
             <div class="row g-4 justify-content-center">
@@ -115,7 +96,7 @@ if (!isset($_SESSION['user_id'])) {
     </section>
 
     <!-- Services Section -->
-    <section id="services" class="min-vh-100 d-flex flex-column align-items-center justify-content-center text-center py-5">
+    <section id="services" class="min-vh-100 py-5 d-flex align-items-center justify-content-center text-center">
         <div class="container">
             <i class="bi bi-heart-pulse display-3 text-danger d-block mb-3"></i>
             <h3 class="section-title mb-3">Our Services</h3>
@@ -128,8 +109,9 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="card-body" style="border-left: 6px solid #0d6efd; border-radius: 6px;">
                             <h5 class="card-title text-primary"><i class="bi bi-clipboard-check-fill text-danger"></i> General Procedures</h5>
                             <ul class="service-list">
-                                <li>• Oral Prophylaxis — <strong>₱1,000</strong></li>
-                                <li>• Tooth Extraction — <strong>₱1,000</strong></li>
+                                <li>• Consultation Fee — <strong>₱700</strong></li>
+                                <li>• Oral Prophylaxis — <strong>₱1,200</strong></li>
+                                <li>• Tooth Extraction — <strong>₱1,200</strong></li>
                                 <li>• Fluoride Treatment — <strong>₱600</strong></li>
                                 <li>• Periapical X-ray — <strong>₱500</strong></li>
                                 <li>• Panoramic X-ray — <strong>₱1,000</strong></li>
@@ -144,12 +126,12 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="card-body" style="border-left: 6px solid #0d6efd; border-radius: 6px;">
                             <h5 class="card-title text-primary"><i class="bi bi-person-hearts text-danger"></i> Prosthodontics & Aesthetic Dentistry</h5>
                             <ul class="service-list">
-                                <li>• Complete Denture — <strong>₱15,000 / arch</strong></li>
+                                <li>• Complete Denture — <strong>₱8,000 / arch</strong></li>
                                 <li>• Removable Partial Dentures — <strong>₱10,000</strong></li>
-                                <li>• Flexible Dentures — <strong>₱12,000</strong></li>
+                                <li>• Flexible Dentures — <strong>₱20,000 / arch</strong></li>
                                 <li>• Fixed Bridge — <strong>₱8,000 / unit</strong></li>
                                 <li>• Dental Crowns — <strong>₱9,000 / tooth</strong></li>
-                                <li>• Veneers — <strong>₱12,000 / tooth</strong></li>
+                                <li>• Veneers — <strong>₱15,000 / unit</strong></li>
                             </ul>
                         </div>
                     </div>
@@ -161,8 +143,8 @@ if (!isset($_SESSION['user_id'])) {
                         <div class="card-body" style="border-left: 6px solid #0d6efd; border-radius: 6px;">
                             <h5 class="card-title text-primary"><i class="bi bi-bandaid-fill text-danger"></i> Endodontics & Surgery</h5>
                             <ul class="service-list">
-                                <li>• Root Canal Treatment — <strong>₱6,000 / tooth</strong></li>
-                                <li>• Odontectomy — <strong>₱5,000</strong></li>
+                                <li>• Root Canal Treatment — <strong>₱8,000 / canal</strong></li>
+                                <li>• Odontectomy — <strong>₱10,000</strong></li>
                                 <li>• Wisdom Tooth Extraction — <strong>₱4,500</strong></li>
                                 <li>• Gingivectomy — <strong>₱3,000 / area</strong></li>
                             </ul>
@@ -179,7 +161,7 @@ if (!isset($_SESSION['user_id'])) {
                                 <li>• Metal Braces — <strong>₱45,000–₱60,000</strong></li>
                                 <li>• Ceramic Braces — <strong>₱70,000–₱90,000</strong></li>
                                 <li>• Self-ligating Braces — <strong>₱80,000+</strong></li>
-                                <li>• Retainers — <strong>₱5,000+</strong></li>
+                                <li>• Retainers/Arch (Hawley's) — <strong>₱6,000 / arch</strong></li>
                             </ul>
                         </div>
                     </div>

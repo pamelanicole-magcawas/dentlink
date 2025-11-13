@@ -30,7 +30,7 @@ $appointment = $result->fetch_assoc();
 $stmt->close();
 
 if (!$appointment) {
-    die("<div style='text-align:center;padding:40px;'><h2 style='color:red;'>❌ Appointment not found.</h2><a href='admin_appointments.php'>Back</a></div>");
+    die("<div style='text-align:center;padding:40px;'><h2 style='color:red;'> Appointment not found.</h2><a href='admin_appointments.php'>Back</a></div>");
 }
 
 // 2) Mark appointment approved
@@ -235,7 +235,7 @@ if (!$saveStmt) {
                     <pre class="debug"><?= htmlspecialchars($qrText) ?></pre>
                 </details>
             <?php else: ?>
-                <div class="alert alert-warning">⚠️ QR generation failed. See debug info below.</div>
+                <div class="alert alert-warning"> QR generation failed. See debug info below.</div>
             <?php endif; ?>
         </div>
     </div>

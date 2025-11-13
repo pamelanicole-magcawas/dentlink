@@ -1,6 +1,6 @@
 <?php
 // Include the Twilio SDK autoload file
-require_once __DIR__ . '\twilio-php-main\src\Twilio\autoload.php';
+require_once 'twilio-php-main\src\Twilio\autoload.php';
 // or use require_once __DIR__ . '/vendor/autoload.php'; if you used Composer
 
 use Twilio\Rest\Client;
