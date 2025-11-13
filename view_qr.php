@@ -3,7 +3,7 @@ require_once 'db_connect.php';
 
 if (!isset($_GET['id'])) {
     die("<div style='text-align:center; padding:50px; font-family:Arial;'>
-        <h2 style='color:#dc3545;'>❌ Invalid QR Code</h2>
+        <h2 style='color:#dc3545;'> Invalid QR Code</h2>
         <p>No appointment ID provided.</p>
     </div>");
 }
@@ -14,7 +14,7 @@ $appt = $result->fetch_assoc();
 
 if (!$appt) {
     die("<div style='text-align:center; padding:50px; font-family:Arial;'>
-        <h2 style='color:#dc3545;'>❌ Appointment Not Found</h2>
+        <h2 style='color:#dc3545;'> Appointment Not Found</h2>
         <p>This appointment does not exist or has not been approved yet.</p>
     </div>");
 }

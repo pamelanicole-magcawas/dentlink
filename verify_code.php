@@ -1,12 +1,13 @@
 <?php
 require_once 'db_connect.php';
-require_once __DIR__ . '\twilio-php-main\src\Twilio\autoload.php';
+require_once 'twilio-php-main\src\Twilio\autoload.php';
 
 use Twilio\Rest\Client;
 
 session_start();
 $message = "";
 
+// Check if pending user session exists
 if (!isset($_SESSION['pending_user'])) {
     header("Location: registration.php");
     exit();
@@ -16,9 +17,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $code = trim($_POST['otp']);
     $user = $_SESSION['pending_user'];
 
+    // Twilio credentials
     $sid = "AC9c75d0e89a750bdc4ff2f0c894326a16";
-    $token = "a7baaa3371668f5864cf6f74f7724a24";
-    $verify_sid = "VA30a9bde26a895cd8b4b664d328a9a55d";
+    $token = "82c5eba7b9824daf086b35d8606a7589";
+    $verify_sid = "VA19c9a06196b042d6ee7b2b44e23a5850";
     $to = '+63' . ltrim($user['phone'], '0');
 
     $client = new Client($sid, $token);
@@ -29,14 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ->create(['to' => $to, 'code' => $code]);
 
         if ($check->status === 'approved') {
-            // Verified successfully → save to DB
-            $db = new Database();
-            $conn = $db->getConnect();
+            // ✅ Verified successfully → Save to DB using MySQLi
+            global $conn;
 
             $stmt = $conn->prepare("
-    INSERT INTO users (first_name, last_name, email, phone, address, role, password)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-");
+                INSERT INTO users (first_name, last_name, email, phone, address, role, password)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ");
 
             $stmt->bind_param(
                 "sssssss",
@@ -49,11 +50,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $user['password']
             );
 
-            $stmt->execute();
+            if ($stmt->execute()) {
+                unset($_SESSION['pending_user']); // clear session
+                header("Location: login.php");
+                exit();
+            } else {
+                $message = "Database error: " . $stmt->error;
+            }
 
-            unset($_SESSION['pending_user']); // clear session
-            header("Location: login.php");
-            exit();
+            $stmt->close();
         } else {
             $message = "❌ Invalid code. Please try again.";
         }
