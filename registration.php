@@ -52,33 +52,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!in_array($imageFileType, ['jpg', 'jpeg', 'png'])) $errors['profile_pic'] = "Only JPG, JPEG, PNG allowed";
     }
 
+    // --- Only proceed if no validation errors ---
     if (empty($errors)) {
-        if (move_uploaded_file($_FILES["profile_pic"]["tmp_name"], $target_file)) {
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        // --- Check email & phone duplicates first ---
+        $checkEmail = $conn->prepare("SELECT * FROM users WHERE email=?");
+        $checkEmail->bind_param("s", $email);
+        $checkEmail->execute();
+        $resultEmail = $checkEmail->get_result();
 
-            $check = $conn->prepare("SELECT * FROM users WHERE email=?");
-            $check->bind_param("s", $email);
-            $check->execute();
-            $result = $check->get_result();
+        $checkPhone = $conn->prepare("SELECT * FROM users WHERE phone=?");
+        $checkPhone->bind_param("s", $phone);
+        $checkPhone->execute();
+        $resultPhone = $checkPhone->get_result();
 
-            if ($result->num_rows > 0) {
-                $errors['email'] = "Email already registered";
-                unlink($target_file);
+        if ($resultEmail->num_rows > 0) $errors['email'] = "Email already registered";
+        if ($resultPhone->num_rows > 0) $errors['phone'] = "Phone number already registered";
+
+        $checkEmail->close();
+        $checkPhone->close();
+
+        // --- Only move file if no duplicate errors ---
+        if (empty($errors)) {
+            if (move_uploaded_file($_FILES["profile_pic"]["tmp_name"], $target_file)) {
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+                // Save user temporarily in session before OTP verification
+                $_SESSION['pending_user'] = [
+                    'first_name' => $first_name,
+                    'last_name'  => $last_name,
+                    'email'      => $email,
+                    'phone'      => $phone,
+                    'address'    => $address,
+                    'password'   => $hashed_password,
+                    'role'       => $role,
+                    'profile_pic' => $file_name
+                ];
+                $_SESSION['otp_resend_count'] = 0; // reset resend attempts
+                header("Location: send_otp.php");
+                exit();
             } else {
-                $stmt = $conn->prepare("INSERT INTO users (first_name,last_name,email,phone,address,password,role,profile_pic) VALUES (?,?,?,?,?,?,?,?)");
-                $stmt->bind_param("ssssssss", $first_name, $last_name, $email, $phone, $address, $hashed_password, $role, $file_name);
-
-                if ($stmt->execute()) {
-                    $success = "Registration successful! You can now log in.";
-                } else {
-                    $errors['general'] = "Database error: " . $stmt->error;
-                    unlink($target_file);
-                }
-                $stmt->close();
+                $errors['profile_pic'] = "Error uploading file";
             }
-            $check->close();
-        } else {
-            $errors['profile_pic'] = "Error uploading file";
         }
     }
 
@@ -112,12 +126,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="right-side d-flex justify-content-center align-items-center p-5">
             <div class="form-box w-100">
                 <h2><i class="bi bi-person-plus-fill"></i> Registration Form</h2>
-
-                <?php if (!empty($errors['general'])): ?>
-                    <p class="message"> <?= htmlspecialchars($errors['general']); ?></p>
-                <?php elseif (!empty($success)): ?>
-                    <p class="success"> <?= htmlspecialchars($success); ?></p>
-                <?php endif; ?>
 
                 <form method="POST" action="" enctype="multipart/form-data">
                     <div class="row mb-3">
@@ -186,7 +194,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             fileChosen.textContent = this.files[0] ? this.files[0].name : "No file chosen";
         });
     </script>
-
 </body>
-
 </html>
