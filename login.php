@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['last_name'] = $user['last_name'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['role'] = $user['role'];
-                $_SESSION['profile_pic'] = $user['profile_pic']; 
+                $_SESSION['profile_pic'] = $user['profile_pic'];
 
                 if ($user['role'] === 'Admin') {
                     header("Location: admin_dashboard.php");
@@ -110,6 +110,11 @@ $conn->close();
                         <button type="submit" class="btn btn-primary">Login</button>
                     </div>
 
+                    <div class="text-end mb-3">
+                        <a href="forgot_password.php" class="text-decoration-none" style="color: var(--primary-color);">
+                            Forgot Password?
+                        </a>
+                    </div>
                 </form>
 
                 <div class="login-link text-center mt-3">
@@ -118,7 +123,6 @@ $conn->close();
             </div>
         </div>
     </div>
-
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
