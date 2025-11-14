@@ -18,21 +18,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($entered_otp != $_SESSION['otp']) {
         $message = "Invalid OTP. Try again.";
     } else {
-        // ✅ Save user to DB
+
         $stmt = $conn->prepare("INSERT INTO users (first_name,last_name,email,phone,address,password,role,profile_pic) VALUES (?,?,?,?,?,?,?,?)");
-        $stmt->bind_param("ssssssss",
-            $user['first_name'], $user['last_name'], $user['email'],
-            $user['phone'], $user['address'], $user['password'],
-            $user['role'], $user['profile_pic']
+        $stmt->bind_param(
+            "ssssssss",
+            $user['first_name'],
+            $user['last_name'],
+            $user['email'],
+            $user['phone'],
+            $user['address'],
+            $user['password'],
+            $user['role'],
+            $user['profile_pic']
         );
 
         if ($stmt->execute()) {
             unset($_SESSION['pending_user'], $_SESSION['otp'], $_SESSION['otp_expiration'], $_SESSION['otp_resend_count']);
-            header("Location: login.php");
-            exit();
+            $message = "success";
         } else {
             $message = "Database error: " . $stmt->error;
         }
+
         $stmt->close();
     }
 }
@@ -40,17 +46,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>OTP Verification</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta charset="UTF-8">
+    <title>OTP Verification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body class="d-flex justify-content-center align-items-center" style="min-height:100vh; background:#f5f5f5">
-<div class="container text-center">
-<?php if(!empty($message)): ?>
-<script>Swal.fire({icon:'error', title:'<?=$message?>'});</script>
-<?php endif; ?>
-</div>
+    <div class="container text-center">
+
+        <?php if (!empty($message) && $message === "success"): ?>
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'OTP Verified!',
+                    text: 'Your account has been created successfully.',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = "login.php";
+                });
+            </script>
+
+        <?php elseif (!empty($message)): ?>
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: '<?= $message ?>'
+                });
+            </script>
+        <?php endif; ?>
+
+    </div>
 </body>
 </html>
