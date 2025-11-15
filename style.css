@@ -1,0 +1,207 @@
+/* ======================================================
+   GLOBAL CHAT (Messenger Style)
+====================================================== */
+
+#chat-widget,
+.admin-chat-box {
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 35px rgba(0,0,0,0.20);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Widget position (patient) */
+#chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 360px;
+    height: 550px;
+    z-index: 1000;
+    border: 1px solid #e0e0e0;
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
+.chat-header {
+    padding: 14px 18px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e6ea;
+    font-size: 1.15rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-header i {
+    font-size: 1.5rem;
+    color: #1877f2;
+}
+
+/* ======================================================
+   SCROLL AREA
+====================================================== */
+#chat-window,
+.admin-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px;
+    background: #f0f2f5;
+}
+
+#chat-window::-webkit-scrollbar,
+.admin-chat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chat-window::-webkit-scrollbar-thumb,
+.admin-chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+}
+
+/* ======================================================
+   MESSAGE BUBBLES (Messenger)
+====================================================== */
+.message {
+    max-width: 70%;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 18px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-break: break-word;
+    display: inline-block;
+    clear: both;
+}
+
+/* Patient (blue right) */
+.message.patient {
+    background: #1877f2;
+    color: white;
+    float: right;
+    border-bottom-right-radius: 4px;
+}
+
+/* Admin (light gray left) */
+.message.admin {
+    background: #e4e6eb;
+    color: #050505;
+    float: left;
+    border-bottom-left-radius: 4px;
+}
+
+/* System (center) */
+.message.system {
+    background: #e7f3ff;
+    border: 1px solid #cce4ff;
+    color: #084298;
+    max-width: 90%;
+    margin: 10px auto;
+    font-style: italic;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+/* Clear fixing floats */
+.message::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* ======================================================
+   QUICK OPTIONS
+====================================================== */
+#message-options {
+    padding: 12px;
+    background: #ffffff;
+    border-top: 1px solid #ddd;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.option-button {
+    padding: 8px 14px;
+    border-radius: 18px;
+    font-size: 0.85rem;
+    background: #ffffff;
+    border: 1px solid #ccd0d5;
+    cursor: pointer;
+    color: #1b4fa9;
+    transition: 0.2s;
+}
+
+.option-button:hover {
+    background: #e7f3ff;
+    border-color: #8bb9ff;
+}
+
+/* ======================================================
+   INPUT AREA (Messenger)
+====================================================== */
+#chat-input-area,
+.admin-input-area {
+    padding: 12px;
+    border-top: 1px solid #ced0d4;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#message-input,
+.admin-input {
+    flex: 1;
+    background: #f0f2f5;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 25px;
+    outline: none;
+    font-size: 0.95rem;
+    color: #050505;
+}
+
+#message-input:focus,
+.admin-input:focus {
+    background: #e4e6eb;
+}
+
+#send-button,
+.admin-send-btn {
+    width: 42px;
+    height: 42px;
+    background: #1877f2;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#send-button:hover,
+.admin-send-btn:hover {
+    background: #0f5ec7;
+}
+
+/* ======================================================
+   MOBILE RESPONSIVE
+====================================================== */
+@media (max-width: 650px) {
+    #chat-widget {
+        width: 92%;
+        height: 75vh;
+        right: 4%;
+        left: 4%;
+        bottom: 12px;
+    }
+}

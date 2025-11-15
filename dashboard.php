@@ -43,6 +43,7 @@ if (!isset($_SESSION['user_id'])) {
                             <span class="me-2"><?= htmlspecialchars($_SESSION['first_name']); ?></span>
                         </a>
                     </li>
+                    <li class="nav-item"><a class="nav-link" href="chat.php"><i class="bi bi-envelope-fill"></i>Messages</a></li>
                     <li class="nav-item"><a class="nav-link" href="logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
                 </ul>
             </div>
