@@ -280,16 +280,15 @@ $denied = $conn->query("SELECT * FROM appointments WHERE user_id = $user_id AND 
                         <select name="time" id="timeSlot" class="form-select" required>
                             <option value="">-- Select Time --</option>
                             <?php
-                            // Generate times in HH:MM:SS to match DB format
-                            for ($hour = 8; $hour <= 16; $hour++) {
-                                $timeValue = sprintf("%02d:00:00", $hour); // "08:00:00"
+                            // Generate times in HH:MM:SS to match DB format (9:00 AM to 4:00 PM)
+                            for ($hour = 9; $hour <= 16; $hour++) {
+                                $timeValue = sprintf("%02d:00:00", $hour); // "09:00:00" to "16:00:00"
                                 $displayTime = date("h:i A", strtotime($timeValue));
-                                // store original label to avoid text corruption later
                                 echo "<option value='$timeValue' data-label='$displayTime'>$displayTime</option>";
                             }
                             ?>
                         </select>
-                        <small class="text-muted">Clinic hours: 8:00 AM - 5:00 PM</small>
+                        <small class="text-muted">Clinic hours: 9:00 AM - 5:00 PM</small>
                     </div>
 
                     <div class="mb-3">
@@ -406,6 +405,10 @@ $denied = $conn->query("SELECT * FROM appointments WHERE user_id = $user_id AND 
             const locationSelect = document.querySelector('select[name="location"]');
             const timeSelect = document.getElementById('timeSlot');
 
+            // Lunch Break
+            const breakTimes = ["12:00:00"];
+
+            // Fetch booked slots and apply all rules
             function fetchBookedSlots() {
                 const date = dateInput.value;
                 const location = locationSelect.value;
@@ -415,117 +418,157 @@ $denied = $conn->query("SELECT * FROM appointments WHERE user_id = $user_id AND 
                 fetch(`get_booked_times.php?date=${encodeURIComponent(date)}&location=${encodeURIComponent(location)}`)
                     .then(response => response.json())
                     .then(bookedTimes => {
-                        // Reset options before applying booked states
+                        // Reset all options
                         for (let option of timeSelect.options) {
-                            if (option.value === "") continue; // skip the placeholder
-                            if (bookedTimes.includes(option.value)) {
-                                option.disabled = true;
-                                if (!option.textContent.includes('(Booked)')) {
-                                    option.textContent += ' (Booked)';
-                                }
-                            } else {
-                                option.disabled = false;
-                                option.textContent = option.textContent.replace(' (Booked)', '');
-                            }
+                            if (option.value === "") continue;
+                            option.disabled = false;
+                            option.textContent = option.dataset.label;
                         }
+
+                        // Disable BOOKED times
+                        for (let option of timeSelect.options) {
+                            if (option.value === "" || !bookedTimes.includes(option.value)) continue;
+                            option.disabled = true;
+                            if (!option.textContent.includes('(Booked)')) option.textContent += ' (Booked)';
+                        }
+
+                        // Disable BREAK times
+                        for (let option of timeSelect.options) {
+                            if (option.value === "" || !breakTimes.includes(option.value)) continue;
+                            option.disabled = true;
+                            option.textContent += " (Break Time)";
+                        }
+
+                        // Apply 2-hour buffer if selected date is today
+                        limitTodayTimes();
                     })
                     .catch(err => console.error('Error loading booked slots:', err));
             }
 
+            // Limit times for today with 2-hour buffer
+            function limitTodayTimes() {
+                const selectedDate = dateInput.value;
+                if (!selectedDate) return;
+
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                const currentDate = `${yyyy}-${mm}-${dd}`;
+
+                if (selectedDate !== currentDate) return;
+
+                const now = new Date();
+                const minAllowedHour = now.getHours() + 2; // 2-hour buffer
+
+                for (let option of timeSelect.options) {
+                    if (option.value === "") continue;
+                    const optionHour = parseInt(option.value.split(":")[0]);
+
+                    if (optionHour < minAllowedHour && !option.disabled) {
+                        option.disabled = true;
+                        option.textContent += " (Unavailable)";
+                    }
+                }
+            }
+
+            // Event listeners
             dateInput.addEventListener('change', fetchBookedSlots);
             locationSelect.addEventListener('change', fetchBookedSlots);
-        });
-        // Service descriptions
-        const serviceDescriptions = {
-            "All Ceramic Veneers with E-Max": "Tooth-colored, durable ceramic veneers made from E-Max material, used to enhance the appearance, shape, and color of front teeth for a natural, aesthetic smile.",
-            "All Ceramic Fixed Bridge with Zirconia": "Strong, tooth-colored bridge made from zirconia, used to replace missing teeth while providing a natural appearance and durable long-term function.",
-            "Cleaning": "Professional removal of plaque, tartar, and stains, followed by polishing and often fluoride treatment to maintain oral health.",
-            "Consultation": "Initial appointment to discuss dental concerns, evaluate oral health, and create a personalized treatment plan.",
-            "Cosmetic Restoration Crown Build-Up": "Procedure that rebuilds and strengthens damaged teeth using aesthetic materials.",
-            "Dental Braces": "Correct problems with crooked teeth, crowding and out of alignment.",
-            "Dental Bridges": "Dental restoration to replace one or more missing teeth.",
-            "Dental Crowns": "Protect, cover and restore the shape of your broken, weak or worn-down teeth.",
-            "Dental Filling": "Procedure to restore a tooth damaged by decay using composite resin or amalgam.",
-            "Dental Veneers": "Cosmetic dental treatment to conceal cracks, chips, stains and other imperfections.",
-            "Dentures": "Removable replacement for missing teeth and surrounding tissues.",
-            "Digital Panoramic X-Ray": "Wide-view dental imaging technique that captures the entire mouth in a single image.",
-            "Digital Periapical X-Ray & Intra-Oral Camera": "Advanced imaging tools for accurate diagnosis and treatment planning.",
-            "Extraction of Mandibular First Molar": "Surgical removal of the lower first molar tooth.",
-            "Fixed Bridge": "Permanent restoration used to replace missing teeth.",
-            "Flexible Dentures": "Lightweight and flexible partial dentures for improved comfort.",
-            "Fluoride Treatment": "Application of fluoride to strengthen tooth enamel and prevent cavities.",
-            "General Checkup": "Comprehensive oral examination to assess overall dental health.",
-            "Gingivectomy": "Surgical removal of diseased gum tissue.",
-            "Metallic Ortho Braces": "Traditional orthodontic braces made of stainless steel.",
-            "Odontectomy (Impacted Tooth Removal)": "Surgical extraction of an impacted tooth.",
-            "Oral Prophylaxis": "Professional cleaning that removes plaque, tartar, and stains.",
-            "Orthodontic Treatment": "Dental procedure that aligns and straightens teeth using braces or aligners.",
-            "Panoramic X-Ray": "Comprehensive dental imaging that captures the entire mouth.",
-            "Periapical X-Ray": "Detailed X-ray focused on one or a few teeth.",
-            "Porcelain Fused to Metal Fixed Bridge": "Durable restoration with metal base and porcelain covering.",
-            "Removable Partial Dentures": "Prosthesis that replaces some missing teeth.",
-            "Retainers and Other Ortho Appliances": "Devices used after orthodontic treatment.",
-            "Root Canal Treatment": "Endodontic procedure to remove infected pulp tissue.",
-            "Self-Ligating Braces": "Advanced braces system using clips instead of elastic bands.",
-            "Teeth Whitening": "Cosmetic procedure that brightens and whitens teeth.",
-            "Tooth Extraction": "Removal of a damaged or decayed tooth.",
-            "Tooth Restoration": "Repair of tooth decay or structural damage.",
-            "Wisdom / 3rd Molar Extraction": "Removal of impacted or misaligned wisdom teeth."
-        };
 
-        // Show service description when selected
-        const serviceSelect = document.getElementById('serviceSelect');
-        const descriptionBox = document.getElementById('serviceDescription');
-        const descriptionText = document.getElementById('descriptionText');
+            // Initial call at page load
+            fetchBookedSlots();
 
-        if (serviceSelect) {
-            serviceSelect.addEventListener('change', function() {
-                const selectedService = this.value;
+            // --- Service Descriptions ---
+            const serviceDescriptions = {
+                "All Ceramic Veneers with E-Max": "Tooth-colored, durable ceramic veneers made from E-Max material, used to enhance the appearance, shape, and color of front teeth for a natural, aesthetic smile.",
+                "All Ceramic Fixed Bridge with Zirconia": "Strong, tooth-colored bridge made from zirconia, used to replace missing teeth while providing a natural appearance and durable long-term function.",
+                "Cleaning": "Professional removal of plaque, tartar, and stains, followed by polishing and often fluoride treatment to maintain oral health.",
+                "Consultation": "Initial appointment to discuss dental concerns, evaluate oral health, and create a personalized treatment plan.",
+                "Cosmetic Restoration Crown Build-Up": "Procedure that rebuilds and strengthens damaged teeth using aesthetic materials.",
+                "Dental Braces": "Correct problems with crooked teeth, crowding and out of alignment.",
+                "Dental Bridges": "Dental restoration to replace one or more missing teeth.",
+                "Dental Crowns": "Protect, cover and restore the shape of your broken, weak or worn-down teeth.",
+                "Dental Filling": "Procedure to restore a tooth damaged by decay using composite resin or amalgam.",
+                "Dental Veneers": "Cosmetic dental treatment to conceal cracks, chips, stains and other imperfections.",
+                "Dentures": "Removable replacement for missing teeth and surrounding tissues.",
+                "Digital Panoramic X-Ray": "Wide-view dental imaging technique that captures the entire mouth in a single image.",
+                "Digital Periapical X-Ray & Intra-Oral Camera": "Advanced imaging tools for accurate diagnosis and treatment planning.",
+                "Extraction of Mandibular First Molar": "Surgical removal of the lower first molar tooth.",
+                "Fixed Bridge": "Permanent restoration used to replace missing teeth.",
+                "Flexible Dentures": "Lightweight and flexible partial dentures for improved comfort.",
+                "Fluoride Treatment": "Application of fluoride to strengthen tooth enamel and prevent cavities.",
+                "General Checkup": "Comprehensive oral examination to assess overall dental health.",
+                "Gingivectomy": "Surgical removal of diseased gum tissue.",
+                "Metallic Ortho Braces": "Traditional orthodontic braces made of stainless steel.",
+                "Odontectomy (Impacted Tooth Removal)": "Surgical extraction of an impacted tooth.",
+                "Oral Prophylaxis": "Professional cleaning that removes plaque, tartar, and stains.",
+                "Orthodontic Treatment": "Dental procedure that aligns and straightens teeth using braces or aligners.",
+                "Panoramic X-Ray": "Comprehensive dental imaging that captures the entire mouth.",
+                "Periapical X-Ray": "Detailed X-ray focused on one or a few teeth.",
+                "Porcelain Fused to Metal Fixed Bridge": "Durable restoration with metal base and porcelain covering.",
+                "Removable Partial Dentures": "Prosthesis that replaces some missing teeth.",
+                "Retainers and Other Ortho Appliances": "Devices used after orthodontic treatment.",
+                "Root Canal Treatment": "Endodontic procedure to remove infected pulp tissue.",
+                "Self-Ligating Braces": "Advanced braces system using clips instead of elastic bands.",
+                "Teeth Whitening": "Cosmetic procedure that brightens and whitens teeth.",
+                "Tooth Extraction": "Removal of a damaged or decayed tooth.",
+                "Tooth Restoration": "Repair of tooth decay or structural damage.",
+                "Wisdom / 3rd Molar Extraction": "Removal of impacted or misaligned wisdom teeth."
+            };
 
-                if (selectedService && serviceDescriptions[selectedService]) {
-                    descriptionText.textContent = serviceDescriptions[selectedService];
-                    descriptionBox.style.display = 'block';
-                } else {
-                    descriptionBox.style.display = 'none';
-                }
-            });
-        }
+            const serviceSelect = document.getElementById('serviceSelect');
+            const descriptionBox = document.getElementById('serviceDescription');
+            const descriptionText = document.getElementById('descriptionText');
 
-        document.querySelectorAll('.swal-delete-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const appointmentId = this.dataset.id;
-
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to undo this action!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Create a form and submit it via POST
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = ''; // same page
-
-                        const actionInput = document.createElement('input');
-                        actionInput.type = 'hidden';
-                        actionInput.name = 'action';
-                        actionInput.value = 'delete';
-
-                        const idInput = document.createElement('input');
-                        idInput.type = 'hidden';
-                        idInput.name = 'id';
-                        idInput.value = appointmentId;
-
-                        form.appendChild(actionInput);
-                        form.appendChild(idInput);
-
-                        document.body.appendChild(form);
-                        form.submit();
+            if (serviceSelect) {
+                serviceSelect.addEventListener('change', function() {
+                    const selectedService = this.value;
+                    if (selectedService && serviceDescriptions[selectedService]) {
+                        descriptionText.textContent = serviceDescriptions[selectedService];
+                        descriptionBox.style.display = 'block';
+                    } else {
+                        descriptionBox.style.display = 'none';
                     }
+                });
+            }
+
+            // --- Swal Delete Buttons ---
+            document.querySelectorAll('.swal-delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const appointmentId = this.dataset.id;
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to undo this action!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = ''; // same page
+
+                            const actionInput = document.createElement('input');
+                            actionInput.type = 'hidden';
+                            actionInput.name = 'action';
+                            actionInput.value = 'delete';
+
+                            const idInput = document.createElement('input');
+                            idInput.type = 'hidden';
+                            idInput.name = 'id';
+                            idInput.value = appointmentId;
+
+                            form.appendChild(actionInput);
+                            form.appendChild(idInput);
+
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
                 });
             });
         });
