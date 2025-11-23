@@ -27,17 +27,149 @@ $approved = $stmt->get_result();
     <title>My Appointments - DentLink</title>
     <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="patient.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .appointment-card {
+            position: relative;
+            /* needed for the strip to align left */
+            padding: 20px 20px 20px 20px;
+            /* extra space for strip */
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .appointment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .status-strip {
+            position: absolute;
+            /* makes strip appear on the left */
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 100%;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .status-approved {
+            background-color: #28a745;
+        }
+
+        .status-pending {
+            background-color: #fd7e14;
+        }
+
+        .status-denied {
+            background-color: #dc3545;
+        }
+
+        .status-checked-in {
+            background-color: #0d6efd;
+        }
+
+        .status-in-treatment {
+            background-color: #6f42c1;
+        }
+
+        .status-completed {
+            background-color: #6c757d;
+        }
+
+        .appointment-info h5 {
+            margin: 0;
+        }
+
+        .appointment-info p {
+            margin: 3px 0 0;
+            color: #555;
+        }
+
+        .modal-body img {
+            max-width: 200px;
+            border: 3px solid #4CAF50;
+            border-radius: 8px;
+            padding: 10px;
+            background: white;
+            margin-bottom: 15px;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 6px;
+            text-transform: capitalize;
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        .status-approved {
+            background-color: #28a745;
+        }
+
+        .status-pending {
+            background-color: #fd7e14;
+        }
+
+        .status-denied {
+            background-color: #dc3545;
+        }
+
+        .status-checked-in {
+            background-color: #0d6efd;
+        }
+
+        .status-in-treatment {
+            background-color: #6f42c1;
+        }
+
+        .status-completed {
+            background-color: #6c757d;
+        }
+
+        .modal-content.d-flex {
+            display: flex;
+            padding: 0;
+        }
+
+        .modal-status-strip {
+            width: 8px;
+            height: 100%;
+            border-radius: 0;
+            margin-right: 10px;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container-fluid">
-        <a href="dashboard.php" class="btn btn-custom mb-3 d-inline-flex align-items-center gap-2">
+    <div class="container">
+        <a href="dashboard.php" class="btn btn-outline-primary mb-3">
             <i class="bi bi-arrow-left"></i> Back to Dashboard
         </a>
 
-        <div class="page-header">
-            <h1><i class="bi bi-calendar-check"></i> My Appointments </h1>
+        <div class="header">
+            <h1><i class="bi bi-calendar-check text-primary"></i> My Appointments</h1>
             <p class="text-muted mb-0">Welcome, <strong><?= htmlspecialchars($full_name) ?></strong></p>
             <small class="text-muted">Click an appointment card to view full details</small>
         </div>

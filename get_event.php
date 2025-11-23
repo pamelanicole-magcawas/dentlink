@@ -2,14 +2,14 @@
 include 'calendar_api.php';
 
 if (!isset($_GET['id'])) {
-    die("⚠️ No event ID provided.");
+    die("No event ID provided.");
 }
 
 $event_id = $_GET['id'];
 $data = get_event($event_id); // use your helper function
 
 if (isset($data['summary'])) {
-    echo "<h2>🦷 Appointment Details</h2>";
+    echo "<h2>Appointment Details</h2>";
     echo "<p><b>Title:</b> " . htmlspecialchars($data['summary']) . "</p>";
     echo "<p><b>Description:</b> " . htmlspecialchars($data['description'] ?? 'N/A') . "</p>";
     echo "<p><b>Location:</b> " . htmlspecialchars($data['location'] ?? 'N/A') . "</p>";

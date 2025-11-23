@@ -95,82 +95,61 @@ $calendarLink = $calendarData['htmlLink'] ?? '';
 $eventId = $calendarData['id'] ?? '';
 $calendarSuccess = ($calendarHttp === 200 || $calendarHttp === 201) && !empty($calendarLink);
 
-// 4) Generate QR (use QRServer to support long payloads)
+// 4) Generate QR using JSON payload (best for scanners)
 $dateFormatted = date('F j, Y (l)', strtotime($appointment['date']));
 $timeFormatted = date('g:i A', strtotime($appointment['start_time']));
 
-// Build QR contents (structured text)
-$qrTextLines = [
-    "DENTLINK APPOINTMENT",
-    "ID: #" . $appointment['id'],
-    "-------------------",
-    "Patient: " . $appointment['patient_name'],
-    "Email: " . $appointment['user_email'],
-    "",
-    "Service: " . $appointment['description'],
-    "Date: " . $dateFormatted,
-    "Time: " . $timeFormatted,
-    "Location: " . $appointment['location'],
-    "-------------------",
-    "Status: APPROVED ✓",
-    "Present this at clinic"
+// JSON payload for QR
+$qrPayload = [
+    "id" => (int)$appointment['id'],
+    "patient" => $appointment['patient_name'],
+    "email" => $appointment['user_email'],
+    "service" => $appointment['description'],
+    "date" => $dateFormatted,
+    "time" => $timeFormatted,
+    "location" => $appointment['location'],
+    "status" => "approved"
 ];
-$qrText = implode("\n", $qrTextLines);
+
+// Convert JSON → string
+$qrText = json_encode($qrPayload, JSON_UNESCAPED_UNICODE);
 
 // Ensure uploads directory exists
 $uploadDir = __DIR__ . '/uploads';
 if (!is_dir($uploadDir)) {
-    if (!mkdir($uploadDir, 0777, true)) {
-        // failed to create uploads dir — we'll still attempt to provide result (but QR won't save)
-        $dirCreateError = true;
-    }
+    mkdir($uploadDir, 0777, true);
 }
 
-// QR image filename and local path
+// Filename + Path
 $fileName = "qr_appointment_" . $appointment['id'] . ".png";
-$localPath = $uploadDir . '/' . $fileName; // full server path
-$relativeUrl = "uploads/" . $fileName;      // relative URL for DB/HTML
+$localPath = $uploadDir . '/' . $fileName;
+$relativeUrl = "uploads/" . $fileName;
 
-// Build QRServer API request (supports long data)
-$qrApiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=" . urlencode($qrText);
+// QR API
+$qrApiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=" . urlencode($qrText);
 
-// attempt to download QR image
+
+// Download QR image
 $qrImageData = @file_get_contents($qrApiUrl);
 
 $qrSuccess = false;
-if ($qrImageData !== false && !empty($localPath)) {
-    $written = @file_put_contents($localPath, $qrImageData);
-    if ($written !== false) {
+if ($qrImageData !== false) {
+    if (@file_put_contents($localPath, $qrImageData) !== false) {
         $qrSuccess = true;
         $qrUrlToSave = $relativeUrl;
-    } else {
-        // fallback: we can save base64 string into DB (but we prefer file)
-        $qrSuccess = false;
-        $qrUrlToSave = '';
     }
-} else {
-    // API failed — keep qrUrl empty and show debug
-    $qrSuccess = false;
+}
+
+if (!$qrSuccess) {
     $qrUrlToSave = '';
-    $qrApiError = $qrImageData === false ? 'QR API returned no data' : 'No local path';
 }
 
-// 5) Save calendar_link and qr_code_url to DB (either empty or value)
+// Save QR path & calendar link to DB
 $saveStmt = $conn->prepare("UPDATE appointments SET qr_code_url = ?, calendar_link = ? WHERE id = ?");
-if (!$saveStmt) {
-    // DB problem — continue but show debug
-    $dbSaveError = $conn->error;
-} else {
-    $saveStmt->bind_param("ssi", $qrUrlToSave, $calendarLink, $id);
-    $saveStmt->execute();
-    $saveStmt->close();
-}
+$saveStmt->bind_param("ssi", $qrUrlToSave, $calendarLink, $id);
+$saveStmt->execute();
+$saveStmt->close();
 
-// 6) Optionally: you could trigger an email via PHPMailer or send a notification here.
-// We rely on Google Calendar invite (sendNotifications/sendUpdates) for attendee email.
-// But many local dev setups won't deliver emails — production requires proper SMTP & PHPMailer.
-
-// 7) Render success page (shows QR preview and debug if something failed)
 ?>
 <!doctype html>
 <html>
@@ -257,7 +236,7 @@ if (!$saveStmt) {
     <?php endif; ?>
 
     <div class="mt-4 text-center">
-        <a href="admin_appointments.php" class="btn btn-secondary">Back to Admin</a>
+        <a href="admin_dashboard.php" class="btn btn-secondary">Back to Admin</a>
     </div>
 </div>
 </body>

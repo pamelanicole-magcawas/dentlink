@@ -1,9 +1,15 @@
+/* ============================
+   Admin Dashboard CSS
+   Using Patient Dashboard Design System
+=============================== */
+
 html {
     scroll-behavior: smooth;
 }
 
 body {
     font-family: 'Poppins', 'Segoe UI', sans-serif;
+    overflow-x: hidden;
 }
 
 /* Color Palette */
@@ -12,11 +18,16 @@ body {
     --secondary-color: #91C4C3;
     --accent-color: #B4DEBD;
     --light-color: #FFF7DD;
+    --card-radius: 18px;
+    --transition: 0.3s ease;
 }
 
-/* Navbar Styles */
+/* ============================
+   NAVBAR
+=============================== */
 .navbar {
     transition: all 0.3s ease;
+    z-index: 30;
 }
 
 .navbar .nav-link {
@@ -43,11 +54,14 @@ body {
     border-radius: 2px;
 }
 
-/* Hero Section */
+/* ============================
+   HERO / HOME SECTION
+=============================== */
 .hero-section {
     background: linear-gradient(135deg, #B4DEBD 0%, #FFF7DD 100%);
     position: relative;
     overflow: hidden;
+    min-height: 70vh;
 }
 
 .hero-section::before {
@@ -58,7 +72,7 @@ body {
     right: 0;
     bottom: 0;
     background: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600') center/cover;
-    opacity: 0.1;
+    opacity: 0.08;
     z-index: 0;
 }
 
@@ -102,15 +116,17 @@ body {
     overflow: hidden;
     line-height: 0;
     z-index: 2;
-  }
-  
-  .smile-curve svg {
+}
+
+.smile-curve svg {
     display: block;
     width: 100%;
     height: 120px;
-  }  
+}
 
-/* Icon Circle */
+/* ============================
+   QUICK ACTIONS & CARDS
+=============================== */
 .icon-circle {
     width: 80px;
     height: 80px;
@@ -120,7 +136,25 @@ body {
     justify-content: center;
 }
 
-/* Custom Buttons */
+.hover-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border-radius: var(--card-radius);
+}
+
+.hover-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(128, 161, 186, 0.2) !important;
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* ============================
+   BUTTONS
+=============================== */
 .btn-custom {
     background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);
     color: white;
@@ -147,28 +181,26 @@ body {
     transform: translateY(-2px);
 }
 
-/* Hover Cards */
-.hover-card {
+/* ============================
+   REVIEWS SECTION
+=============================== */
+.reviews-grid {
+    gap: 1.25rem;
+}
+
+.review-card {
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 6px 22px rgba(128, 161, 186, 0.07);
+    background: #fff;
     transition: all 0.3s ease;
-    cursor: pointer;
 }
 
-.hover-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgba(128, 161, 186, 0.2) !important;
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(128, 161, 186, 0.15);
 }
 
-/* Service List */
-.service-list li {
-    padding: 8px 0;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.service-list li:last-child {
-    border-bottom: none;
-}
-
-/* Avatar Circle */
 .avatar-circle {
     width: 50px;
     height: 50px;
@@ -180,83 +212,43 @@ body {
     font-size: 1.2rem;
 }
 
-/* Star Rating */
-.star-rating i {
-    cursor: pointer;
-    transition: all 0.2s ease;
+/* ============================
+   TEXT COLORS
+=============================== */
+.text-primary-custom {
+    color: #80A1BA !important;
 }
 
-.star-rating i:hover {
-    transform: scale(1.2);
+.text-secondary-custom {
+    color: #91C4C3 !important;
 }
 
-/* Social Buttons */
-.social-btn {
-    transition: all 0.3s ease;
-    border: none;
+.text-accent-custom {
+    color: #B4DEBD !important;
 }
 
-.social-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+/* ============================
+   BACKGROUND COLORS
+=============================== */
+.bg-primary-custom {
+    background-color: #80A1BA !important;
 }
 
-/* Footer */
-footer {
-    background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);
+.bg-secondary-custom {
+    background-color: #91C4C3 !important;
 }
 
-/* Buttons */
-.btn-primary {
-    transition: all 0.3s ease;
+.bg-accent-custom {
+    background-color: #B4DEBD !important;
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(128, 161, 186, 0.3);
+.bg-light-custom {
+    background-color: #FFF7DD !important;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .hero-title {
-        font-size: 2rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1rem;
-    }
-    
-    .display-5 {
-        font-size: 2rem;
-    }
-}
-
-/* Loading Animation */
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
-}
-
-.loading {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Section Spacing */
-section {
-    scroll-margin-top: 70px;
-}
-
-/* Card Borders */
-.card {
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-/* Custom Scrollbar */
+/* ============================
+   CUSTOM SCROLLBAR
+=============================== */
 ::-webkit-scrollbar {
     width: 10px;
 }
@@ -274,32 +266,69 @@ section {
     background: #6b8ba3;
 }
 
-/* Text Colors */
-.text-primary-custom {
-    color: #80A1BA !important;
+/* ============================
+   LOADING ANIMATION
+=============================== */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
 }
 
-.text-secondary-custom {
-    color: #91C4C3 !important;
+.loading {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-.text-accent-custom {
-    color: #B4DEBD !important;
+/* ============================
+   SECTION SPACING
+=============================== */
+section {
+    scroll-margin-top: 70px;
 }
 
-/* Background Colors */
-.bg-primary-custom {
-    background-color: #80A1BA !important;
+section#home {
+    padding-top: 80px;
+    padding-bottom: 80px;
 }
 
-.bg-secondary-custom {
-    background-color: #91C4C3 !important;
+/* ============================
+   RESPONSIVE
+=============================== */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+    }
 }
 
-.bg-accent-custom {
-    background-color: #B4DEBD !important;
+/* ============================
+   ADDITIONAL UTILITIES
+=============================== */
+.welcome-admin {
+    font-size: 1.25rem;
+    color: #2b4f5f;
 }
 
-.bg-light-custom {
-    background-color: #FFF7DD !important;
+.shadow-soft {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+}
+
+/* Smooth transitions for all interactive elements */
+button, a, .card, .btn {
+    transition: all 0.3s ease;
 }

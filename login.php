@@ -1,9 +1,12 @@
 <?php
 session_start();
 include("db_connect.php");
+require "log_activity.php";
 
-$email = $password = "";
-$emailErr = $passwordErr = $loginErr = "";
+$email = "";
+$loginErr = "";
+$emailErr = "";
+$passwordErr = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -17,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (empty($_POST["password"])) {
         $passwordErr = "Please enter your password";
-    } elseif (strlen($_POST["password"]) < 5 || strlen($_POST["password"]) > 12) {
-        $passwordErr = "Password must be 5–12 characters long";
+    } elseif (strlen($_POST["password"]) < 5 || strlen($_POST["password"]) > 15) {
+        $passwordErr = "Password must be 5–15 characters long";
     } else {
         $password = $_POST["password"];
     }
@@ -40,6 +43,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['role'] = $user['role'];
                 $_SESSION['profile_pic'] = $user['profile_pic'];
 
+                // Log login & first visit
+                logActivity($user['user_id'], "Logged in");
+                
                 if ($user['role'] === 'Admin') {
                     header("Location: admin_dashboard.php");
                 } else {
@@ -55,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->close();
     }
 }
-
 $conn->close();
 ?>
 
@@ -111,9 +116,10 @@ $conn->close();
                     </div>
 
                     <div class="text-end mb-3">
-                        <a href="forgot_password.php" class="text-decoration-none">Forgot Password?</a>
+                        <a href="forgot_password.php" class="text-decoration-none" style="color: var(--primary-color);">
+                            Forgot Password?
+                        </a>
                     </div>
-
                 </form>
 
                 <div class="login-link text-center mt-3">
@@ -122,7 +128,6 @@ $conn->close();
             </div>
         </div>
     </div>
-
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($address)) $errors['address'] = "Address is required";
 
     if (empty($password)) $errors['password'] = "Password is required";
-    elseif (!preg_match("/^.{5,12}$/", $password)) $errors['password'] = "Password must be 5–12 characters";
+    elseif (!preg_match("/^.{5,15}$/", $password)) $errors['password'] = "Password must be 5–15 characters";
 
     if (empty($confirm)) $errors['confirm_password'] = "Please confirm your password";
     elseif ($password !== $confirm) $errors['confirm_password'] = "Passwords do not match";
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="form-box w-100">
                 <h2><i class="bi bi-person-plus-fill"></i> Registration Form</h2>
 
-                <form method="POST" action="" enctype="multipart/form-data">
+                <form method="POST" action="" enctype="multipart/form-data" novalidate>
                     <div class="row mb-3">
                         <div class="col">
                             <input type="text" name="first_name" class="form-control <?= isset($errors['first_name']) ? 'is-invalid' : '' ?>" placeholder="First Name" value="<?= htmlspecialchars($first_name); ?>">
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
 
                     <div class="mb-3">
-                        <input type="password" name="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" placeholder="Password (5-12 characters)">
+                        <input type="password" name="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" placeholder="Password (5-15 characters)">
                         <?php if (isset($errors['password'])): ?><div class="invalid-feedback"><?= $errors['password']; ?></div><?php endif; ?>
                     </div>
 

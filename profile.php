@@ -32,55 +32,124 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>User Profile - DentLink</title>
     <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="credentials.css">
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 
-<body style="font-family: Cambria, serif; color: #333;">
-    <nav class="navbar navbar-expand-lg bg-white shadow-sm py-3">
+<body class="profile-page">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white sticky-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold text-primary d-flex align-items-center" href="#">
-                <img src="dentlink-logo.png" alt="DentLink" width="35" class="me-2">
-                DentLink
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="dashboard.php" style="color: #80A1BA;">
+                <img src="dentlink-logo.png" alt="Logo" width="50" height="45" class="me-2">
+                <span style="font-size: 1.5rem;">DentLink</span>
             </a>
-
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.php"><i class="bi bi-house-door-fill"></i> Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="dashboard.php#services"><i class="bi bi-clipboard2-pulse-fill"></i> Services</a></li>
-                    <li class="nav-item d-flex align-items-center">
-                        <a href="profile.php" class="d-flex align-items-center text-decoration-none text-dark">
-                            <img src="upload/<?= htmlspecialchars($user['profile_pic']); ?>"
-                                alt="Profile Picture"
-                                style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-                            <span class="ms-2"><?= htmlspecialchars($user['first_name']); ?></span>
-                        </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="dashboard.php">Home</a>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <img src="upload/<?= htmlspecialchars($user['profile_pic']); ?>" 
+                                 alt="Profile" 
+                                 style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 8px;">
+                            <?php echo htmlspecialchars($user['first_name']); ?>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person"></i> Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container py-5" style="margin-top:80px;">
-        <div class="card mx-auto" style="max-width:600px;">
-            <div class="card-body text-center">
-                <img src="upload/<?= htmlspecialchars($user['profile_pic']); ?>"
-                    alt="Profile Picture"
-                    class="rounded-circle mb-3"
-                    style="width:200px; height:200px; object-fit:cover;">
-                <h3 class="card-title"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></h3>
-                <p class="text-muted"><strong>ID:</strong> <?= htmlspecialchars($user['user_id']); ?></p>
-                <p class="text-muted mb-1"><strong>Email:</strong> <?= htmlspecialchars($user['email']); ?></p>
-                <p class="text-muted mb-1"><strong>Phone:</strong> <?= htmlspecialchars($user['phone']); ?></p>
-                <p class="text-muted mb-1"><strong>Address:</strong> <?= htmlspecialchars($user['address']); ?></p>
-                <p class="text-muted"><strong>Joined:</strong> <?= htmlspecialchars($user['created_at']); ?></p>
-                <a href="dashboard.php" class="btn btn-primary mt-3">Back to Dashboard</a>
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-image-container">
+                    <img src="upload/<?= htmlspecialchars($user['profile_pic']); ?>"
+                        alt="Profile Picture"
+                        class="profile-image">
+                </div>
+                <h2 class="profile-name">
+                    <?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?>
+                </h2>
+            </div>
+
+            <div class="profile-body">
+                <div class="profile-info-item">
+                    <div class="profile-info-icon">
+                        <i class="bi bi-hash"></i>
+                    </div>
+                    <div class="profile-info-content">
+                        <div class="profile-info-label">User ID</div>
+                        <p class="profile-info-value"><?= htmlspecialchars($user['user_id']); ?></p>
+                    </div>
+                </div>
+
+                <div class="profile-info-item">
+                    <div class="profile-info-icon">
+                        <i class="bi bi-envelope-fill"></i>
+                    </div>
+                    <div class="profile-info-content">
+                        <div class="profile-info-label">Email Address</div>
+                        <p class="profile-info-value"><?= htmlspecialchars($user['email']); ?></p>
+                    </div>
+                </div>
+
+                <div class="profile-info-item">
+                    <div class="profile-info-icon">
+                        <i class="bi bi-telephone-fill"></i>
+                    </div>
+                    <div class="profile-info-content">
+                        <div class="profile-info-label">Phone Number</div>
+                        <p class="profile-info-value"><?= htmlspecialchars($user['phone']); ?></p>
+                    </div>
+                </div>
+
+                <div class="profile-info-item">
+                    <div class="profile-info-icon">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <div class="profile-info-content">
+                        <div class="profile-info-label">Address</div>
+                        <p class="profile-info-value"><?= htmlspecialchars($user['address']); ?></p>
+                    </div>
+                </div>
+
+                <div class="profile-info-item">
+                    <div class="profile-info-icon">
+                        <i class="bi bi-calendar-check-fill"></i>
+                    </div>
+                    <div class="profile-info-content">
+                        <div class="profile-info-label">Member Since</div>
+                        <p class="profile-info-value"><?= date('F d, Y', strtotime($user['created_at'])); ?></p>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <a href="dashboard.php" class="btn-profile btn-profile-primary">
+                        <i class="bi bi-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                    <a href="edit_profile.php" class="btn-profile btn-profile-outline">
+                        <i class="bi bi-pencil-square"></i>
+                        Edit Profile
+                    </a>
+                </div>
             </div>
         </div>
     </div>

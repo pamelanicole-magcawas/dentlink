@@ -1,76 +1,66 @@
 <?php
-include 'db_config.php';
-include 'functions.php';
+// send_message.php - Save messages from both Patient and Admin
 header('Content-Type: application/json');
+include 'db_config.php';
 
-// Ensure we have a logged-in user id and type
 if ($current_user_id === 0) {
-    echo json_encode(['success' => false, 'error' => 'Not authenticated']);
+    echo json_encode(['success' => false, 'message' => 'Not authenticated']);
     exit;
 }
 
-if (!isset($_POST['message_text'])) {
-    echo json_encode(['success' => false, 'error' => 'message_text required']);
+$message_text = trim($_POST['message_text'] ?? '');
+
+if (empty($message_text)) {
+    echo json_encode(['success' => false, 'message' => 'Message cannot be empty']);
     exit;
 }
 
-$message_text = trim($_POST['message_text']);
+// Determine sender type and target user
+$user_type = $current_user_type ?? ($_SESSION['role'] ?? 'Patient');
 
-// Determine effective role: prefer $current_user_type, but fallback to session role
-$role = $current_user_type ?? ($_SESSION['role'] ?? null);
-
-// === ADMIN sending reply to a patient (must include target_id) ===
-if ($role === 'Admin') {
-    if (!isset($_POST['target_id'])) {
-        echo json_encode(['success' => false, 'error' => 'target_id required for Admin messages']);
+if ($user_type === 'Admin') {
+    // Admin is sending a message to a patient
+    $target_id = isset($_POST['target_id']) ? (int)$_POST['target_id'] : 0;
+    
+    if ($target_id <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Invalid target patient']);
         exit;
     }
-    $patient_id = (int)$_POST['target_id'];
-    if ($patient_id <= 0) {
-        echo json_encode(['success' => false, 'error' => 'Invalid target_id']);
-        exit;
-    }
-
-    $sql = "INSERT INTO chat_messages (user_id, sender_type, message_text, timestamp) VALUES (?, 'Admin', ?, NOW())";
+    
+    // Save message under the patient's conversation (user_id = patient_id)
+    $sql = "INSERT INTO chat_messages (user_id, sender_type, message_text, created_at) VALUES (?, 'Admin', ?, NOW())";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("is", $patient_id, $message_text);
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'error' => $conn->error]);
+    
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $conn->error]);
+        exit;
     }
-    $stmt->close();
-    $conn->close();
-    exit;
+    
+    $stmt->bind_param("is", $target_id, $message_text);
+    
+} else {
+    // Patient is sending a message
+    $sql = "INSERT INTO chat_messages (user_id, sender_type, message_text, created_at) VALUES (?, 'Patient', ?, NOW())";
+    $stmt = $conn->prepare($sql);
+    
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $conn->error]);
+        exit;
+    }
+    
+    $stmt->bind_param("is", $current_user_id, $message_text);
 }
 
-// === PATIENT sending ===
-$conversation_user_id = $current_user_id; // patient sends to their own conversation
-$sender_type = 'Patient';
+if ($stmt->execute()) {
+    echo json_encode([
+        'success' => true,
+        'message_id' => $conn->insert_id,
+        'timestamp' => date('Y-m-d H:i:s'),
+        'sender_type' => ($user_type === 'Admin' ? 'Admin' : 'Patient')
+    ]);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Failed to save message: ' . $stmt->error]);
+}
 
-$sql = "INSERT INTO chat_messages (user_id, sender_type, message_text, timestamp) VALUES (?, ?, ?, NOW())";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("iss", $conversation_user_id, $sender_type, $message_text);
-$ok = $stmt->execute();
 $stmt->close();
-
-if (!$ok) {
-    echo json_encode(['success' => false, 'error' => $conn->error]);
-    $conn->close();
-    exit;
-}
-
-// Check if message is a strict date -> auto query available slots
-$detected_date = extractDateFromMessage($message_text);
-if ($detected_date) {
-    $response_text = getAvailableSlots($conn, $detected_date);
-    $sql2 = "INSERT INTO chat_messages (user_id, sender_type, message_text, timestamp) VALUES (?, 'System', ?, NOW())";
-    $stmt2 = $conn->prepare($sql2);
-    $stmt2->bind_param("is", $conversation_user_id, $response_text);
-    $stmt2->execute();
-    $stmt2->close();
-}
-
-echo json_encode(['success' => true]);
 $conn->close();
-?>

@@ -1,5 +1,5 @@
 <?php
-// index.php — PATIENT CHAT UI
+// chat.php – PATIENT CHAT UI
 include 'db_config.php';
 
 if ($current_user_id === 0) {
@@ -16,160 +16,114 @@ if ($q) $options = $q->fetch_all(MYSQLI_ASSOC);
 
 <head>
     <meta charset="utf-8">
-    <title>Patient Support Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chat - DentLink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
-
-    <style>
-        body {
-            background: #eef0f3;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        .patient-chat-container {
-            width: 600px;
-            height: 85vh;
-            margin: 30px auto;
-            background: white;
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-        }
-
-        .patient-chat-header {
-            padding: 15px 20px;
-            background: #1877f2;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        #chat-window {
-            flex: 1;
-            overflow-y: auto;
-            padding: 18px;
-            background: #f0f2f5;
-        }
-
-        /* CHAT BUBBLES */
-        .message {
-            padding: 10px 14px;
-            margin: 6px 0;
-            border-radius: 18px;
-            max-width: 70%;
-            font-size: 0.95rem;
-            line-height: 1.4;
-            display: block;
-            clear: both;
-        }
-
-        /* PATIENT → RIGHT (BLUE) */
-        .message.patient {
-            background: #1877f2;
-            color: white;
-            float: right;
-            border-bottom-right-radius: 4px;
-        }
-
-        /* ADMIN + SYSTEM → LEFT (GRAY) */
-        .message.admin {
-            background: #e4e6eb;
-            color: black;
-            float: left;
-            border-bottom-left-radius: 4px;
-        }
-
-        .message.system {
-            background: #d9dce2;
-            color: #333;
-            float: left;
-            border-left: 4px solid #6a6e74;
-        }
-
-        /* OPTION BUTTONS */
-        #message-options {
-            padding: 10px;
-            background: white;
-            border-top: 1px solid #ddd;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .option-button {
-            padding: 8px 14px;
-            border-radius: 20px;
-            border: 1px solid #1877f2;
-            color: #1877f2;
-            background: white;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .option-button:hover {
-            background: #e7f0ff;
-        }
-
-        .patient-input-bar {
-            display: flex;
-            padding: 12px;
-            background: white;
-            border-top: 1px solid #ccc;
-        }
-
-        #message-input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 20px;
-            border: 1px solid #bbb;
-            outline: none;
-        }
-
-        #send-button {
-            width: 48px;
-            height: 48px;
-            margin-left: 10px;
-            border: none;
-            background: #1877f2;
-            color: white;
-            border-radius: 50%;
-            font-size: 1.4rem;
-            cursor: pointer;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="patient.css">
 </head>
 
-<body>
-    <div class="container">
-        <a href="admin_dashboard.php" class="btn btn-outline-primary mb-3">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
-        </a>
-    </div>
-    <div class="patient-chat-container">
+<body class="chat-page">
 
-        <div class="patient-chat-header">
-            DentLink Chat Support
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-white sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="dashboard.php" style="color: #80A1BA;">
+                <img src="dentlink-logo.png" alt="Logo" width="50" height="45" class="me-2">
+                <span style="font-size: 1.5rem;">DentLink</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="dashboard.php#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="dashboard.php#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="dashboard.php#services">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="dashboard.php#reviews">Reviews</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3" href="dashboard.php#contact">Contact Us</a>
+                    </li>
+                    <!-- Chat Button (Active) -->
+                    <li class="nav-item ms-2">
+                        <a class="nav-link chat-btn px-3 active" href="chat.php">
+                            <i class="bi bi-chat-dots-fill chat-icon"></i>
+                            <span class="d-none d-lg-inline">Chat</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <img src="upload/<?= htmlspecialchars($_SESSION['profile_pic'] ?? 'default-avatar.png'); ?>"
+                                alt="Profile"
+                                style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 8px;">
+                            <?= htmlspecialchars($_SESSION['first_name'] ?? 'User'); ?>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person me-2"></i>Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
 
-        <div id="chat-window"></div>
+    <div class="chat-wrapper">
+        <div class="chat-container">
 
-        <div id="message-options">
-            <?php foreach ($options as $opt): ?>
-                <button class="option-button" data-query-id="<?= $opt['query_id'] ?>">
-                    <?= htmlspecialchars($opt['button_label']) ?>
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <a href="patient_dashboard.php" class="chat-header-back">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <div class="chat-header-icon">
+                    <i class="bi bi-chat-dots-fill"></i>
+                </div>
+                <div class="chat-header-info">
+                    <p class="chat-header-title">Chat with Admin</p>
+                    <p class="chat-header-subtitle">We're here to help!</p>
+                </div>
+                <div class="chat-header-status">
+                    <span class="status-dot"></span>
+                    Online
+                </div>
+            </div>
+
+            <!-- Chat Messages Window -->
+            <div id="chat-window" class="chat-window"></div>
+
+            <!-- Quick Action Buttons -->
+            <div class="chat-quick-actions">
+                <div class="chat-quick-actions-label">Quick Actions:</div>
+                <div id="message-options" class="chat-options-container">
+                    <?php foreach ($options as $opt): ?>
+                        <button class="chat-option-btn" data-query-id="<?= $opt['query_id'] ?>">
+                            <?= htmlspecialchars($opt['button_label']) ?>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <!-- Chat Input Bar -->
+            <div class="chat-input-bar">
+                <input type="text" id="message-input" class="chat-input" placeholder="Type your message...">
+                <button id="send-button" class="chat-send-btn">
+                    <i class="bi bi-send-fill"></i>
                 </button>
-            <?php endforeach; ?>
-        </div>
+            </div>
 
-        <div class="patient-input-bar">
-            <input type="text" id="message-input" placeholder="Type your message...">
-            <button id="send-button">➤</button>
         </div>
-
     </div>
 
     <script>
@@ -179,13 +133,14 @@ if ($q) $options = $q->fetch_all(MYSQLI_ASSOC);
         // RENDER MESSAGE
         function renderMessage(msg) {
             const el = document.createElement("div");
+            el.className = "chat-message";
 
             if (msg.sender_type === "Patient") {
-                el.className = "message patient";
+                el.classList.add("patient");
             } else if (msg.sender_type === "Admin") {
-                el.className = "message admin";
+                el.classList.add("admin");
             } else {
-                el.className = "message system";
+                el.classList.add("system");
             }
 
             el.innerHTML = msg.message_text
@@ -253,7 +208,7 @@ if ($q) $options = $q->fetch_all(MYSQLI_ASSOC);
 
         // OPTION BUTTON CLICK
         document.getElementById("message-options").addEventListener("click", e => {
-            const btn = e.target.closest(".option-button");
+            const btn = e.target.closest(".chat-option-btn");
             if (!btn) return;
 
             const queryId = btn.getAttribute("data-query-id");

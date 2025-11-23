@@ -81,6 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
     <title>Forgot Password</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="credentials.css">
     <style>
         body {
             background: #f0f4f7;
@@ -154,18 +155,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
             </form>
             <div class="mt-3">
                 <span id="timerText">OTP expires in: <span id="countdown"></span></span>
-                <button id="resendBtn" class="btn btn-secondary w-100" <?= $_SESSION['reset_resend'] >= 3 ? 'disabled' : '' ?>>Resend OTP</button>
+                <button id="resendBtn"
+                    class="btn btn-primary w-100"
+                    <?= $_SESSION['reset_resend'] >= 3 ? 'disabled' : '' ?>>
+                    Resend OTP
+                </button>
+
             </div>
         </div>
 
     <?php elseif ($step === "verified"): ?>
-        <!-- SweetAlert handled below -->
-        <div class="otp-card">
+        <div class="otp-card text-center">
             <h3>OTP Verified</h3>
-            <p>Redirecting to reset password...</p>
+            <p class="text-muted mb-4">
+                Redirecting to reset password...
+            </p>
+            <!-- Button follows exact OTP + Reset Password design -->
+            <a href="reset_password.php"
+                class="btn btn-primary w-100 fw-semibold"
+                style="margin-top: 10px;">
+                Continue
+            </a>
+
         </div>
     <?php endif; ?>
-
     <script>
         // Countdown
         <?php if ($step === "otp"): ?>
@@ -207,9 +220,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
                     .then(res => {
                         Swal.fire({
                             icon: res.status === 'success' ? 'success' : 'error',
-                            title: res.message
+                            title: res.message,
+                            confirmButtonText: "OK"
                         });
-                        if (res.status === 'success') remaining = 300;
+
+                        if (res.status === 'success') {
+                            remaining = 300;
+                        }
                     });
             });
         <?php endif; ?>
@@ -218,23 +235,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
             Swal.fire({
                 icon: 'error',
                 title: 'OTP Expired',
-                text: 'Please resend a new OTP.'
+                text: 'Please resend a new OTP.',
+                confirmButtonText: "OK"
             });
         <?php elseif (isset($otpStatus) && $otpStatus === 'invalid'): ?>
             Swal.fire({
                 icon: 'error',
                 title: 'Invalid OTP',
-                text: 'Please try again.'
+                text: 'Please try again.',
+                confirmButtonText: "Retry"
             });
         <?php elseif ($step === 'verified'): ?>
             Swal.fire({
-                    icon: 'success',
-                    title: 'OTP Verified',
-                    text: 'You may now reset your password.'
-                })
-                .then(() => {
-                    window.location = 'reset_password.php';
-                });
+                icon: 'success',
+                title: 'OTP Verified',
+                text: 'You may now reset your password.',
+                confirmButtonText: "Continue"
+            }).then(() => {
+                window.location = 'reset_password.php';
+            });
         <?php endif; ?>
     </script>
 
