@@ -1,6 +1,5 @@
 /* ============================
    Admin Dashboard CSS
-   Using Patient Dashboard Design System
 =============================== */
 
 html {
@@ -10,6 +9,7 @@ html {
 body {
     font-family: 'Poppins', 'Segoe UI', sans-serif;
     overflow-x: hidden;
+    color: #333;
 }
 
 /* Color Palette */
@@ -182,25 +182,8 @@ body {
 }
 
 /* ============================
-   REVIEWS SECTION
+   REVIEWS SECTION STYLES ONLY
 =============================== */
-.reviews-grid {
-    gap: 1.25rem;
-}
-
-.review-card {
-    border-radius: 14px;
-    padding: 18px;
-    box-shadow: 0 6px 22px rgba(128, 161, 186, 0.07);
-    background: #fff;
-    transition: all 0.3s ease;
-}
-
-.review-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(128, 161, 186, 0.15);
-}
-
 .avatar-circle {
     width: 50px;
     height: 50px;
@@ -210,6 +193,36 @@ body {
     justify-content: center;
     font-weight: bold;
     font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* Review Card Styles */
+.review-card {
+    transition: all 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(128, 161, 186, 0.15) !important;
+}
+
+/* Rating Stars in Reviews Display */
+.review-stars {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.review-stars i {
+    font-size: 0.9rem;
+}
+
+/* Empty State */
+.empty-reviews {
+    padding: 3rem 2rem;
+}
+
+.empty-reviews i {
+    opacity: 0.3;
 }
 
 /* ============================
