@@ -228,7 +228,6 @@ $fullName = esc($patient['first_name'] . " " . $patient['last_name']);
             font-size: 0.9rem;
             margin-bottom: 12px;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }

@@ -9,20 +9,34 @@ $result = $conn->query("
     ORDER BY a.id DESC
 ");
 
-function shortDay($dateStr) {
+function shortDay($dateStr)
+{
     return date('D', strtotime($dateStr));
 }
 
-function expandScheduleDays($sched) {
+function expandScheduleDays($sched)
+{
     $sched = trim($sched);
     if ($sched === '') return [];
     $sched = str_replace([' ', ';'], ['', ','], $sched);
     $daysOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     $map = [
-        'monday' => 'Mon', 'mon' => 'Mon', 'tuesday' => 'Tue', 'tue' => 'Tue',
-        'tues' => 'Tue', 'wednesday' => 'Wed', 'wed' => 'Wed', 'thursday' => 'Thu',
-        'thu' => 'Thu', 'thurs' => 'Thu', 'friday' => 'Fri', 'fri' => 'Fri',
-        'saturday' => 'Sat', 'sat' => 'Sat', 'sunday' => 'Sun', 'sun' => 'Sun'
+        'monday' => 'Mon',
+        'mon' => 'Mon',
+        'tuesday' => 'Tue',
+        'tue' => 'Tue',
+        'tues' => 'Tue',
+        'wednesday' => 'Wed',
+        'wed' => 'Wed',
+        'thursday' => 'Thu',
+        'thu' => 'Thu',
+        'thurs' => 'Thu',
+        'friday' => 'Fri',
+        'fri' => 'Fri',
+        'saturday' => 'Sat',
+        'sat' => 'Sat',
+        'sunday' => 'Sun',
+        'sun' => 'Sun'
     ];
     if (strpos($sched, '-') !== false) {
         list($start, $end) = explode('-', $sched, 2);
@@ -50,7 +64,8 @@ function expandScheduleDays($sched) {
     return $ordered;
 }
 
-function getDefaultDentist($conn, $location, $date) {
+function getDefaultDentist($conn, $location, $date)
+{
     $day = shortDay($date);
     $stmt = $conn->prepare("SELECT id, name, schedule_days FROM dentists WHERE location = ? AND is_active = 1 ORDER BY id ASC");
     $stmt->bind_param("s", $location);
@@ -64,6 +79,7 @@ function getDefaultDentist($conn, $location, $date) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -74,6 +90,7 @@ function getDefaultDentist($conn, $location, $date) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
 </head>
+
 <body class="admin-page">
 
     <a href="admin_dashboard.php" class="btn-back-dashboard">
@@ -103,31 +120,28 @@ function getDefaultDentist($conn, $location, $date) {
             </thead>
             <tbody>
                 <?php while ($row = $result->fetch_assoc()):
-                    $dentistName = !empty($row['dentist_id']) 
-                        ? $row['dentist_name'] 
-                        : (($d = getDefaultDentist($conn, $row['location'], $row['date'])) ? $d['name'] : "Unassigned");
-                    $statusClass = strtolower($row['status']);
+                    $dentistName = !empty($row['dentist_id']) ? $row['dentist_name'] : "Unassigned";
                 ?>
-                <tr>
-                    <td><?= htmlspecialchars($row['id']) ?></td>
-                    <td><?= htmlspecialchars($row['name']) ?></td>
-                    <td><?= htmlspecialchars($row['email']) ?></td>
-                    <td><?= htmlspecialchars($row['date']) ?></td>
-                    <td><?= htmlspecialchars($row['start_time'] ?? $row['time'] ?? '') ?></td>
-                    <td><?= htmlspecialchars($row['location']) ?></td>
-                    <td><?= htmlspecialchars($dentistName) ?></td>
-                    <td><?= htmlspecialchars($row['description']) ?></td>
-                    <td><span class="status-badge <?= $statusClass ?>"><?= htmlspecialchars($row['status']) ?></span></td>
-                    <td>
-                        <?php if ($row['status'] === 'pending'): ?>
-                            <button class="btn-action approve" data-id="<?= $row['id'] ?>"><i class="bi bi-check-lg"></i> Approve</button>
-                            <button class="btn-action deny" data-id="<?= $row['id'] ?>"><i class="bi bi-x-lg"></i> Deny</button>
-                            <button class="btn-action changeDentist" data-id="<?= $row['id'] ?>"><i class="bi bi-person-gear"></i> Dentist</button>
-                        <?php else: ?>
-                            <span class="status-badge <?= $statusClass ?>"><?= strtoupper($row['status']) ?></span>
-                        <?php endif; ?>
-                    </td>
-                </tr>
+                    <tr>
+                        <td><?= htmlspecialchars($row['id']) ?></td>
+                        <td><?= htmlspecialchars($row['name']) ?></td>
+                        <td><?= htmlspecialchars($row['email']) ?></td>
+                        <td><?= htmlspecialchars($row['date']) ?></td>
+                        <td><?= date('g:i A', strtotime(substr($row['start_time'], 0, 5))) ?></td>
+                        <td><?= htmlspecialchars($row['location']) ?></td>
+                        <td><?= htmlspecialchars($dentistName) ?></td>
+                        <td><?= htmlspecialchars($row['description']) ?></td>
+                        <td><span class="status-badge <?= $statusClass ?>"><?= htmlspecialchars($row['status']) ?></span></td>
+                        <td>
+                            <?php if ($row['status'] === 'pending'): ?>
+                                <button class="btn-action approve" data-id="<?= $row['id'] ?>"><i class="bi bi-check-lg"></i> Approve</button>
+                                <button class="btn-action deny" data-id="<?= $row['id'] ?>"><i class="bi bi-x-lg"></i> Deny</button>
+                                <button class="btn-action changeDentist" data-id="<?= $row['id'] ?>"><i class="bi bi-person-gear"></i> Dentist</button>
+                            <?php else: ?>
+                                <span class="status-badge <?= $statusClass ?>"><?= strtoupper($row['status']) ?></span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
                 <?php endwhile; ?>
             </tbody>
         </table>
@@ -137,88 +151,129 @@ function getDefaultDentist($conn, $location, $date) {
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-    $(document).ready(function() {
-        $('#appointmentsTable').DataTable({ responsive: true, pageLength: 10, order: [[0, 'desc']] });
-
-        $('.approve').click(function() {
-            const id = $(this).data('id');
-            Swal.fire({
-                title: 'Approve Appointment?',
-                text: 'This will confirm the appointment.',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#22c55e',
-                confirmButtonText: 'Yes, approve!'
-            }).then((r) => {
-                if (r.isConfirmed) {
-                    $.post('approve.php', { id }, () => {
-                        Swal.fire('Approved!', 'Appointment confirmed.', 'success').then(() => location.reload());
-                    });
-                }
+        $(document).ready(function() {
+            $('#appointmentsTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                order: [
+                    [0, 'desc']
+                ]
             });
-        });
 
-        $('.deny').click(async function() {
-            const id = $(this).data('id');
-            const { value: choice } = await Swal.fire({
-                title: 'Deny Appointment?',
-                input: 'select',
-                inputOptions: {
-                    'conflict': 'Schedule conflict',
-                    'policy': 'Policy violation',
-                    'info': 'Invalid information',
-                    'late': 'Outside clinic hours',
-                    'other': 'Other reason'
-                },
-                inputPlaceholder: 'Select reason',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444'
-            });
-            if (!choice) return;
-            let reason = { conflict: 'Schedule conflict.', policy: 'Policy violation.', info: 'Invalid information.', late: 'Outside clinic hours.' }[choice];
-            if (choice === 'other') {
-                const { value: custom } = await Swal.fire({ title: 'Enter reason', input: 'text', showCancelButton: true });
-                if (!custom) return;
-                reason = custom;
-            }
-            Swal.fire({
-                title: 'Confirm Denial',
-                html: `<strong>Reason:</strong> ${reason}`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                confirmButtonText: 'Yes, deny!'
-            }).then((r) => {
-                if (r.isConfirmed) {
-                    $.post('deny.php', { id, reason }, () => {
-                        Swal.fire('Denied!', 'Appointment denied.', 'success').then(() => location.reload());
-                    });
-                }
-            });
-        });
+            $('.approve').click(function() {
+                const id = $(this).data('id');
 
-        $('.changeDentist').click(function() {
-            const apptId = $(this).data('id');
-            $.post('fetch_dentists_by_location.php', { appointment_id: apptId }, function(resp) {
-                if (!resp?.options) {
-                    Swal.fire('No dentists', 'None available for this location.', 'info');
-                    return;
-                }
                 Swal.fire({
-                    title: 'Select Dentist',
-                    input: 'select',
-                    inputOptions: resp.options,
-                    showCancelButton: true
-                }).then(c => {
-                    if (c.isConfirmed && c.value) {
-                        $.post('update_dentist.php', { appointment_id: apptId, dentist_id: c.value }, () => {
-                            Swal.fire('Updated!', 'Dentist changed.', 'success').then(() => location.reload());
+                    title: 'Approving...',
+                    text: 'Please wait.',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+
+                        // Request immediately but WITHOUT waiting for approve.php to finish
+                        $.ajax({
+                            url: 'approve.php',
+                            method: 'POST',
+                            data: {
+                                id
+                            },
+                            success: function() {
+                                Swal.fire('Approved!', 'Appointment confirmed.', 'success')
+                                    .then(() => location.reload());
+                            },
+                            error: function() {
+                                Swal.fire('Error', 'Something went wrong.', 'error');
+                            }
                         });
                     }
                 });
-            }, 'json');
+            });
+
+            $('.deny').click(async function() {
+                const id = $(this).data('id');
+                const {
+                    value: choice
+                } = await Swal.fire({
+                    title: 'Deny Appointment?',
+                    input: 'select',
+                    inputOptions: {
+                        'conflict': 'Schedule conflict',
+                        'policy': 'Policy violation',
+                        'info': 'Invalid information',
+                        'late': 'Outside clinic hours',
+                        'other': 'Other reason'
+                    },
+                    inputPlaceholder: 'Select reason',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444'
+                });
+                if (!choice) return;
+                let reason = {
+                    conflict: 'Schedule conflict.',
+                    policy: 'Policy violation.',
+                    info: 'Invalid information.',
+                    late: 'Outside clinic hours.'
+                } [choice];
+                if (choice === 'other') {
+                    const {
+                        value: custom
+                    } = await Swal.fire({
+                        title: 'Enter reason',
+                        input: 'text',
+                        showCancelButton: true
+                    });
+                    if (!custom) return;
+                    reason = custom;
+                }
+                Swal.fire({
+                    title: 'Confirm Denial',
+                    html: `<strong>Reason:</strong> ${reason}`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    confirmButtonText: 'Yes, deny!'
+                }).then((r) => {
+                    if (r.isConfirmed) {
+                        $.post('deny.php', {
+                            id,
+                            reason
+                        }, () => {
+                            Swal.fire('Denied!', 'Appointment denied.', 'success').then(() => location.reload());
+                        });
+                    }
+                });
+            });
+
+            $('.changeDentist').click(function() {
+                const apptId = $(this).data('id');
+                $.post('fetch_dentists_by_location.php', {
+                    appointment_id: apptId
+                }, function(resp) {
+                    if (!resp?.options) {
+                        Swal.fire('No dentists', 'None available for this location.', 'info');
+                        return;
+                    }
+                    Swal.fire({
+                        title: 'Select Dentist',
+                        input: 'select',
+                        inputOptions: resp.options,
+                        showCancelButton: true
+                    }).then(c => {
+                        if (c.isConfirmed && c.value) {
+                            $.post('update_dentist.php', {
+                                appointment_id: apptId,
+                                dentist_id: c.value
+                            }, () => {
+                                Swal.fire('Updated!', 'Dentist changed.', 'success').then(() => location.reload());
+                            });
+                        }
+                    });
+                }, 'json');
+            });
         });
-    });
     </script>
 </body>
+
 </html>

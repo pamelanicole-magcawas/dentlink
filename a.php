@@ -13,11 +13,9 @@ $id = intval($_POST['id']);
 // 1) Fetch appointment + user info (join on user_id)
 $sql = "
     SELECT a.*, u.email AS user_email, u.first_name, u.last_name,
-           CONCAT(u.first_name, ' ', u.last_name) AS patient_name,
-           d.name AS dentist_name
+           CONCAT(u.first_name, ' ', u.last_name) AS patient_name
     FROM appointments a
     LEFT JOIN users u ON a.user_id = u.user_id
-    LEFT JOIN dentists d ON a.dentist_id = d.id
     WHERE a.id = ?
     LIMIT 1
 ";
@@ -35,9 +33,6 @@ if (!$appointment) {
     die("<div style='text-align:center;padding:40px;'><h2 style='color:red;'> Appointment not found.</h2><a href='admin_appointments.php'>Back</a></div>");
 }
 
-// Get dentist info if assigned
-$dentistName = $appointment['dentist_name'] ?? 'Unassigned';
-
 // 2) Mark appointment approved
 $updateStmt = $conn->prepare("UPDATE appointments SET status = 'approved' WHERE id = ?");
 if (!$updateStmt) {
@@ -48,7 +43,10 @@ $updateStmt->execute();
 $updateStmt->close();
 
 // 3) Create Google Calendar event via NoCodeAPI (replace endpoint if different)
-$startDT = new DateTime($appointment['date'] . ' ' . $appointment['start_time'], new DateTimeZone('Asia/Manila'));
+$fixedStartTime = substr($appointment['start_time'], 0, 5); // "14:00"
+
+$startDT = new DateTime($appointment['date'] . ' ' . $fixedStartTime);
+
 $endDT = clone $startDT;
 $endDT->modify('+1 hour'); // default 1 hour event
 
@@ -102,8 +100,9 @@ $calendarSuccess = ($calendarHttp === 200 || $calendarHttp === 201) && !empty($c
 
 // 4) Generate QR using JSON payload (best for scanners)
 $dateFormatted = date('F j, Y (l)', strtotime($appointment['date']));
-$timeFormatted = date('g:i A', strtotime($appointment['start_time']));
+$timeFormatted = date('g:i A', strtotime(substr($appointment['start_time'], 0, 5)));
 
+// JSON payload for QR
 $qrPayload = [
     "id" => (int)$appointment['id'],
     "patient" => $appointment['patient_name'],
@@ -112,9 +111,29 @@ $qrPayload = [
     "date" => $dateFormatted,
     "time" => $timeFormatted,
     "location" => $appointment['location'],
-    "dentist" => $dentistName, // <-- added this line
     "status" => "approved"
 ];
+
+// Fetch assigned dentist
+$dentistName = "Unassigned";
+
+// If appointment already has a dentist_id, fetch it  
+if (!empty($appointment['dentist_id'])) {
+    $dstmt = $conn->prepare("SELECT name FROM dentists WHERE id = ?");
+    $dstmt->bind_param("i", $appointment['dentist_id']);
+    $dstmt->execute();
+    $dres = $dstmt->get_result()->fetch_assoc();
+    $dentistName = $dres['name'] ?? "Unassigned";
+    $dstmt->close();
+} else {
+    // fallback to default dentist
+    require_once "pending_appointments.php"; // contains getDefaultDentist()
+    $default = getDefaultDentist($conn, $appointment['location'], $appointment['date']);
+    if ($default) $dentistName = $default['name'];
+}
+
+// Add dentist to QR PAYLOAD
+$qrPayload["dentist"] = $dentistName;
 
 // Convert JSON → string
 $qrText = json_encode($qrPayload, JSON_UNESCAPED_UNICODE);
@@ -184,7 +203,6 @@ $saveStmt->close();
                 <p><strong>Service:</strong> <?= htmlspecialchars($appointment['description']) ?></p>
                 <p><strong>Date:</strong> <?= htmlspecialchars($dateFormatted) ?></p>
                 <p><strong>Time:</strong> <?= htmlspecialchars($timeFormatted) ?></p>
-                <p><strong>Dentist:</strong> <?= htmlspecialchars($dentistName) ?></p>             
                 <p><strong>Location:</strong> <?= htmlspecialchars($appointment['location']) ?></p>
             </div>
 

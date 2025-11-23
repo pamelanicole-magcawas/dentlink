@@ -11,7 +11,17 @@ $user_id = $_SESSION['user_id'];
 $full_name = $_SESSION['first_name'] . ' ' . $_SESSION['last_name'];
 
 // Fetch user's appointments
-$approved_sql = "SELECT * FROM appointments WHERE user_id = ? ORDER BY date DESC, start_time DESC";
+$approved_sql = "
+    SELECT a.*, 
+           u.first_name, u.last_name,
+           CONCAT(u.first_name,' ',u.last_name) AS patient_name,
+           d.name AS dentist_name
+    FROM appointments a
+    LEFT JOIN users u ON a.user_id = u.user_id
+    LEFT JOIN dentists d ON a.dentist_id = d.id
+    WHERE a.user_id = ?
+    ORDER BY a.date DESC, a.start_time DESC
+";
 $stmt = $conn->prepare($approved_sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -67,6 +77,7 @@ $approved = $stmt->get_result();
                                 </div>
                                 <p><strong>Date:</strong> <?= (new DateTime($appt['date']))->format('F j, Y (l)') ?></p>
                                 <p><strong>Time:</strong> <?= (new DateTime($appt['start_time']))->format('g:i A') ?></p>
+                                <p><strong>Dentist:</strong> <?= htmlspecialchars($appt['dentist_name']) ?></p>
                                 <p><strong>Location:</strong> <?= htmlspecialchars($appt['location']) ?></p>
                                 <?php if (!empty($appt['description'])): ?>
                                     <p><strong>Description:</strong> <?= htmlspecialchars($appt['description']) ?></p>
@@ -77,7 +88,10 @@ $approved = $stmt->get_result();
                                         <img src="<?= htmlspecialchars($appt['qr_code_url']) ?>" alt="QR Code" id="qr_<?= $appt['id'] ?>">
                                         <div class="mt-2">
                                             <a href="<?= htmlspecialchars($appt['qr_code_url']) ?>" download="dentlink_appointment_<?= $appt['id'] ?>.png" class="btn btn-success btn-sm me-2"><i class="bi bi-download"></i> Download</a>
-                                            <button onclick="printQR(<?= $appt['id'] ?>,'<?= htmlspecialchars($appt['description']) ?>','<?= (new DateTime($appt['date']))->format('F j, Y') ?>','<?= (new DateTime($appt['start_time']))->format('g:i A') ?>')" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-printer"></i> Print</button>
+                                            <button onclick="printQR(<?= $appt['id'] ?>, <?= json_encode($appt['description']) ?>, <?= json_encode((new DateTime($appt['date']))->format('F j, Y')) ?>, <?= json_encode((new DateTime($appt['start_time']))->format('g:i A')) ?>, <?= json_encode($appt['dentist_name'] ?: 'Unassigned') ?>)" class="btn btn-outline-primary btn-sm me-2">
+                                                <i class="bi bi-printer"></i> Print
+                                            </button>
+
                                             <button onclick="shareQR('<?= htmlspecialchars($appt['qr_code_url']) ?>')" class="btn btn-outline-secondary btn-sm"><i class="bi bi-share"></i> Share</button>
                                         </div>
                                     </div>
@@ -113,7 +127,7 @@ $approved = $stmt->get_result();
     </div>
 
     <script>
-        function printQR(id, service, date, time) {
+        function printQR(id, service, date, time, dentist) {
             var qrImage = document.getElementById('qr_' + id).src;
             var printWindow = window.open('', '', 'height=700,width=800');
             printWindow.document.write('<html><head><title>Print QR</title><style>body{text-align:center;font-family:Arial;padding:50px}img{max-width:350px;border:3px solid #4CAF50;padding:20px;border-radius:10px}</style></head><body>');
@@ -122,6 +136,7 @@ $approved = $stmt->get_result();
             printWindow.document.write('<p><strong>Service:</strong>' + service + '</p>');
             printWindow.document.write('<p><strong>Date:</strong>' + date + '</p>');
             printWindow.document.write('<p><strong>Time:</strong>' + time + '</p>');
+            printWindow.document.write('<p><strong>Dentist:</strong>' + dentist + '</p>');
             printWindow.document.write('<img src="' + qrImage + '" alt="QR Code">');
             printWindow.document.write('<p><strong>Please present this QR code at the clinic</strong></p>');
             printWindow.document.write('</body></html>');
@@ -129,6 +144,7 @@ $approved = $stmt->get_result();
             printWindow.focus();
             setTimeout(() => printWindow.print(), 250);
         }
+
 
         function shareQR(qrUrl) {
             if (navigator.share) {

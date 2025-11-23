@@ -10,7 +10,10 @@ if (!isset($_SESSION['user_id'])) {
 
 // Fetch user details from the database
 $user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
+$stmt = $conn->prepare("
+    SELECT user_id, first_name, last_name, email, phone, address, profile_pic, gender, created_at 
+    FROM users WHERE user_id = ? AND role='Patient' LIMIT 1
+");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -58,9 +61,9 @@ $conn->close();
                     </li>
                     <li class="nav-item dropdown ms-3">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="upload/<?= htmlspecialchars($user['profile_pic']); ?>" 
-                                 alt="Profile" 
-                                 style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 8px;">
+                            <img src="upload/<?= htmlspecialchars($user['profile_pic']); ?>"
+                                alt="Profile"
+                                style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 8px;">
                             <?php echo htmlspecialchars($user['first_name']); ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -97,6 +100,16 @@ $conn->close();
                     <div class="profile-info-content">
                         <div class="profile-info-label">User ID</div>
                         <p class="profile-info-value"><?= htmlspecialchars($user['user_id']); ?></p>
+                    </div>
+                </div>
+
+                <div class="profile-info-item">
+                    <div class="profile-info-icon">
+                        <i class="bi bi-gender-ambiguous"></i>
+                    </div>
+                    <div class="profile-info-content">
+                        <div class="profile-info-label">Gender</div>
+                        <p class="profile-info-value"><?= htmlspecialchars($user['gender']); ?></p>
                     </div>
                 </div>
 
