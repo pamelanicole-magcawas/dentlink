@@ -20,7 +20,7 @@ html {
 }
 
 body {
-    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    font-family: 'Poppins', 'sans-serif', 'Segoe UI';
     color: #333;
     overflow-x: hidden;
 }
@@ -519,7 +519,51 @@ body {
     font-weight: 500;
 }
 
-/* Add this to replace the existing CONTACT SECTION in landing.css */
+/* ============================
+   REVIEWS SECTION STYLES ONLY
+=============================== */
+
+/* Avatar Circle */
+.avatar-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* Review Card Styles */
+.review-card {
+    transition: all 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(128, 161, 186, 0.15) !important;
+}
+
+/* Rating Stars in Reviews Display */
+.review-stars {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.review-stars i {
+    font-size: 0.9rem;
+}
+
+/* Empty State */
+.empty-reviews {
+    padding: 3rem 2rem;
+}
+
+.empty-reviews i {
+    opacity: 0.3;
+}
 
 /* ==========================================
    CONTACT SECTION - DASHBOARD STYLE
