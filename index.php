@@ -250,13 +250,105 @@
         </div>
     </section>
 
-   <!-- Replace the existing Contact Section in index.php with this -->
+    <!-- Reviews Section -->
+<section id="reviews" class="py-5 bg-light">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Reviews</span>
+            <h2>What Our Patients Say</h2>
+            <p>Real experiences from our valued patients</p>
+        </div>
+
+        <!-- Reviews Display Only -->
+        <div class="row g-4" id="reviewsContainer">
+            <?php
+            // Include database connection
+            include 'db_connect.php';
+            
+            // Fetch all reviews from database (limit to 6 for landing page)
+            $reviews_sql = "SELECT r.rating, r.review_text, r.created_at, u.first_name 
+                           FROM reviews r 
+                           JOIN users u ON r.user_id = u.user_id 
+                           ORDER BY r.created_at DESC 
+                           LIMIT 6";
+            $reviews_result = $conn->query($reviews_sql);
+
+            if ($reviews_result && $reviews_result->num_rows > 0):
+                while ($review = $reviews_result->fetch_assoc()):
+                    // Get first letter of first name
+                    $avatar_letter = strtoupper(substr($review['first_name'], 0, 1));
+
+                    // Generate random color for avatar
+                    $colors = ['#80A1BA', '#91C4C3', '#B4DEBD'];
+                    $avatar_color = $colors[array_rand($colors)];
+
+                    // Format date
+                    $review_date = date('F j, Y', strtotime($review['created_at'])); 
+            ?>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-sm h-100 review-card">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="avatar-circle text-white me-3" style="background-color: <?= $avatar_color ?>;">
+                                        <?= $avatar_letter ?>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 fw-bold">Anonymous Patient</h6>
+                                        <div class="review-stars mb-1">
+                                            <?php
+                                            // Display stars based on rating
+                                            for ($i = 1; $i <= 5; $i++) {
+                                                if ($i <= $review['rating']) {
+                                                    echo '<i class="bi bi-star-fill" style="color: #FFD700;"></i>';
+                                                } else {
+                                                    echo '<i class="bi bi-star" style="color: #e0e0e0;"></i>';
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+                                        <small class="text-muted"><?= $review_date ?></small>
+                                    </div>
+                                </div>
+                                <p class="text-muted mb-0">"<?= htmlspecialchars($review['review_text']) ?>"</p>
+                            </div>
+                        </div>
+                    </div>
+            <?php
+                endwhile;
+            else:
+            ?>
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center empty-reviews">
+                            <i class="bi bi-chat-quote display-1 text-muted mb-3 d-block"></i>
+                            <h5 class="text-muted mb-2">No reviews yet</h5>
+                            <p class="text-muted mb-0">Be the first to experience our exceptional dental care!</p>
+                        </div>
+                    </div>
+                </div>
+            <?php 
+            endif; 
+            $conn->close();
+            ?>
+        </div>
+
+        <!-- Call to Action -->
+        <?php if ($reviews_result && $reviews_result->num_rows > 0): ?>
+        <div class="text-center mt-5">
+            <a href="login.php" class="btn btn-hero-primary">
+                <i class="bi bi-calendar-check me-2"></i>Book Your Appointment
+            </a>
+        </div>
+        <?php endif; ?>
+    </div>
+</section>
 
 <!-- Contact Section -->
 <section id="contact" class="py-5 bg-light">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold mb-3" style="color: #80A1BA;">Contact Us</h2>
+        <span class="section-badge">Contact</span>
+            <h2 class="display-5 fw-bold mb-3">Contact Us</h2>
             <p class="lead text-muted">Get in touch with us today</p>
         </div>
 
