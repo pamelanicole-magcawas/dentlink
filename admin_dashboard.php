@@ -179,49 +179,53 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
     </div>
 </section>
 
-    <!-- REVIEWS SECTION -->
-    <section id="reviews" class="py-5">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3 text-primary-custom">Latest Patient Reviews</h2>
-                <p class="lead text-muted">See what patients are saying about your clinic</p>
-            </div>
+<!-- Reviews Section - ADMIN DASHBOARD (View Only) -->
+<section id="reviews" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold mb-3" style="color: #80A1BA;">Patient Reviews</h2>
+            <p class="lead text-muted">What our patients say about us</p>
+        </div>
 
-            <!-- Reviews Display -->
-            <div class="row g-4" id="reviewsContainer">
-                <?php
-                // Fetch all reviews from database
-                $reviews_sql = "SELECT rating, review_text, created_at FROM reviews ORDER BY created_at DESC LIMIT 6";
-                $reviews_result = $conn->query($reviews_sql);
+        <!-- Reviews Display Only -->
+        <div class="row g-4" id="reviewsContainer">
+            <?php
+            // Fetch all reviews from database
+            $reviews_sql = "SELECT r.rating, r.review_text, r.created_at, u.first_name 
+                           FROM reviews r 
+                           JOIN users u ON r.user_id = u.user_id 
+                           ORDER BY r.created_at DESC";
+            $reviews_result = $conn->query($reviews_sql);
 
-                if ($reviews_result && $reviews_result->num_rows > 0):
-                    while ($review = $reviews_result->fetch_assoc()):
-                        // Generate random avatar letter
-                        $letters = range('A', 'Z');
-                        $avatar_letter = $letters[array_rand($letters)];
+            if ($reviews_result && $reviews_result->num_rows > 0):
+                while ($review = $reviews_result->fetch_assoc()):
+                    // Get first letter of first name
+                    $avatar_letter = strtoupper(substr($review['first_name'], 0, 1));
 
-                        // Generate random color for avatar
-                        $colors = ['#80A1BA', '#91C4C3', '#B4DEBD'];
-                        $avatar_color = $colors[array_rand($colors)];
+                    // Generate random color for avatar
+                    $colors = ['#80A1BA', '#91C4C3', '#B4DEBD'];
+                    $avatar_color = $colors[array_rand($colors)];
 
-                        // Format date
-                        $review_date = date('F j, Y', strtotime($review['created_at'])); ?>
-                        <div class="col-lg-4 col-md-6">
-                            <div class="review-card">
-                                <div class="d-flex align-items-center mb-3">
+                    // Format date
+                    $review_date = date('F j, Y', strtotime($review['created_at'])); 
+            ?>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card border-0 shadow-sm h-100 review-card">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-start mb-3">
                                     <div class="avatar-circle text-white me-3" style="background-color: <?= $avatar_color ?>;">
                                         <?= $avatar_letter ?>
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="mb-1 fw-bold">Anonymous Patient</h6>
-                                        <div class="mb-1">
+                                        <div class="review-stars mb-1">
                                             <?php
                                             // Display stars based on rating
                                             for ($i = 1; $i <= 5; $i++) {
                                                 if ($i <= $review['rating']) {
-                                                    echo '<i class="bi bi-star-fill text-accent-custom"></i>';
+                                                    echo '<i class="bi bi-star-fill" style="color: #FFD700;"></i>';
                                                 } else {
-                                                    echo '<i class="bi bi-star text-secondary-custom"></i>';
+                                                    echo '<i class="bi bi-star" style="color: #e0e0e0;"></i>';
                                                 }
                                             }
                                             ?>
@@ -229,26 +233,27 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                                         <small class="text-muted"><?= $review_date ?></small>
                                     </div>
                                 </div>
-                                <p class="text-muted mb-0">"<?= htmlspecialchars($review['review_text']) ?>"</p>
-                            </div>
-                        </div>
-                <?php
-                    endwhile;
-                else:
-                ?>
-                    <div class="col-12">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body p-5 text-center">
-                                <i class="bi bi-chat-quote display-1 text-muted mb-3"></i>
-                                <h5 class="text-muted">No reviews yet</h5>
-                                <p class="text-muted">Patient reviews will appear here once submitted.</p>
+                                <p class="text-muted mb-0 ms-0">"<?= htmlspecialchars($review['review_text']) ?>"</p>
                             </div>
                         </div>
                     </div>
-                <?php endif; ?>
-            </div>
+            <?php
+                endwhile;
+            else:
+            ?>
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center empty-reviews">
+                            <i class="bi bi-chat-quote display-1 text-muted mb-3 d-block"></i>
+                            <h5 class="text-muted mb-2">No reviews yet</h5>
+                            <p class="text-muted mb-0">Waiting for patient feedback</p>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
-    </section>
+    </div>
+</section>
 
         <!-- Footer -->
         <footer class="text-white py-2" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);">
