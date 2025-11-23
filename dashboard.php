@@ -29,6 +29,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -138,8 +139,8 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         </div>
     </nav>
 
-<!-- Hero Section - UPDATED -->
-<section id="home" class="hero-section position-relative">
+    <!-- Hero Section - UPDATED -->
+    <section id="home" class="hero-section position-relative">
         <div class="hero-overlay"></div>
         <div class="container">
             <div class="row align-items-center min-vh-100 py-5">
@@ -370,24 +371,55 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                     <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
                             <h5 class="card-title mb-4">Share Your Experience</h5>
-                            <form id="reviewForm" action="submit_review.php" method="POST">
-                                <div class="mb-3">
-                                    <label class="form-label">Rating</label>
-                                    <div class="star-rating d-flex">
-                                        <i class="bi bi-star fs-4 me-1" data-rating="1" style="color: #FFD700; cursor:pointer;"></i>
-                                        <i class="bi bi-star fs-4 me-1" data-rating="2" style="color: #FFD700; cursor:pointer;"></i>
-                                        <i class="bi bi-star fs-4 me-1" data-rating="3" style="color: #FFD700; cursor:pointer;"></i>
-                                        <i class="bi bi-star fs-4 me-1" data-rating="4" style="color: #FFD700; cursor:pointer;"></i>
-                                        <i class="bi bi-star fs-4" data-rating="5" style="color: #FFD700; cursor:pointer;"></i>
+
+                            <?php
+                            // Check if user has already submitted a review today
+                            $user_id = $_SESSION['user_id'];
+
+                            $check_sql = "SELECT COUNT(*) as count FROM reviews 
+                                     WHERE user_id = ? AND DATE(created_at) = CURDATE()";
+                            $check_stmt = $conn->prepare($check_sql);
+                            $check_stmt->bind_param("i", $user_id);
+                            $check_stmt->execute();
+                            $check_result = $check_stmt->get_result();
+                            $check_data = $check_result->fetch_assoc();
+                            $can_review = $check_data['count'] == 0;
+                            $check_stmt->close();
+
+                            if ($can_review): ?>
+                                <form id="reviewForm" action="submit_review.php" method="POST">
+                                    <div class="mb-3">
+                                        <label class="form-label">Rating <span class="text-danger">*</span></label>
+                                        <div class="star-rating d-flex">
+                                            <i class="bi bi-star" data-rating="1" style="color: #FFD700;"></i>
+                                            <i class="bi bi-star" data-rating="2" style="color: #FFD700;"></i>
+                                            <i class="bi bi-star" data-rating="3" style="color: #FFD700;"></i>
+                                            <i class="bi bi-star" data-rating="4" style="color: #FFD700;"></i>
+                                            <i class="bi bi-star" data-rating="5" style="color: #FFD700;"></i>
+                                        </div>
+                                        <input type="hidden" name="rating" id="rating" value="0" required>
+                                        <small class="text-muted">Click on the stars to rate</small>
                                     </div>
-                                    <input type="hidden" name="rating" id="rating" value="0">
+                                    <div class="mb-3">
+                                        <label for="review" class="form-label">Your Review <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="review" name="review" rows="4"
+                                            minlength="5" maxlength="200" required
+                                            placeholder="Share your experience (5-200 characters)"></textarea>
+                                        <div class="d-flex justify-content-between mt-1">
+                                            <small class="text-muted">Minimum 5 characters</small>
+                                            <small class="text-muted"><span id="charCount">0</span>/200</small>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-custom">
+                                        <i class="bi bi-send me-2"></i>Submit Review
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <div class="alert alert-info mb-0">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    You've already submitted a review today. You can submit another review tomorrow.
                                 </div>
-                                <div class="mb-3">
-                                    <label for="review" class="form-label">Your Review</label>
-                                    <textarea class="form-control" id="review" name="review" rows="4" required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-custom">Submit Review</button>
-                            </form>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -397,36 +429,41 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
             <div class="row g-4" id="reviewsContainer">
                 <?php
                 // Fetch all reviews from database
-                $reviews_sql = "SELECT rating, review_text, created_at FROM reviews ORDER BY created_at DESC";
+                $reviews_sql = "SELECT r.rating, r.review_text, r.created_at, u.first_name 
+                           FROM reviews r 
+                           JOIN users u ON r.user_id = u.user_id 
+                           ORDER BY r.created_at DESC";
                 $reviews_result = $conn->query($reviews_sql);
 
                 if ($reviews_result && $reviews_result->num_rows > 0):
                     while ($review = $reviews_result->fetch_assoc()):
-                        // Generate random avatar letter
-                        $letters = range('A', 'Z');
-                        $avatar_letter = $letters[array_rand($letters)];
+                        // Get first letter of first name
+                        $avatar_letter = strtoupper(substr($review['first_name'], 0, 1));
 
                         // Generate random color for avatar
                         $colors = ['#80A1BA', '#91C4C3', '#B4DEBD'];
                         $avatar_color = $colors[array_rand($colors)];
 
                         // Format date
-                        $review_date = date('F j, Y', strtotime($review['created_at'])); ?>
-                        <div class="col-lg-6">
-                            <div class="card border-0 shadow-sm h-100">
+                        $review_date = date('F j, Y', strtotime($review['created_at']));
+                ?>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card border-0 shadow-sm h-100 review-card">
                                 <div class="card-body p-4">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="avatar-circle text-white me-3" style="background-color: <?= $avatar_color ?>;"><?= $avatar_letter ?></div>
-                                        <div>
-                                            <h6 class="mb-0">Anonymous Patient</h6>
-                                            <div class="small mb-1">
+                                    <div class="d-flex align-items-start mb-3">
+                                        <div class="avatar-circle text-white me-3" style="background-color: <?= $avatar_color ?>;">
+                                            <?= $avatar_letter ?>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fw-bold">Anonymous Patient</h6>
+                                            <div class="review-stars mb-1">
                                                 <?php
                                                 // Display stars based on rating
                                                 for ($i = 1; $i <= 5; $i++) {
                                                     if ($i <= $review['rating']) {
-                                                        echo '<i class="bi bi-star-fill" style="color: #FFF7DD;"></i>';
+                                                        echo '<i class="bi bi-star-fill" style="color: #FFD700;"></i>';
                                                     } else {
-                                                        echo '<i class="bi bi-star" style="color: #FFF7DD;"></i>';
+                                                        echo '<i class="bi bi-star" style="color: #e0e0e0;"></i>';
                                                     }
                                                 }
                                                 ?>
@@ -434,7 +471,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                                             <small class="text-muted"><?= $review_date ?></small>
                                         </div>
                                     </div>
-                                    <p class="text-muted mb-0">"<?= htmlspecialchars($review['review_text']) ?>"</p>
+                                    <p class="text-muted mb-0 ms-0">"<?= htmlspecialchars($review['review_text']) ?>"</p>
                                 </div>
                             </div>
                         </div>
@@ -444,10 +481,10 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                     ?>
                     <div class="col-12">
                         <div class="card border-0 shadow-sm">
-                            <div class="card-body p-5 text-center">
-                                <i class="bi bi-chat-quote display-1 text-muted mb-3"></i>
-                                <h5 class="text-muted">No reviews yet</h5>
-                                <p class="text-muted">Be the first to share your experience!</p>
+                            <div class="card-body text-center empty-reviews">
+                                <i class="bi bi-chat-quote display-1 text-muted mb-3 d-block"></i>
+                                <h5 class="text-muted mb-2">No reviews yet</h5>
+                                <p class="text-muted mb-0">Be the first to share your experience!</p>
                             </div>
                         </div>
                     </div>
@@ -455,6 +492,141 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
             </div>
         </div>
     </section>
+
+    <script>
+        // Character counter for review textarea
+        const reviewTextarea = document.getElementById('review');
+        const charCount = document.getElementById('charCount');
+
+        if (reviewTextarea && charCount) {
+            reviewTextarea.addEventListener('input', function() {
+                const count = this.value.length;
+                charCount.textContent = count;
+
+                // Change color based on character count
+                if (count < 5) {
+                    charCount.style.color = '#dc3545'; // Red
+                } else if (count >= 200) {
+                    charCount.style.color = '#ffc107'; // Warning
+                } else {
+                    charCount.style.color = '#28a745'; // Green
+                }
+            });
+        }
+
+        (() => {
+            // Star Rating System (Isolated Scope)
+            const stars = document.querySelectorAll('.star-rating i');
+            const ratingInput = document.getElementById('rating');
+
+            if (stars.length > 0 && ratingInput) {
+                stars.forEach((star, idx) => {
+
+                    // Click event
+                    star.addEventListener('click', () => {
+                        const selectedRating = idx + 1;
+                        ratingInput.value = selectedRating;
+
+                        stars.forEach((s, i) => {
+                            if (i < selectedRating) {
+                                s.classList.add('bi-star-fill');
+                                s.classList.remove('bi-star');
+                            } else {
+                                s.classList.add('bi-star');
+                                s.classList.remove('bi-star-fill');
+                            }
+                        });
+                    });
+
+                    // Hover event
+                    star.addEventListener('mouseenter', () => {
+                        const hoverRating = idx + 1;
+                        stars.forEach((s, i) => {
+                            if (i < hoverRating) {
+                                s.style.transform = 'scale(1.2)';
+                            }
+                        });
+                    });
+
+                    // Remove hover
+                    star.addEventListener('mouseleave', () => {
+                        stars.forEach(s => s.style.transform = 'scale(1)');
+                    });
+                });
+            }
+        })();
+
+
+        // Handle review form submission
+        const reviewForm = document.getElementById('reviewForm');
+        if (reviewForm) {
+            reviewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Validate rating
+                const rating = document.getElementById('rating').value;
+                if (rating === '0') {
+                    Swal.fire({
+                        title: 'Rating Required',
+                        text: 'Please select a star rating before submitting.',
+                        icon: 'warning',
+                        confirmButtonColor: '#80A1BA'
+                    });
+                    return;
+                }
+
+                // Validate review length
+                const reviewText = document.getElementById('review').value;
+                if (reviewText.length < 5) {
+                    Swal.fire({
+                        title: 'Review Too Short',
+                        text: 'Please write at least 5 characters.',
+                        icon: 'warning',
+                        confirmButtonColor: '#80A1BA'
+                    });
+                    return;
+                }
+
+                const formData = new FormData(this);
+
+                fetch('submit_review.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonColor: '#B4DEBD'
+                            }).then(() => {
+                                // Reload page to show new review
+                                window.location.href = '#reviews';
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message,
+                                icon: 'error',
+                                confirmButtonColor: '#80A1BA'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred. Please try again.',
+                            icon: 'error',
+                            confirmButtonColor: '#80A1BA'
+                        });
+                        console.error('Error:', error);
+                    });
+            });
+        }
+    </script>
 
     <!-- Contact Section -->
     <section id="contact" class="py-5 bg-light">
@@ -524,9 +696,9 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
     <!-- Footer -->
     <footer class="text-white py-2" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);">
         <div class="container text-center">
-                <p style="margin-bottom: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
-                <p style="margin-top: 0;">All rights reserved.</p>
-            </div>
+            <p style="margin-bottom: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
+            <p style="margin-top: 0;">All rights reserved.</p>
+        </div>
     </footer>
 
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
@@ -648,4 +820,5 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         });
     </script>
 </body>
+
 </html>
