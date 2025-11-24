@@ -126,32 +126,28 @@ include 'db_connect.php';
         }
 
         .btn-back-dashboard {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
             text-decoration: none;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .btn-back-dashboard:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-back-dashboard:active {
-            transform: translateY(0);
+            background: var(--primary);
+            color: white;
+            transform: translateX(-3px);
+            box-shadow: 0 4px 12px rgba(128, 161, 186, 0.25);
         }
 
         .btn-back-dashboard i {
-            font-size: 18px;
+            font-size: 1.1rem;
         }
 
         .btn {
@@ -465,7 +461,7 @@ include 'db_connect.php';
                 if (!$stmt) {
                     die("Prepare failed: " . $conn->error);
                 }
-                
+
                 $stmt->bind_param("ss", $from, $to);
                 $stmt->execute();
                 $appts = $stmt->get_result();
