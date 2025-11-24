@@ -34,9 +34,10 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DentLink - Admin Dashboard</title>
     <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -82,60 +83,36 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
     </div>
 </nav>
 
-    <!-- HERO SECTION -->
-    <section id="home" class="hero-section position-relative">
-        <div class="hero-overlay"></div>
-        <div class="container">
-            <div class="row align-items-center py-5" style="min-height: 70vh;">
-                <div class="col-lg-10 mx-auto text-center position-relative" style="z-index: 2;">
-                    <h1 class="display-3 fw-bold mb-4 hero-title text-dark">
+<!-- HERO SECTION -->
+<section id="home" class="hero-section position-relative">
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="row align-items-center py-5" style="min-height: 70vh;">
+            <div class="col-lg-10 mx-auto text-center position-relative" style="z-index: 2;">
+                <h1 class="display-3 fw-bold mb-4 hero-title text-dark">
                     Welcome, <?php echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?>!
-                    </h1>
-                    <p class="lead mb-5 hero-subtitle text-dark">
-                        Manage your clinic operations efficiently from this administrative dashboard. 
-                        Monitor appointments, patient records, and communications all in one place.
-                    </p>
-                </div>
+                </h1>
+                <p class="lead mb-5 hero-subtitle text-dark">
+                    Manage your clinic operations efficiently from this administrative dashboard.
+                    Monitor appointments, patient records, and communications all in one place.
+                </p>
             </div>
         </div>
-        <!-- Smile Curve Effect -->
-        <div class="smile-curve">
-            <svg viewBox="0 0 1440 120" width="100%" height="120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0C240 80 480 120 720 120C960 120 1200 80 1440 0V120H0V0Z" fill="#f8f9fa" />
-            </svg>
-        </div>
-    </section>
+    </div>
+    <!-- Smile Curve Effect -->
+    <div class="smile-curve">
+        <svg viewBox="0 0 1440 120" width="100%" height="120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0C240 80 480 120 720 120C960 120 1200 80 1440 0V120H0V0Z" fill="#f8f9fa" />
+        </svg>
+    </div>
+</section>
 
-    <!-- QUICK ACTIONS SECTION -->
+<?php include 'analytics_widget.php'; ?>
+
+<!-- QUICK ACTIONS SECTION -->
 <section class="py-5 bg-light" style="margin-top: -1px;">
     <div class="container">
         <div class="row g-4 justify-content-center">
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card hover-card text-center shadow-sm border-0 h-100">
-                    <div class="card-body py-4">
-                        <div class="icon-circle bg-primary-custom mb-3 mx-auto">
-                            <i class="bi bi-hourglass-split text-white display-6"></i>
-                        </div>
-                        <h5 class="card-title fw-bold">Pending Appointments</h5>
-                        <p class="card-text text-muted">View and manage all pending appointment requests.</p>
-                        <a href="pending_appointments.php" class="btn btn-outline-custom mt-2 rounded-pill">View Pending</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card hover-card text-center shadow-sm border-0 h-100">
-                    <div class="card-body py-4">
-                        <div class="icon-circle bg-secondary-custom mb-3 mx-auto">
-                            <i class="bi bi-calendar-check text-white display-6"></i>
-                        </div>
-                        <h5 class="card-title fw-bold">Approved Appointments</h5>
-                        <p class="card-text text-muted">See schedules that were already approved.</p>
-                        <a href="approved_appointments.php" class="btn btn-outline-custom mt-2 rounded-pill">View Approved</a>
-                    </div>
-                </div>
-            </div>
 
             <div class="col-md-6 col-lg-4">
                 <div class="card hover-card text-center shadow-sm border-0 h-100">
@@ -153,19 +130,6 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
             <div class="col-md-6 col-lg-4">
                 <div class="card hover-card text-center shadow-sm border-0 h-100">
                     <div class="card-body py-4">
-                        <div class="icon-circle bg-accent-custom mb-3 mx-auto">
-                            <i class="bi bi-folder2-open text-white display-6"></i>
-                        </div>
-                        <h5 class="card-title fw-bold">Patient Records</h5>
-                        <p class="card-text text-muted">Access and maintain patient treatment history and files.</p>
-                        <a href="patient_records.php" class="btn btn-outline-custom mt-2 rounded-pill">View Records</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card hover-card text-center shadow-sm border-0 h-100">
-                    <div class="card-body py-4">
                         <div class="icon-circle bg-primary-custom mb-3 mx-auto">
                             <i class="bi bi-chat-square-text text-white display-6"></i>
                         </div>
@@ -175,9 +139,11 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
+
 
 <!-- Reviews Section - ADMIN DASHBOARD (View Only) -->
 <section id="reviews" class="py-5">
@@ -207,7 +173,7 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                     $avatar_color = $colors[array_rand($colors)];
 
                     // Format date
-                    $review_date = date('F j, Y', strtotime($review['created_at'])); 
+                    $review_date = date('F j, Y', strtotime($review['created_at']));
             ?>
                     <div class="col-lg-4 col-md-6">
                         <div class="card border-0 shadow-sm h-100 review-card">
@@ -237,10 +203,10 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                             </div>
                         </div>
                     </div>
-            <?php
+                <?php
                 endwhile;
             else:
-            ?>
+                ?>
                 <div class="col-12">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center empty-reviews">
@@ -255,51 +221,52 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
     </div>
 </section>
 
-        <!-- Footer -->
-        <footer class="text-white py-2" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);">
-        <div class="container text-center">
-                <p style="margin-bottom: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
-                <p style="margin-top: 0;">All rights reserved.</p>
-            </div>
-    </footer>
+<!-- Footer -->
+<footer class="text-white py-2" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);">
+    <div class="container text-center">
+        <p style="margin-bottom: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
+        <p style="margin-top: 0;">All rights reserved.</p>
+    </div>
+</footer>
 
-    <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
+<script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Active nav link on scroll
+    window.addEventListener('scroll', () => {
+        let current = '';
+        const sections = document.querySelectorAll('section');
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 200) {
+                current = section.getAttribute('id');
+            }
         });
 
-        // Active nav link on scroll
-        window.addEventListener('scroll', () => {
-            let current = '';
-            const sections = document.querySelectorAll('section');
-
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (pageYOffset >= sectionTop - 200) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${current}`) {
-                    link.classList.add('active');
-                }
-            });
+        document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
         });
-    </script>
+    });
+</script>
 
 </body>
+
 </html>
