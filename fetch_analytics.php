@@ -32,11 +32,11 @@ try {
     $stmt->close();
 
     // 3. Total number of PENDING APPOINTMENTS (for today)
-    $stmt = $conn->prepare("
+     $stmt = $conn->prepare("
         SELECT COUNT(*) as count 
         FROM appointments 
-        WHERE status = 'pending' 
-        AND date = ?
+        WHERE status = 'pending'
+        AND DATE(created_at) = ?
     ");
     $stmt->bind_param("s", $today);
     $stmt->execute();
@@ -54,16 +54,16 @@ try {
     $stmt->close();
 
     // 5. Total number of APPROVED APPOINTMENTS (for today)
-    $stmt = $conn->prepare("
+    $approved_appointments_today_stmt = $conn->prepare("
         SELECT COUNT(*) as count 
         FROM appointments 
         WHERE status = 'approved' 
-        AND date = ?
+        AND DATE(updated_at) = ?
     ");
-    $stmt->bind_param("s", $today);
-    $stmt->execute();
-    $analytics['approved_appointments_today'] = $stmt->get_result()->fetch_assoc()['count'];
-    $stmt->close();
+    $approved_appointments_today_stmt->bind_param("s", $today);
+    $approved_appointments_today_stmt->execute();
+    $analytics['approved_appointments_today'] = $approved_appointments_today_stmt->get_result()->fetch_assoc()['count'];
+    $approved_appointments_today_stmt->close();
 
     // 6. Total number of COMPLETED APPOINTMENTS (any date)
     $stmt = $conn->prepare("
@@ -79,8 +79,8 @@ try {
     $stmt = $conn->prepare("
         SELECT COUNT(*) as count 
         FROM appointments 
-        WHERE status = 'completed' 
-        AND date = ?
+        WHERE status = 'completed'
+        AND DATE(updated_at) = ?
     ");
     $stmt->bind_param("s", $today);
     $stmt->execute();
@@ -103,7 +103,7 @@ try {
         SELECT COUNT(*) as count 
         FROM chat_messages 
         WHERE sender_type = 'Patient' 
-        AND is_read = 0 
+        AND is_read = 0
         AND DATE(timestamp) = ?
     ");
     $stmt->bind_param("s", $today);
