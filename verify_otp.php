@@ -19,17 +19,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "Invalid OTP. Try again.";
     } else {
 
-        $stmt = $conn->prepare("INSERT INTO users (first_name,last_name,email,phone,address,password,role,profile_pic) VALUES (?,?,?,?,?,?,?,?)");
+        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, phone, address, gender, password, role, profile_pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param(
-            "ssssssss",
-            $user['first_name'],
-            $user['last_name'],
-            $user['email'],
-            $user['phone'],
-            $user['address'],
-            $user['password'],
-            $user['role'],
-            $user['profile_pic']
+            "sssssssss",
+            $_SESSION['pending_user']['first_name'],
+            $_SESSION['pending_user']['last_name'],
+            $_SESSION['pending_user']['email'],
+            $_SESSION['pending_user']['phone'],
+            $_SESSION['pending_user']['address'],
+            $_SESSION['pending_user']['gender'], // ADD THIS LINE
+            $_SESSION['pending_user']['password'],
+            $_SESSION['pending_user']['role'],
+            $_SESSION['pending_user']['profile_pic']
         );
 
         if ($stmt->execute()) {
@@ -81,4 +82,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </div>
 </body>
+
 </html>
