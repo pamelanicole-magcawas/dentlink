@@ -17,14 +17,23 @@ $new_users = $new_users_stmt->get_result()->fetch_assoc()['count'];
 $new_users_stmt->close();
 
 // Pending appointments today
-$pending_today_stmt = $conn->prepare("SELECT COUNT(*) as count FROM appointments WHERE status = 'pending' AND date = ?");
-$pending_today_stmt->bind_param("s", $today);
-$pending_today_stmt->execute();
-$pending_today = $pending_today_stmt->get_result()->fetch_assoc()['count'];
-$pending_today_stmt->close();
+$query = "
+    SELECT COUNT(*) AS pending_today
+    FROM appointments
+    WHERE status = 'pending'
+    AND DATE(created_at) = CURDATE()
+";
+$result = $conn->query($query);
+$row = $result->fetch_assoc();
+$pendingToday = $row['pending_today'];
 
 // Approved appointments today
-$approved_today_stmt = $conn->prepare("SELECT COUNT(*) as count FROM appointments WHERE status = 'approved' AND date = ?");
+$approved_today_stmt = $conn->prepare("
+    SELECT COUNT(*) as count 
+    FROM appointments 
+    WHERE status = 'approved' 
+    AND DATE(updated_at) = ?
+");
 $approved_today_stmt->bind_param("s", $today);
 $approved_today_stmt->execute();
 $approved_today = $approved_today_stmt->get_result()->fetch_assoc()['count'];
@@ -188,7 +197,7 @@ $unread_msgs_stmt->close();
         </a>
         
         <a href="pending_appointments.php" class="quick-stat">
-            <div class="quick-stat-value"><?= $pending_today ?></div>
+            <div class="quick-stat-value"><?= $pendingToday ?></div>
             <div class="quick-stat-label">Pending Today</div>
         </a>
         
