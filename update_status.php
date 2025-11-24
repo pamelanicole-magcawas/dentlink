@@ -1,5 +1,7 @@
 <?php
 // update_status.php
+header('Content-Type: application/json'); // ensure response is JSON
+
 require 'db_connect.php';
 
 if (!isset($_POST['id'], $_POST['status'])) {
@@ -25,6 +27,8 @@ $stmt->close();
 
 echo json_encode([
     'status' => $success ? 'success' : 'error',
-    'new_status' => $success ? $status : null
+    'message' => $success ? 'Appointment updated successfully' : 'Failed to update appointment',
+    'new_status' => $success ? $status : null,
+    'success' => $success // Added for compatibility with the frontend
 ]);
-?>
+exit;
