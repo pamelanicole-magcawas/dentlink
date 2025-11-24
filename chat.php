@@ -70,7 +70,9 @@ if ($q) $options = $q->fetch_all(MYSQLI_ASSOC);
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person me-2"></i>Profile</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                         </ul>
                     </li>
@@ -84,7 +86,7 @@ if ($q) $options = $q->fetch_all(MYSQLI_ASSOC);
 
             <!-- Chat Header -->
             <div class="chat-header">
-                <a href="patient_dashboard.php" class="chat-header-back">
+                <a href="dashboard.php" class="chat-header-back">
                     <i class="bi bi-arrow-left"></i>
                 </a>
                 <div class="chat-header-icon">
