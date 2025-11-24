@@ -32,7 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($address)) $errors['address'] = "Address is required";
 
     if (empty($gender)) $errors['gender'] = "Please select your gender";
-    elseif (!in_array($gender, ['Male', 'Female'])) $errors['gender'] = "Invalid selection";
+    elseif (!in_array($gender, ['Male', 'Female', 'Prefer not to say'])) 
+    $errors['gender'] = "Invalid selection";
 
     if (empty($password)) $errors['password'] = "Password is required";
     elseif (!preg_match("/^.{5,15}$/", $password)) $errors['password'] = "Password must be 5–15 characters";
@@ -107,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -115,98 +117,101 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="credentials.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
+
 <body>
-<div class="container-fluid login-container d-flex flex-column flex-lg-row min-vh-100 p-0">
-    <div class="left-side d-flex flex-column justify-content-center align-items-center text-center p-5">
-        <img src="dentlink-logo.png" alt="DentLink Logo">
-        <p class="mt-3"><strong>DentLink: Dental Clinic Digital Appointment and Patient Records Management System</strong></p>
-        <div class="info-box mt-3">
-            <p><strong>DentLink</strong> simplifies dental appointment scheduling and patient record management. Patients can book online, check time slots, and get email notifications.</p>
-            <p>The system ensures accurate record-keeping by tracking treatment histories and identifying new or returning patients for reliable dental services.</p>
+    <div class="container-fluid login-container d-flex flex-column flex-lg-row min-vh-100 p-0">
+        <div class="left-side d-flex flex-column justify-content-center align-items-center text-center p-5">
+            <img src="dentlink-logo.png" alt="DentLink Logo">
+            <p class="mt-3"><strong>DentLink: Dental Clinic Digital Appointment and Patient Records Management System</strong></p>
+            <div class="info-box mt-3">
+                <p><strong>DentLink</strong> simplifies dental appointment scheduling and patient record management. Patients can book online, check time slots, and get email notifications.</p>
+                <p>The system ensures accurate record-keeping by tracking treatment histories and identifying new or returning patients for reliable dental services.</p>
+            </div>
         </div>
-    </div>
 
-    <div class="right-side d-flex justify-content-center align-items-center p-5">
-        <div class="form-box w-100">
-            <h2><i class="bi bi-person-plus-fill"></i> Registration Form</h2>
+        <div class="right-side d-flex justify-content-center align-items-center p-5">
+            <div class="form-box w-100">
+                <h2><i class="bi bi-person-plus-fill"></i> Registration Form</h2>
 
-            <form method="POST" action="" enctype="multipart/form-data" novalidate>
-                <div class="row mb-3">
-                    <div class="col">
-                        <input type="text" name="first_name" class="form-control <?= isset($errors['first_name']) ? 'is-invalid' : '' ?>" placeholder="First Name" value="<?= htmlspecialchars($first_name); ?>">
-                        <?php if (isset($errors['first_name'])): ?><div class="invalid-feedback"><?= $errors['first_name']; ?></div><?php endif; ?>
+                <form method="POST" action="" enctype="multipart/form-data" novalidate>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <input type="text" name="first_name" class="form-control <?= isset($errors['first_name']) ? 'is-invalid' : '' ?>" placeholder="First Name" value="<?= htmlspecialchars($first_name); ?>">
+                            <?php if (isset($errors['first_name'])): ?><div class="invalid-feedback"><?= $errors['first_name']; ?></div><?php endif; ?>
+                        </div>
+                        <div class="col">
+                            <input type="text" name="last_name" class="form-control <?= isset($errors['last_name']) ? 'is-invalid' : '' ?>" placeholder="Last Name" value="<?= htmlspecialchars($last_name); ?>">
+                            <?php if (isset($errors['last_name'])): ?><div class="invalid-feedback"><?= $errors['last_name']; ?></div><?php endif; ?>
+                        </div>
                     </div>
-                    <div class="col">
-                        <input type="text" name="last_name" class="form-control <?= isset($errors['last_name']) ? 'is-invalid' : '' ?>" placeholder="Last Name" value="<?= htmlspecialchars($last_name); ?>">
-                        <?php if (isset($errors['last_name'])): ?><div class="invalid-feedback"><?= $errors['last_name']; ?></div><?php endif; ?>
+
+                    <div class="mb-3">
+                        <input type="email" name="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" placeholder="Email Address" value="<?= htmlspecialchars($email); ?>">
+                        <?php if (isset($errors['email'])): ?><div class="invalid-feedback"><?= $errors['email']; ?></div><?php endif; ?>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <input type="email" name="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" placeholder="Email Address" value="<?= htmlspecialchars($email); ?>">
-                    <?php if (isset($errors['email'])): ?><div class="invalid-feedback"><?= $errors['email']; ?></div><?php endif; ?>
-                </div>
+                    <div class="mb-3">
+                        <input type="text" name="phone" class="form-control <?= isset($errors['phone']) ? 'is-invalid' : '' ?>" placeholder="Phone Number (09XXXXXXXXX)" value="<?= htmlspecialchars($phone); ?>">
+                        <?php if (isset($errors['phone'])): ?><div class="invalid-feedback"><?= $errors['phone']; ?></div><?php endif; ?>
+                    </div>
 
-                <div class="mb-3">
-                    <input type="text" name="phone" class="form-control <?= isset($errors['phone']) ? 'is-invalid' : '' ?>" placeholder="Phone Number (09XXXXXXXXX)" value="<?= htmlspecialchars($phone); ?>">
-                    <?php if (isset($errors['phone'])): ?><div class="invalid-feedback"><?= $errors['phone']; ?></div><?php endif; ?>
-                </div>
+                    <div class="mb-3">
+                        <input type="text" name="address" class="form-control <?= isset($errors['address']) ? 'is-invalid' : '' ?>" placeholder="Complete Address" value="<?= htmlspecialchars($address); ?>">
+                        <?php if (isset($errors['address'])): ?><div class="invalid-feedback"><?= $errors['address']; ?></div><?php endif; ?>
+                    </div>
 
-                <div class="mb-3">
-                    <input type="text" name="address" class="form-control <?= isset($errors['address']) ? 'is-invalid' : '' ?>" placeholder="Complete Address" value="<?= htmlspecialchars($address); ?>">
-                    <?php if (isset($errors['address'])): ?><div class="invalid-feedback"><?= $errors['address']; ?></div><?php endif; ?>
-                </div>
+                    <div class="mb-3">
+                        <select name="gender" class="form-select <?= isset($errors['gender']) ? 'is-invalid' : '' ?>">
+                            <option value="">Select Gender</option>
+                            <option value="Male" <?= ($gender === 'Male') ? 'selected' : '' ?>>Male</option>
+                            <option value="Female" <?= ($gender === 'Female') ? 'selected' : '' ?>>Female</option>
+                            <option value="Prefer not to say" <?= ($gender === 'Prefer not to say') ? 'selected' : '' ?>>Prefer not to say</option>
+                        </select>
+                        <?php if (isset($errors['gender'])): ?>
+                            <div class="invalid-feedback"><?= $errors['gender']; ?></div>
+                        <?php endif; ?>
+                    </div>
 
-                <div class="mb-3">
-                    <select name="gender" class="form-select <?= isset($errors['gender']) ? 'is-invalid' : '' ?>">
-                        <option value="">Select Gender</option>
-                        <option value="Male" <?= ($gender === 'Male') ? 'selected' : '' ?>>Male</option>
-                        <option value="Female" <?= ($gender === 'Female') ? 'selected' : '' ?>>Female</option>
-                    </select>
-                    <?php if (isset($errors['gender'])): ?>
-                        <div class="invalid-feedback"><?= $errors['gender']; ?></div>
-                    <?php endif; ?>
-                </div>
+                    <div class="mb-3">
+                        <label class="file-label">
+                            Choose Profile Picture
+                            <input type="file" id="profile_pic" name="profile_pic" accept="image/*" hidden class="<?= isset($errors['profile_pic']) ? 'is-invalid' : '' ?>">
+                        </label>
+                        <span id="file-chosen">No file chosen</span>
+                        <?php if (isset($errors['profile_pic'])): ?><div class="invalid-feedback d-block"><?= $errors['profile_pic']; ?></div><?php endif; ?>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="file-label">
-                        Choose Profile Picture
-                        <input type="file" id="profile_pic" name="profile_pic" accept="image/*" hidden class="<?= isset($errors['profile_pic']) ? 'is-invalid' : '' ?>">
-                    </label>
-                    <span id="file-chosen">No file chosen</span>
-                    <?php if (isset($errors['profile_pic'])): ?><div class="invalid-feedback d-block"><?= $errors['profile_pic']; ?></div><?php endif; ?>
-                </div>
+                    <div class="mb-3">
+                        <input type="password" name="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" placeholder="Password (5-15 characters)">
+                        <?php if (isset($errors['password'])): ?><div class="invalid-feedback"><?= $errors['password']; ?></div><?php endif; ?>
+                    </div>
 
-                <div class="mb-3">
-                    <input type="password" name="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" placeholder="Password (5-15 characters)">
-                    <?php if (isset($errors['password'])): ?><div class="invalid-feedback"><?= $errors['password']; ?></div><?php endif; ?>
-                </div>
+                    <div class="mb-3">
+                        <input type="password" name="confirm_password" class="form-control <?= isset($errors['confirm_password']) ? 'is-invalid' : '' ?>" placeholder="Confirm Password">
+                        <?php if (isset($errors['confirm_password'])): ?><div class="invalid-feedback"><?= $errors['confirm_password']; ?></div><?php endif; ?>
+                    </div>
 
-                <div class="mb-3">
-                    <input type="password" name="confirm_password" class="form-control <?= isset($errors['confirm_password']) ? 'is-invalid' : '' ?>" placeholder="Confirm Password">
-                    <?php if (isset($errors['confirm_password'])): ?><div class="invalid-feedback"><?= $errors['confirm_password']; ?></div><?php endif; ?>
-                </div>
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </form>
 
-                <div class="d-grid mb-3">
-                    <button type="submit" class="btn btn-primary">Register</button>
+                <div class="text-center">
+                    Already have an account? <a href="login.php">Login here</a>
                 </div>
-            </form>
-
-            <div class="text-center">
-                Already have an account? <a href="login.php">Login here</a>
             </div>
         </div>
     </div>
-</div>
 
-<script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const fileInput = document.getElementById('profile_pic');
-    const fileChosen = document.getElementById('file-chosen');
+    <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const fileInput = document.getElementById('profile_pic');
+        const fileChosen = document.getElementById('file-chosen');
 
-    fileInput.addEventListener('change', function() {
-        fileChosen.textContent = this.files[0] ? this.files[0].name : "No file chosen";
-    });
-</script>
+        fileInput.addEventListener('change', function() {
+            fileChosen.textContent = this.files[0] ? this.files[0].name : "No file chosen";
+        });
+    </script>
 </body>
+
 </html>
