@@ -2,7 +2,6 @@
 // analytics_widget.php - Include this in admin_dashboard.php
 // This provides a quick overview with link to full analytics
 
-// Make sure $conn is available
 if (!isset($conn)) {
     require_once 'db_connect.php';
 }

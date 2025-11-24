@@ -125,7 +125,7 @@ function getDynamicResponse($conn, $tokenOrQueryId, $user_id = null) {
         case 'FUNC_CHECK_SLOTS':
             return "Please provide the date you want to check in **YYYY-MM-DD** format (e.g., 2025-11-20).";
         case 'FUNC_CLINIC_LOCATION':
-            return "Our clinic is located on the 12th Floor of CL Building, E. Mayo St., Lipa City (beside New Star).";
+            return "Our clinic is located on the 2nd Floor of CL Building, E. Mayo St., Lipa City (beside New Star).";
         default:
             // If it's not a FUNC token, return as static text
             return $token;

@@ -44,10 +44,6 @@ $patientName = htmlspecialchars($patient_info['first_name'] . ' ' . $patient_inf
                     <p class="admin-chat-header-title"><?= $patientName ?></p>
                     <p class="admin-chat-header-subtitle">Patient Chat</p>
                 </div>
-                <div class="admin-chat-header-status">
-                    <span class="status-dot"></span>
-                    Online
-                </div>
             </div>
 
             <!-- Chat Messages Window -->

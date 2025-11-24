@@ -223,7 +223,7 @@ $denied = $conn->query("SELECT * FROM appointments WHERE user_id = $user_id AND 
                         <label class="form-label">Service:</label>
                         <select name="service" id="serviceSelect" class="form-select" required>
                             <option value="">--Select Service--</option>
-                            <option value="Consultation Fee">Consultation Fee</option>
+                            <option value="Consultation Fee">Consultation</option>
                             <option value="Fluoride Treatment">Fluoride Treatment</option>
                             <option value="Oral Prophylaxis (Cleaning)">Oral Prophylaxis (Cleaning)</option>
                             <option value="Panoramic X-ray">Panoramic X-ray</option>

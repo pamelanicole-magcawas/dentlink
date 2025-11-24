@@ -264,7 +264,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                                 <i class="bi bi-clipboard-check me-2" style="color: #91C4C3;"></i>General Dental Services
                             </h5>
                             <ul class="list-unstyled service-list">
-                                <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: #B4DEBD;"></i>Consultation Fee – ₱700</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: #B4DEBD;"></i>Consultation – ₱700</li>
                                 <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: #B4DEBD;"></i>Fluoride Treatment – ₱600</li>
                                 <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: #B4DEBD;"></i>Oral Prophylaxis (Cleaning) – ₱1,200</li>
                                 <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: #B4DEBD;"></i>Panoramic X-ray – ₱1,000</li>

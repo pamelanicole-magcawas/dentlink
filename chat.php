@@ -96,10 +96,6 @@ if ($q) $options = $q->fetch_all(MYSQLI_ASSOC);
                     <p class="chat-header-title">Chat with Admin</p>
                     <p class="chat-header-subtitle">We're here to help!</p>
                 </div>
-                <div class="chat-header-status">
-                    <span class="status-dot"></span>
-                    Online
-                </div>
             </div>
 
             <!-- Chat Messages Window -->
