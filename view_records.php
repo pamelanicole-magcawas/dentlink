@@ -8,273 +8,559 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$full_name = $_SESSION['first_name'] . ' ' . $_SESSION['last_name'];
 
-// Fetch user's appointments
-$approved_sql = "SELECT * FROM appointments WHERE user_id = ? ORDER BY date DESC, start_time DESC";
-$stmt = $conn->prepare($approved_sql);
-$stmt->bind_param("i", $user_id);
+/* -------------------------------
+   FETCH PRESCRIPTIONS
+---------------------------------*/
+$prescriptions_sql = "
+    SELECT p.*, c.medication_name AS medication, d.name AS prescribed_by_name
+    FROM prescriptions p
+    LEFT JOIN common_medications c ON p.medication_id = c.id
+    LEFT JOIN dentists d ON p.prescribed_by = d.id
+    WHERE p.user_id = ? 
+    ORDER BY p.prescription_date DESC
+";
+$stmt = $conn->prepare($prescriptions_sql);
+$stmt->bind_param("i", $user_id); // Use $user_id from session
 $stmt->execute();
-$approved = $stmt->get_result();
-?>
+$prescriptions = $stmt->get_result();
+$stmt->close();
 
+/* -------------------------------
+   FETCH APPOINTMENTS
+---------------------------------*/
+$appt = $conn->prepare("
+    SELECT a.id, a.date, a.start_time, a.location, a.description, a.status,
+           d.name AS dentist_name
+    FROM appointments a
+    LEFT JOIN dentists d ON d.id = a.dentist_id
+    WHERE a.user_id = ?
+    ORDER BY a.date DESC, a.start_time DESC
+");
+$appt->bind_param("i", $user_id);
+$appt->execute();
+$appointments = $appt->get_result();
+$appt->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Appointments - DentLink</title>
+    <title>My Dental Records - DentLink</title>
     <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #80A1BA;
+            --secondary-color: #91C4C3;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%);
+            background: linear-gradient(135deg, #B4DEBD 0%, #FFF7DD 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
-        .header {
+        .record-section {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            margin-bottom: 30px;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(128, 161, 186, 0.15);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .section-header h4 {
+            margin: 0;
+            color: #80A1BA;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .count-badge {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: .85rem;
+        }
+
+        .appointment-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media(max-width:992px) {
+            .appointment-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:576px) {
+            .appointment-cards-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .appointment-card {
-            position: relative;
-            /* needed for the strip to align left */
-            padding: 20px 20px 20px 20px;
-            /* extra space for strip */
-            margin-bottom: 15px;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 15px;
+            border: 1px solid #eee;
+            overflow: hidden;
             cursor: pointer;
-            transition: transform 0.3s;
-            display: flex;
-            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .appointment-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(128, 161, 186, 0.2);
         }
 
-        .status-strip {
-            position: absolute;
-            /* makes strip appear on the left */
-            top: 0;
-            left: 0;
-            width: 8px;
-            height: 100%;
-            border-radius: 12px 0 0 12px;
+        .appointment-card-strip {
+            height: 6px;
+            width: 100%;
+            margin-bottom: 10px;
+            border-radius: 6px;
         }
 
-        .status-approved {
-            background-color: #28a745;
+        .appointment-card-body {
+            padding: 20px;
         }
 
-        .status-pending {
-            background-color: #fd7e14;
+        .appointment-card-date {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #80A1BA;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .status-denied {
-            background-color: #dc3545;
+        .appointment-card-time {
+            font-size: .9rem;
+            color: #666;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .status-checked-in {
-            background-color: #0d6efd;
-        }
-
-        .status-in-treatment {
-            background-color: #6f42c1;
-        }
-
-        .status-completed {
-            background-color: #6c757d;
-        }
-
-        .appointment-info h5 {
-            margin: 0;
-        }
-
-        .appointment-info p {
-            margin: 3px 0 0;
+        .appointment-card-desc {
+            font-size: .9rem;
             color: #555;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .modal-body img {
-            max-width: 200px;
-            border: 3px solid #4CAF50;
-            border-radius: 8px;
-            padding: 10px;
-            background: white;
+        .appointment-card-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: .8rem;
+            color: #888;
+        }
+
+        .appointment-status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Status Colors */
+        .strip-pending {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+        }
+
+        .strip-approved {
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+        }
+
+        .strip-denied {
+            background: linear-gradient(90deg, #f87171, #ef4444);
+        }
+
+        .strip-checked-in {
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+        }
+
+        .strip-in-treatment {
+            background: linear-gradient(90deg, #a78bfa, #8b5cf6);
+        }
+
+        .strip-completed {
+            background: linear-gradient(90deg, #9ca3af, #6b7280);
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .badge-approved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .badge-denied {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .badge-checked-in {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .badge-in-treatment {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .badge-completed {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #888;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #ddd;
             margin-bottom: 15px;
         }
 
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 6px;
-            text-transform: capitalize;
-            font-size: 0.85rem;
+        .empty-state h5 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        /* Prescription Cards Styled Like Appointment Cards */
+        .prescription-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media(max-width:992px) {
+            .prescription-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:576px) {
+            .prescription-cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .prescription-card {
+            background: white;
+            border-radius: 15px;
+            border: 1px solid #eee;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .prescription-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(128, 161, 186, 0.2);
+        }
+
+        .prescription-card-strip {
+            height: 6px;
+            width: 100%;
+            margin-bottom: 10px;
+            border-radius: 6px 6px 0 0;
+            background: linear-gradient(90deg, #80A1BA, #91C4C3);
+        }
+
+        .prescription-card-body {
+            padding: 20px;
+        }
+
+        .prescription-card h5 {
+            font-weight: 600;
+            color: #80A1BA;
+            margin-bottom: 5px;
+        }
+
+        .prescription-card small {
+            color: #666;
+        }
+
+        .prescription-card .details {
+            font-size: .9rem;
+            color: #555;
+            margin-top: 8px;
+        }
+
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
             color: white;
+            border-bottom: none;
         }
 
-        .status-approved {
-            background-color: #28a745;
+        .modal-body strong {
+            color: var(--primary-color)
         }
 
-        .status-pending {
-            background-color: #fd7e14;
+        .btn-back-dashboard {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            margin-bottom: 20px;
         }
 
-        .status-denied {
-            background-color: #dc3545;
+        .btn-back-dashboard:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateX(-3px);
+            box-shadow: 0 4px 12px rgba(128, 161, 186, 0.25);
         }
 
-        .status-checked-in {
-            background-color: #0d6efd;
+        .btn-back-dashboard i {
+            font-size: 1.1rem;
         }
 
-        .status-in-treatment {
-            background-color: #6f42c1;
+        .page-title {
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            background: white;
+            border-radius: 20px;
+            padding: 20px 30px;
+            box-shadow: 0 8px 24px rgba(128, 161, 186, 0.15);
+            text-align: center;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .status-completed {
-            background-color: #6c757d;
+        .page-title::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--primary-color);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
         }
 
-        .modal-content.d-flex {
-            display: flex;
-            padding: 0;
-        }
-
-        .modal-status-strip {
-            width: 8px;
-            height: 100%;
-            border-radius: 0;
-            margin-right: 10px;
+        .page-title:hover {
+            transform: translateY(-3px);
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <a href="dashboard.php" class="btn btn-outline-primary mb-3">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
-        </a>
 
-        <div class="header">
-            <h1><i class="bi bi-calendar-check text-primary"></i> My Appointments</h1>
-            <p class="text-muted mb-0">Welcome, <strong><?= htmlspecialchars($full_name) ?></strong></p>
-            <small class="text-muted">Click an appointment card to view full details</small>
+    <a href="dashboard.php" class="btn-back-dashboard">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <h2 class="page-title">My Records</h2>
+
+    <!-- Appointments Section -->
+    <div class="record-section">
+        <div class="section-header">
+            <h4><i class="bi bi-calendar-event"></i> Appointments</h4>
+            <span class="count-badge"><?= $appointments->num_rows ?> Total</span>
         </div>
 
-        <?php if ($approved->num_rows > 0): ?>
-            <?php while ($appt = $approved->fetch_assoc()): ?>
-                <?php $status_class = 'status-' . strtolower(str_replace(' ', '-', $appt['status'])); ?>
-                <div class="appointment-card" data-bs-toggle="modal" data-bs-target="#apptModal<?= $appt['id'] ?>">
-                    <div class="status-strip <?= $status_class ?>"></div>
-                    <div class="appointment-info">
-                        <h5><?= htmlspecialchars($appt['description'] ?: 'Appointment') ?></h5>
-                        <p><?= (new DateTime($appt['date']))->format('F j, Y') ?> at <?= (new DateTime($appt['start_time']))->format('g:i A') ?></p>
-                        <!-- Removed status badge from card -->
-                    </div>
-                </div>
-
-                <!-- Modal -->
-                <div class="modal fade" id="apptModal<?= $appt['id'] ?>" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                        <div class="modal-content d-flex">
-                            <div class="modal-status-strip <?= $status_class ?>"></div>
-                            <div class="modal-body flex-grow-1">
-                                <div class="modal-header d-flex align-items-center">
-                                    <h5 class="modal-title"><?= htmlspecialchars($appt['description'] ?: 'Appointment Details') ?></h5>
-                                    <span class="status-badge <?= $status_class ?> ms-2"><?= htmlspecialchars($appt['status']) ?></span>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <p><strong>Date:</strong> <?= (new DateTime($appt['date']))->format('F j, Y (l)') ?></p>
-                                <p><strong>Time:</strong> <?= (new DateTime($appt['start_time']))->format('g:i A') ?></p>
-                                <p><strong>Location:</strong> <?= htmlspecialchars($appt['location']) ?></p>
-                                <?php if (!empty($appt['description'])): ?>
-                                    <p><strong>Description:</strong> <?= htmlspecialchars($appt['description']) ?></p>
-                                <?php endif; ?>
-
-                                <?php if (!empty($appt['qr_code_url'])): ?>
-                                    <div class="text-center">
-                                        <img src="<?= htmlspecialchars($appt['qr_code_url']) ?>" alt="QR Code" id="qr_<?= $appt['id'] ?>">
-                                        <div class="mt-2">
-                                            <a href="<?= htmlspecialchars($appt['qr_code_url']) ?>" download="dentlink_appointment_<?= $appt['id'] ?>.png" class="btn btn-success btn-sm me-2"><i class="bi bi-download"></i> Download</a>
-                                            <button onclick="printQR(<?= $appt['id'] ?>,'<?= htmlspecialchars($appt['description']) ?>','<?= (new DateTime($appt['date']))->format('F j, Y') ?>','<?= (new DateTime($appt['start_time']))->format('g:i A') ?>')" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-printer"></i> Print</button>
-                                            <button onclick="shareQR('<?= htmlspecialchars($appt['qr_code_url']) ?>')" class="btn btn-outline-secondary btn-sm"><i class="bi bi-share"></i> Share</button>
-                                        </div>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="alert alert-warning mt-2">QR code is being generated. Please refresh later.</div>
-                                <?php endif; ?>
-
-                                <?php if (!empty($appt['calendar_link'])): ?>
-                                    <p class="mt-2"><a href="<?= htmlspecialchars($appt['calendar_link']) ?>" target="_blank" class="btn btn-outline-primary btn-sm"><i class="bi bi-calendar-event"></i> View in Google Calendar</a></p>
-                                <?php endif; ?>
-
-                                <div class="alert alert-info mt-2">
-                                    <h6>Important Reminders:</h6>
-                                    <ul class="mb-0 small">
-                                        <li>Arrive 15 minutes before your appointment time</li>
-                                        <li>Bring a valid ID along with your QR code</li>
-                                        <li>Contact the clinic if you need to reschedule</li>
-                                    </ul>
-                                </div>
+        <?php if ($appointments->num_rows === 0): ?>
+            <div class="empty-state">
+                <i class="bi bi-calendar-x"></i>
+                <h5>No Appointments Found</h5>
+            </div>
+        <?php else: ?>
+            <div class="appointment-cards-grid">
+                <?php while ($a = $appointments->fetch_assoc()):
+                    $statusSlug = strtolower(str_replace(' ', '-', $a['status']));
+                    $statusText = ucwords(str_replace('-', ' ', $a['status']));
+                ?>
+                    <div class="appointment-card"
+                        data-bs-toggle="modal" data-bs-target="#appointmentModal"
+                        data-id="<?= $a['id'] ?>"
+                        data-date="<?= date('F j, Y', strtotime($a['date'])) ?>"
+                        data-time="<?= date('h:i A', strtotime($a['start_time'])) ?>"
+                        data-location="<?= htmlspecialchars($a['location']) ?>"
+                        data-description="<?= htmlspecialchars($a['description'] ?: 'No description') ?>"
+                        data-dentist="<?= htmlspecialchars($a['dentist_name'] ?: 'Unassigned') ?>"
+                        data-status="<?= $statusText ?>"
+                        data-status-slug="<?= $statusSlug ?>">
+                        <span class="appointment-status-badge badge-<?= $statusSlug ?>"><?= $statusText ?></span>
+                        <div class="appointment-card-strip strip-<?= $statusSlug ?>"></div>
+                        <div class="appointment-card-body">
+                            <div class="appointment-card-date"><i class="bi bi-calendar3"></i> <?= date('F j, Y', strtotime($a['date'])) ?></div>
+                            <div class="appointment-card-time"><i class="bi bi-clock"></i> <?= date('h:i A', strtotime($a['start_time'])) ?></div>
+                            <div class="appointment-card-desc"><?= htmlspecialchars($a['description'] ?: 'No description') ?></div>
+                            <div class="appointment-card-footer">
+                                <span><i class="bi bi-geo-alt"></i> <?= htmlspecialchars($a['location']) ?></span>
+                                <span><i class="bi bi-person"></i> <?= htmlspecialchars($a['dentist_name'] ?: 'Unassigned') ?></span>
                             </div>
                         </div>
                     </div>
-                </div>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <div class="appointment-card text-center">
-                <div style="font-size: 64px; color: #ccc; margin: 20px 0;"><i class="bi bi-calendar-x"></i></div>
-                <h4 class="text-muted">No Appointments Found</h4>
-                <p class="text-muted">Book your appointment to see it here.</p>
-                <a href="book_appointment.php" class="btn btn-primary mt-3"><i class="bi bi-plus-circle"></i> Book Appointment</a>
+                <?php endwhile; ?>
             </div>
         <?php endif; ?>
     </div>
 
-    <script>
-        function printQR(id, service, date, time) {
-            var qrImage = document.getElementById('qr_' + id).src;
-            var printWindow = window.open('', '', 'height=700,width=800');
-            printWindow.document.write('<html><head><title>Print QR</title><style>body{text-align:center;font-family:Arial;padding:50px}img{max-width:350px;border:3px solid #4CAF50;padding:20px;border-radius:10px}</style></head><body>');
-            printWindow.document.write('<h1>DentLink Dental Clinic</h1><h3>Appointment QR Code</h3>');
-            printWindow.document.write('<p><strong>Patient:</strong> <?= htmlspecialchars($full_name) ?></p>');
-            printWindow.document.write('<p><strong>Service:</strong>' + service + '</p>');
-            printWindow.document.write('<p><strong>Date:</strong>' + date + '</p>');
-            printWindow.document.write('<p><strong>Time:</strong>' + time + '</p>');
-            printWindow.document.write('<img src="' + qrImage + '" alt="QR Code">');
-            printWindow.document.write('<p><strong>Please present this QR code at the clinic</strong></p>');
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => printWindow.print(), 250);
-        }
+    <div class="record-section">
+        <div class="section-header">
+            <h4><i class="bi bi-capsule"></i> Prescriptions</h4>
+            <span class="count-badge"><?= $prescriptions->num_rows ?> Total</span>
+        </div>
 
-        function shareQR(qrUrl) {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'My DentLink Appointment QR Code',
-                    text: 'Here is my dental appointment QR code',
-                    url: qrUrl
-                }).catch(err => console.log(err));
-            } else {
-                navigator.clipboard.writeText(qrUrl).then(() => alert('QR code link copied!')).catch(() => alert('QR code link: ' + qrUrl));
-            }
-        }
-    </script>
+        <?php if ($prescriptions->num_rows === 0): ?>
+            <div class="empty-state">
+                <i class="bi bi-file-earmark-medical"></i>
+                <h5>No Prescriptions Found</h5>
+            </div>
+        <?php else: ?>
+            <div class="prescription-cards-grid">
+                <?php while ($p = $prescriptions->fetch_assoc()): ?>
+                    <div class="prescription-card"
+                        data-bs-toggle="modal"
+                        data-bs-target="#prescriptionModal"
+                        data-medication="<?= htmlspecialchars($p['medication']) ?>"
+                        data-date="<?= date('M j, Y', strtotime($p['prescription_date'])) ?>"
+                        data-dosage="<?= htmlspecialchars($p['dosage']) ?>"
+                        data-frequency="<?= htmlspecialchars($p['frequency']) ?>"
+                        data-duration="<?= htmlspecialchars($p['duration']) ?>"
+                        data-instructions="<?= htmlspecialchars($p['instructions']) ?>"
+                        data-prescribed-by="<?= htmlspecialchars($p['prescribed_by_name'] ?? 'Not specified') ?>">
+                        <div class="prescription-card-strip"></div>
+                        <div class="prescription-card-body">
+                            <h5><?= htmlspecialchars($p['medication']) ?></h5>
+                            <small><i class="bi bi-calendar3"></i> <?= date('M j, Y', strtotime($p['prescription_date'])) ?></small>
+                            <div class="details mt-2">
+                                <strong>Dosage:</strong> <?= htmlspecialchars($p['dosage'] ?? 'N/A') ?><br>
+                                <strong>Frequency:</strong> <?= htmlspecialchars($p['frequency'] ?? 'N/A') ?><br>
+                                <strong>Duration:</strong> <?= htmlspecialchars($p['duration'] ?? 'N/A') ?><br>
+                                <strong>Prescribed By:</strong> <?= htmlspecialchars($p['prescribed_by_name'] ?? 'Not specified') ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="appointmentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-calendar-event me-2"></i>Appointment Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                    <p><strong>Time:</strong> <span id="modalTime"></span></p>
+                    <p><strong>Location:</strong> <span id="modalLocation"></span></p>
+                    <p><strong>Service:</strong> <span id="modalDescription"></span></p>
+                    <p><strong>Dentist:</strong> <span id="modalDentist"></span></p>
+                    <p><span id="modalStatus" class="appointment-status-badge"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prescription Modal -->
+    <div class="modal fade" id="prescriptionModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-capsule me-2"></i>Prescription Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Medication:</strong> <span id="modalMedication"></span></p>
+                    <p><strong>Date:</strong> <span id="modalPrescriptionDate"></span></p>
+                    <p><strong>Dosage:</strong> <span id="modalDosage"></span></p>
+                    <p><strong>Frequency:</strong> <span id="modalFrequency"></span></p>
+                    <p><strong>Duration:</strong> <span id="modalDuration"></span></p>
+                    <p><strong>Instructions:</strong> <span id="modalInstructions"></span></p>
+                    <p><strong>Prescribed By:</strong> <span id="modalPrescribedBy"></span></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.appointment-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.getElementById('modalDate').textContent = card.dataset.date;
+                document.getElementById('modalTime').textContent = card.dataset.time;
+                document.getElementById('modalLocation').textContent = card.dataset.location;
+                document.getElementById('modalDescription').textContent = card.dataset.description;
+                document.getElementById('modalDentist').textContent = card.dataset.dentist;
+                const statusEl = document.getElementById('modalStatus');
+                statusEl.textContent = card.dataset.status;
+                statusEl.className = 'appointment-status-badge badge-' + card.dataset.statusSlug;
+            });
+        });
+
+        document.querySelectorAll('.prescription-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.getElementById('modalMedication').textContent = card.dataset.medication;
+                document.getElementById('modalPrescriptionDate').textContent = card.dataset.date;
+                document.getElementById('modalDosage').textContent = card.dataset.dosage;
+                document.getElementById('modalFrequency').textContent = card.dataset.frequency;
+                document.getElementById('modalDuration').textContent = card.dataset.duration;
+                document.getElementById('modalInstructions').textContent = card.dataset.instructions;
+                document.getElementById('modalPrescribedBy').textContent = card.dataset.prescribedBy;
+            });
+        });
+    </script>
 </body>
 
 </html>
