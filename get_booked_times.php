@@ -12,7 +12,7 @@ if (empty($date) || empty($location)) {
 
 $sql = "SELECT start_time FROM appointments 
         WHERE date = ? AND location = ? 
-        AND status IN ('approved', 'pending')";
+        AND status IN ('approved', 'pending', 'checked-in', 'completed')";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ss", $date, $location);
 $stmt->execute();
