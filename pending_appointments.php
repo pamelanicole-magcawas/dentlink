@@ -6,6 +6,7 @@ $result = $conn->query("
     SELECT a.*, d.name AS dentist_name
     FROM appointments a
     LEFT JOIN dentists d ON d.id = a.dentist_id
+    WHERE a.status = 'pending'
     ORDER BY a.id DESC
 ");
 
@@ -89,6 +90,41 @@ function getDefaultDentist($conn, $location, $date)
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
+    <style>
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-badge.approved {
+            background: #ccfbf1;
+            color: #0d9488;
+        }
+
+        .status-badge.denied {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-badge.checked-in {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-badge.completed {
+            background: #d1fae5;
+            color: #059669;
+        }
+    </style>
 </head>
 
 <body class="admin-page">
@@ -121,6 +157,7 @@ function getDefaultDentist($conn, $location, $date)
             <tbody>
                 <?php while ($row = $result->fetch_assoc()):
                     $dentistName = !empty($row['dentist_id']) ? $row['dentist_name'] : "Unassigned";
+                    $statusClass = strtolower(str_replace('-', ' ', $row['status']));
                 ?>
                     <tr>
                         <td><?= htmlspecialchars($row['id']) ?></td>
@@ -131,12 +168,24 @@ function getDefaultDentist($conn, $location, $date)
                         <td><?= htmlspecialchars($row['location']) ?></td>
                         <td><?= htmlspecialchars($dentistName) ?></td>
                         <td><?= htmlspecialchars($row['description']) ?></td>
-                        <td><span class="status-badge <?= $statusClass ?>"><?= htmlspecialchars($row['status']) ?></span></td>
+                        <td>
+                            <span class="status-badge <?= $statusClass ?>">
+                                <?= htmlspecialchars(ucwords(str_replace('-', ' ', $row['status']))) ?>
+                            </span>
+                        </td>
                         <td>
                             <?php if ($row['status'] === 'pending'): ?>
                                 <button class="btn-action approve" data-id="<?= $row['id'] ?>"><i class="bi bi-check-lg"></i> Approve</button>
                                 <button class="btn-action deny" data-id="<?= $row['id'] ?>"><i class="bi bi-x-lg"></i> Deny</button>
                                 <button class="btn-action changeDentist" data-id="<?= $row['id'] ?>"><i class="bi bi-person-gear"></i> Dentist</button>
+                            <?php elseif ($row['status'] === 'approved'): ?>
+                                <span class="status-badge approved">APPROVED</span>
+                            <?php elseif ($row['status'] === 'denied'): ?>
+                                <span class="status-badge denied">DENIED</span>
+                            <?php elseif ($row['status'] === 'checked-in'): ?>
+                                <span class="status-badge checked-in">CHECKED IN</span>
+                            <?php elseif ($row['status'] === 'completed'): ?>
+                                <span class="status-badge completed">COMPLETED</span>
                             <?php else: ?>
                                 <span class="status-badge <?= $statusClass ?>"><?= strtoupper($row['status']) ?></span>
                             <?php endif; ?>
@@ -172,7 +221,6 @@ function getDefaultDentist($conn, $location, $date)
                     didOpen: () => {
                         Swal.showLoading();
 
-                        // Request immediately but WITHOUT waiting for approve.php to finish
                         $.ajax({
                             url: 'approve.php',
                             method: 'POST',
@@ -266,7 +314,7 @@ function getDefaultDentist($conn, $location, $date)
                                 appointment_id: apptId,
                                 dentist_id: c.value
                             }, () => {
-                                Swal.fire('Updated!', 'Dentist changed.', 'success').then(() => location.reload());
+                                Swal.fire('Updated!', 'Dentist assigned.', 'success').then(() => location.reload());
                             });
                         }
                     });
