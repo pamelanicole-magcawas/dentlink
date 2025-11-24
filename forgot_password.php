@@ -82,51 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="credentials.css">
-    <style>
-        body {
-            background: #f0f4f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .card,
-        .otp-card {
-            background: #fff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-        }
-
-        .otp-inputs {
-            display: flex;
-            justify-content: space-between;
-            margin: 25px 0;
-        }
-
-        .otp-inputs input {
-            width: 45px;
-            height: 55px;
-            font-size: 24px;
-            text-align: center;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-        }
-
-        .otp-inputs input:focus {
-            border-color: #0d6efd;
-            outline: none;
-            box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
-        }
-
-        #resendBtn {
-            margin-top: 15px;
-        }
-    </style>
 </head>
 
 <body>

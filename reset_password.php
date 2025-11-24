@@ -46,36 +46,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Reset Password</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="credentials.css">
-    
+    <style>
+        .card .form-control {
+            margin-bottom: 18px !important;
+            border-radius: 12px !important;
+        }
+    </style>
+
 </head>
+
 <body class="d-flex justify-content-center align-items-center" style="min-height:100vh;">
 
-<div class="card p-4 shadow" style="width:380px;">
-    <h4 class="text-center mb-3">Reset Password</h4>
+    <div class="card p-4 shadow" style="width:380px;">
+        <h4 class="text-center mb-3">Reset Password</h4>
 
-    <form method="POST">
-        <input type="password" name="password" placeholder="New Password" class="form-control mb-2" required>
-        <input type="password" name="confirm" placeholder="Confirm Password" class="form-control mb-3" required>
-        <button class="btn btn-primary w-100">Update Password</button>
-    </form>
-</div>
+        <form method="POST">
+            <input type="password" name="password" placeholder="New Password" class="form-control mb-2" required>
+            <input type="password" name="confirm" placeholder="Confirm Password" class="form-control mb-3" required>
+            <button class="btn btn-primary w-100">Update Password</button>
+        </form>
+    </div>
 
-<?php if (!empty($message)): ?>
-<script>
-Swal.fire({
-    icon: '<?= $messageType ?>',
-    title: '<?= $messageType === "success" ? "Success" : "Error" ?>',
-    text: '<?= $message ?>',
-}).then(() => {
-    <?php if ($messageType === "success") echo "window.location='login.php';"; ?>
-});
-</script>
-<?php endif; ?>
+    <?php if (!empty($message)): ?>
+        <script>
+            Swal.fire({
+                icon: '<?= $messageType ?>',
+                title: '<?= $messageType === "success" ? "Success" : "Error" ?>',
+                text: '<?= $message ?>',
+            }).then(() => {
+                <?php if ($messageType === "success") echo "window.location='login.php';"; ?>
+            });
+        </script>
+    <?php endif; ?>
 
 </body>
+
 </html>
