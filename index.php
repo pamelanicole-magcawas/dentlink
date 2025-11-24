@@ -13,7 +13,7 @@
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg fixed-top">
+    <nav class="navbar navbar-expand-lg bg-white sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="#">
                 <img src="dentlink-logo.png" alt="DentLink" width="40" class="me-2">
