@@ -20,7 +20,7 @@
 
     <div class="admin-page-header" style="max-width: 700px; margin: 0 auto 25px auto;">
         <h2><i class="bi bi-qr-code-scan"></i> Scan Appointment QR</h2>
-        <p>Scan patient QR codes to check-in or mark appointments as completed</p>
+        <p>Scan patient QR codes to check-in appointments</p>
     </div>
 
     <div class="scanner-card">
@@ -60,14 +60,7 @@
                     <div id="appointmentDetails"></div>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <div id="statusButtons">
-                        <button class="btn-action btn-primary" data-status="checked-in">
-                            <i class="bi bi-box-arrow-in-right"></i> Check-in
-                        </button>
-                        <button class="btn-action btn-success" data-status="completed">
-                            <i class="bi bi-check-circle"></i> Completed
-                        </button>
-                    </div>
+                    <div id="statusButtons"></div>
                 </div>
             </div>
         </div>
@@ -105,19 +98,42 @@
                 <p><strong>Location:</strong> ${a.location}</p>
                 <p><strong>Service:</strong> ${a.description}</p>
                 <p><strong>Dentist:</strong> ${a.dentist ?? 'Unassigned'}</p>
-                <p><strong>Status:</strong> <span class="status-badge ${a.status}">${a.status.replace('-', ' ').toUpperCase()}</span></p>
+                <p><strong>Status:</strong> <span class="status-badge ${a.status}" id="statusBadgeDisplay">${a.status.replace('-', ' ').toUpperCase()}</span></p>
             `;
+
+            // Show buttons based on status
+            const statusButtons = document.getElementById('statusButtons');
+            
+            if (a.status === 'completed') {
+                statusButtons.innerHTML = '<p class="text-success"><i class="bi bi-check-circle-fill"></i> This appointment is already completed</p>';
+            } else if (a.status === 'checked-in') {
+                statusButtons.innerHTML = '<p class="text-info"><i class="bi bi-box-arrow-in-right-fill"></i> Patient is already checked-in</p>';
+            } else if (a.status === 'approved' || a.status === 'pending') {
+                // Only show Check-in button for approved/pending appointments
+                statusButtons.innerHTML = `
+                    <button class="btn-action btn-primary" data-status="checked-in">
+                        <i class="bi bi-box-arrow-in-right"></i> Check-in
+                    </button>
+                `;
+                statusButtons.querySelector('button').addEventListener('click', function() {
+                    if (globalID) updateStatus(globalID, this.dataset.status);
+                });
+            } else {
+                statusButtons.innerHTML = '<p class="text-muted">No actions available</p>';
+            }
+
             new bootstrap.Modal(document.getElementById("modalAppointment")).show();
         }
 
         function updateStatus(id, status) {
             const text = status.replace('-', ' ').toUpperCase();
             Swal.fire({
-                title: 'Confirm Status',
-                text: `Mark as ${text}?`,
+                title: 'Confirm Check-in',
+                text: `Mark patient as ${text}?`,
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Yes, update!'
+                confirmButtonText: 'Yes, check-in!',
+                confirmButtonColor: '#3b82f6'
             }).then((r) => {
                 if (r.isConfirmed) {
                     fetch('update_status.php', {
@@ -128,28 +144,31 @@
                         body: `id=${id}&status=${status}`
                     }).then(r => r.json()).then(res => {
                         if (res.status === 'success') {
-                            const badge = document.querySelector('#appointmentDetails .status-badge');
+                            // Update the status badge in the modal
+                            const badge = document.getElementById('statusBadgeDisplay');
                             badge.className = 'status-badge ' + status;
                             badge.textContent = res.new_status.replace('-', ' ').toUpperCase();
+                            
+                            // Update buttons to show checked-in message
+                            const statusButtons = document.getElementById('statusButtons');
+                            statusButtons.innerHTML = '<p class="text-success"><i class="bi bi-check-circle-fill"></i> Patient checked-in successfully!</p>';
+                            
                             Swal.fire({
-                                title: 'Updated!',
+                                title: 'Checked-in!',
+                                html: 'Patient has been checked-in successfully.<br><small>You can now mark as complete from Patient Records.</small>',
                                 icon: 'success',
-                                timer: 1500,
+                                timer: 2500,
                                 showConfirmButton: false
                             });
                         } else {
                             Swal.fire('Error', res.message, 'error');
                         }
+                    }).catch(err => {
+                        Swal.fire('Error', 'Failed to update status. Please try again.', 'error');
                     });
                 }
             });
         }
-
-        document.querySelectorAll('#statusButtons button').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (globalID) updateStatus(globalID, this.dataset.status);
-            });
-        });
 
         document.getElementById('cameraModeBtn').addEventListener('click', function() {
             currentMode = 'camera';
