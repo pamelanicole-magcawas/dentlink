@@ -23,64 +23,7 @@ if ($q) $options = $q->fetch_all(MYSQLI_ASSOC);
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="patient.css">
 </head>
-
 <body class="chat-page">
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-white sticky-top shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="dashboard.php" style="color: #80A1BA;">
-                <img src="dentlink-logo.png" alt="Logo" width="50" height="45" class="me-2">
-                <span style="font-size: 1.5rem;">DentLink</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="dashboard.php#home">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="dashboard.php#about">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="dashboard.php#services">Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="dashboard.php#reviews">Reviews</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="dashboard.php#contact">Contact Us</a>
-                    </li>
-                    <!-- Chat Button (Active) -->
-                    <li class="nav-item ms-2">
-                        <a class="nav-link chat-btn px-3 active" href="chat.php">
-                            <i class="bi bi-chat-dots-fill chat-icon"></i>
-                            <span class="d-none d-lg-inline">Chat</span>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown ms-3">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                            <img src="upload/<?= htmlspecialchars($_SESSION['profile_pic'] ?? 'default-avatar.png'); ?>"
-                                alt="Profile"
-                                style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 8px;">
-                            <?= htmlspecialchars($_SESSION['first_name'] ?? 'User'); ?>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="profile.php"><i class="bi bi-person me-2"></i>Profile</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
     <div class="chat-wrapper">
         <div class="chat-container">
 
