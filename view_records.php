@@ -473,9 +473,6 @@ $appt->close();
                             <h5><?= htmlspecialchars($p['medication']) ?></h5>
                             <small><i class="bi bi-calendar3"></i> <?= date('M j, Y', strtotime($p['prescription_date'])) ?></small>
                             <div class="details mt-2">
-                                <strong>Dosage:</strong> <?= htmlspecialchars($p['dosage'] ?? 'N/A') ?><br>
-                                <strong>Frequency:</strong> <?= htmlspecialchars($p['frequency'] ?? 'N/A') ?><br>
-                                <strong>Duration:</strong> <?= htmlspecialchars($p['duration'] ?? 'N/A') ?><br>
                                 <strong>Prescribed By:</strong> <?= htmlspecialchars($p['prescribed_by_name'] ?? 'Not specified') ?>
                             </div>
                         </div>

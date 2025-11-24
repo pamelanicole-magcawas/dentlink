@@ -718,9 +718,6 @@ unset($_SESSION['success_message']);
                             <h5><?= htmlspecialchars($p['medication_name']) ?></h5>
                             <small><i class="bi bi-calendar3"></i> <?= date('M j, Y', strtotime($p['prescription_date'])) ?></small>
                             <div class="details mt-2">
-                                <strong>Dosage:</strong> <?= htmlspecialchars($p['dosage']) ?><br>
-                                <strong>Frequency:</strong> <?= htmlspecialchars($p['frequency']) ?><br>
-                                <strong>Duration:</strong> <?= htmlspecialchars($p['duration']) ?><br>
                                 <strong>Prescribed By:</strong> <?= htmlspecialchars($p['prescribed_by_name'] ?? 'N/A') ?>
                             </div>
                         </div>
