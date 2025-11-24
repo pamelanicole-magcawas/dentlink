@@ -145,7 +145,7 @@ unset($_SESSION['flash']);
         <?php endif; ?>
 
         <?php while ($row = $result->fetch_assoc()):
-            $pic = $row['profile_pic'] ? "$uploads_web/" . urlencode($row['profile_pic']) : "default-avatar.png";
+            $pic = $row['profile_pic'] ? "$uploads_web/" . ($row['profile_pic']) : "default-avatar.png";
         ?>
         <div class="patient-card">
             <img src="<?= esc($pic) ?>" alt="Profile" class="patient-img">
