@@ -11,6 +11,7 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +22,7 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
     <link rel="stylesheet" href="admin.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body class="admin-page">
 
     <a href="admin_dashboard.php" class="btn-back-dashboard">
@@ -66,7 +68,7 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
             <i class="bi bi-box-arrow-in-right me-1"></i> Logins
         </button>
         <button class="tab-btn" data-tab="actions">
-            <i class="bi bi-cursor me-1"></i> Actions
+            <i class="bi bi-cursor me-1"></i> Log out
         </button>
     </div>
 
@@ -94,33 +96,33 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function fetchActivityData() {
-            $.getJSON('fetch_activity_logs.php', function(data) {
+        function fetchActivityData(filter = '') {
+            $.getJSON('fetch_activity_logs.php?filter=' + filter, function(data) {
                 $('#total-active-users').text(data.totalActiveUsers || 0);
                 $('#today-activities').text(data.todayActivities || 0);
                 $('#recent-logins').text(data.recentLogins || 0);
-                
+
                 if (data.allLogs && data.allLogs.trim() !== '') {
                     $('#logs-table tbody').html(data.allLogs);
                 } else {
                     $('#logs-table tbody').html(`
-                        <tr>
-                            <td colspan="4" class="text-center py-4 text-muted">
-                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                No activity logs found
-                            </td>
-                        </tr>
-                    `);
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">
+                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                        No activity logs found
+                    </td>
+                </tr>
+            `);
                 }
             }).fail(function() {
                 $('#logs-table tbody').html(`
-                    <tr>
-                        <td colspan="4" class="text-center py-4 text-danger">
-                            <i class="bi bi-exclamation-triangle fs-4 d-block mb-2"></i>
-                            Failed to load activity logs
-                        </td>
-                    </tr>
-                `);
+            <tr>
+                <td colspan="4" class="text-center py-4 text-danger">
+                    <i class="bi bi-exclamation-triangle fs-4 d-block mb-2"></i>
+                    Failed to load activity logs
+                </td>
+            </tr>
+        `);
             });
         }
 
@@ -128,11 +130,17 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
         $('.tab-btn').on('click', function() {
             $('.tab-btn').removeClass('active');
             $(this).addClass('active');
-            // Add filter logic here if needed
+
+            const tab = $(this).data('tab');
+            if (tab === 'all-logs') fetchActivityData(''); // all login/logout
+            else if (tab === 'logins') fetchActivityData('login'); // only logins
+            else if (tab === 'actions') fetchActivityData('logout'); // only logouts
         });
 
+        // Initial load
         fetchActivityData();
-        setInterval(fetchActivityData, 5000);
+        setInterval(() => fetchActivityData($('.tab-btn.active').data('tab') === 'logins' ? 'login' : ($('.tab-btn.active').data('tab') === 'actions' ? 'logout' : '')), 5000);
     </script>
 </body>
+
 </html>
