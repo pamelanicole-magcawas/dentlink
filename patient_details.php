@@ -111,6 +111,7 @@ unset($_SESSION['success_message']);
     <title>Patient Records - <?= htmlspecialchars($patient_info['first_name'] . ' ' . $patient_info['last_name']) ?></title>
     <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -144,8 +145,10 @@ unset($_SESSION['success_message']);
 
         .section-header {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
             border-bottom: 2px solid #f0f0f0;
             padding-bottom: 12px;
             margin-bottom: 20px;
@@ -158,6 +161,8 @@ unset($_SESSION['success_message']);
             display: flex;
             align-items: center;
             gap: 8px;
+            flex: 1;
+            min-width: 200px;
         }
 
         .patient-header {
@@ -183,7 +188,7 @@ unset($_SESSION['success_message']);
         .patient-info-header h2 {
             margin: 0;
             font-weight: 600;
-            font-size: 3rem;
+            font-size: 1.8rem;
         }
 
         .patient-info-header p {
@@ -220,7 +225,7 @@ unset($_SESSION['success_message']);
         }
 
         .count-badge {
-            background: var(--accent-color);
+            background: #80A1BA;
             color: white;
             padding: 5px 12px;
             border-radius: 20px;
@@ -243,7 +248,6 @@ unset($_SESSION['success_message']);
         }
 
         @media(max-width:992px) {
-
             .appointment-cards-grid,
             .prescription-cards-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -287,12 +291,19 @@ unset($_SESSION['success_message']);
         .appointment-card-body,
         .prescription-card-body {
             padding: 20px;
+            padding-top: 45px;
+        }
+
+        .prescription-card h5 {
+            font-weight: 600;
+            color: #80A1BA;
+            margin-bottom: 5px;
         }
 
         .appointment-card-date {
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--primary-color);
+            color: #2C3E50;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
@@ -336,29 +347,64 @@ unset($_SESSION['success_message']);
         }
 
         /* Status Colors */
+        .strip-pending {
+            background: linear-gradient(135deg, #F3D9AA 0%, #E7C892 100%);
+        }
+
+        .strip-approved {
+            background: linear-gradient(135deg, #A2D8B3 0%, #88C49F 100%);
+        }
+
+        .strip-denied {
+            background: linear-gradient(135deg, #E6BBBB 0%, #D9A5A5 100%);
+        }
+
+        .strip-checked-in {
+            background: linear-gradient(135deg, #A8C2D3 0%, #80A1BA 100%);
+        }
+
+        .strip-in-treatment {
+            background: linear-gradient(90deg, #a78bfa, #8b5cf6);
+        }
+
+        .strip-completed {
+            background: linear-gradient(135deg, #8BBDB8 0%, #6FA8A3 100%);
+        }
+
         .badge-pending {
-            background: #fef3c7;
-            color: #d97706;
+            background: #FFF7DD;
+            color: #B48945;
+            border: 1px solid #E7C892;
         }
 
         .badge-approved {
-            background: #d1fae5;
-            color: #059669;
+            background: #EEF8F1;
+            color: #4E8A62;
+            border: 1px solid #88C49F;
         }
 
         .badge-denied {
-            background: #fee2e2;
-            color: #dc2626;
+            background: #FBECEC;
+            color: #A85E5E;
+            border: 1px solid #D9A5A5;
         }
 
         .badge-checked-in {
-            background: #dbeafe;
-            color: #2563eb;
+            background: #EBF1F6;
+            color: #5D7C95;
+            border: 1px solid #80A1BA;
+        }
+
+        .badge-in-treatment {
+            background: #ede9fe;
+            color: #7c3aed;
+            border: 1px solid #a78bfa;
         }
 
         .badge-completed {
-            background: #f3f4f6;
-            color: #4b5563;
+            background: #E7F4F3;
+            color: #467974;
+            border: 1px solid #6FA8A3;
         }
 
         /* Empty State */
@@ -419,7 +465,6 @@ unset($_SESSION['success_message']);
         /* Prescription Card Delete Button */
         .btn-delete-small {
             background: #f87171;
-            /* red */
             border: none;
             color: white;
             width: 32px;
@@ -442,13 +487,11 @@ unset($_SESSION['success_message']);
             transform: scale(1.1);
         }
 
-        /* Adjust prescription card hover to lift up */
         .prescription-card:hover {
             transform: translateY(-6px);
             box-shadow: 0 12px 28px rgba(128, 161, 186, 0.25);
         }
 
-        /* Optional: Add padding-top so delete button doesn't cover title */
         .prescription-card-body {
             padding: 20px;
             padding-top: 40px;
@@ -475,8 +518,8 @@ unset($_SESSION['success_message']);
         }
 
         .complete-section {
-            background-color: #dbeafe; /* Light blue */
-            border-left: 4px solid #2563eb; /* Blue accent */
+            background-color: #dbeafe;
+            border-left: 4px solid #2563eb;
             padding: 10px 15px;
             border-radius: 10px;
             display: flex;
@@ -485,7 +528,8 @@ unset($_SESSION['success_message']);
             gap: 10px;
             margin: 15px;
             font-size: 0.95rem;
-            color: #1e3a8a; /* Dark blue text */
+            color: #1e3a8a;
+            /* Dark blue text */
         }
 
         .complete-section .btn-complete {
@@ -505,6 +549,20 @@ unset($_SESSION['success_message']);
         .complete-section .btn-complete:hover {
             background-color: #1e40af;
             transform: translateY(-2px);
+        }
+
+        @media(max-width:576px) {
+            .appointment-card-body {
+                padding: 15px;
+                padding-top: 40px;
+            }
+
+            .appointment-status-badge {
+                font-size: .7rem;
+                padding: 4px 10px;
+                top: 10px;
+                right: 10px;
+            }
         }
     </style>
 </head>
