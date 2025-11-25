@@ -356,11 +356,6 @@ unset($_SESSION['success_message']);
             color: #2563eb;
         }
 
-        .badge-in-treatment {
-            background: #ede9fe;
-            color: #7c3aed;
-        }
-
         .badge-completed {
             background: #f3f4f6;
             color: #4b5563;
@@ -397,21 +392,28 @@ unset($_SESSION['success_message']);
 
         /* Back Button */
         .btn-back-dashboard {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            padding: 8px 15px;
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-            color: white;
-            border-radius: 12px;
-            font-weight: 500;
+            gap: 8px;
             text-decoration: none;
             margin-bottom: 20px;
-            transition: all 0.3s ease;
         }
 
         .btn-back-dashboard:hover {
-            transform: translateY(-2px);
+            background: var(--primary-color);
+            color: white;
+            transform: translateX(-3px);
+            box-shadow: 0 4px 12px rgba(128, 161, 186, 0.25);
+        }
+
+        .btn-back-dashboard i {
+            font-size: 1.1rem;
         }
 
         /* Prescription Card Delete Button */
@@ -510,7 +512,7 @@ unset($_SESSION['success_message']);
 <body class="admin-records-page">
 
     <a href="patient_records.php" class="btn-back-dashboard">
-        <i class="bi bi-arrow-left"></i> Back to Patient Records
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
     </a>
 
     <?php if ($success_message): ?>

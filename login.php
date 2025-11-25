@@ -4,12 +4,13 @@ include("db_connect.php");
 require "log_activity.php";
 
 $email = "";
-$loginErr = "";
 $emailErr = "";
 $passwordErr = "";
+$loginErr = "";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
+    // --- EMAIL VALIDATION ---
     if (empty($_POST["email"])) {
         $emailErr = "Please enter your email";
     } elseif (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
@@ -18,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = trim($_POST["email"]);
     }
 
+    // --- PASSWORD VALIDATION ---
     if (empty($_POST["password"])) {
         $passwordErr = "Please enter your password";
     } elseif (strlen($_POST["password"]) < 5 || strlen($_POST["password"]) > 15) {
@@ -26,16 +28,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $password = $_POST["password"];
     }
 
+    // --- ONLY CHECK DATABASE IF NO ERRORS ---
     if (empty($emailErr) && empty($passwordErr)) {
+
         $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        if ($result->num_rows > 0) {
+        if ($result->num_rows === 1) {
             $user = $result->fetch_assoc();
 
             if (password_verify($password, $user['password'])) {
+
+                // Success
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['first_name'] = $user['first_name'];
                 $_SESSION['last_name'] = $user['last_name'];
@@ -43,24 +49,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['role'] = $user['role'];
                 $_SESSION['profile_pic'] = $user['profile_pic'];
 
-                // Log login & first visit
                 logActivity($user['user_id'], "Logged in");
-                
-                if ($user['role'] === 'Admin') {
-                    header("Location: admin_dashboard.php");
-                } else {
-                    header("Location: dashboard.php");
-                }
-                exit();
+
+                header("Location: " . ($user['role'] === 'Admin' ? "admin_dashboard.php" : "dashboard.php"));
+                exit;
+
             } else {
-                $loginErr = "Invalid email or password";
+                $passwordErr = "Incorrect password";
             }
+
         } else {
-            $loginErr = "Invalid email or password";
+            $emailErr = "Email not registered";
         }
+
         $stmt->close();
     }
 }
+
 $conn->close();
 ?>
 
