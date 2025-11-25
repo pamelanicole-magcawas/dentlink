@@ -478,8 +478,8 @@ while ($appt = $result->fetch_assoc()) {
                                                 <h6>Important Reminders:</h6>
                                                 <ul class="mb-0 small">
                                                     <li>Arrive 15 minutes before your appointment time</li>
-                                                    <li>Bring a valid ID along with your QR code</li>
-                                                    <li>Contact the clinic if you need to reschedule</li>
+                                                    <li>Kindly have your QR code ready for verification</li>
+                                                    <li>Please use our phone line or chat system to request a reschedule</li>
                                                 </ul>
                                             </div>
                                         </div>
