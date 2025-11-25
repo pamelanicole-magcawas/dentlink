@@ -50,7 +50,7 @@ $unread_msgs_stmt->close();
         background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
         border-radius: var(--card-radius);
         padding: 30px;
-        color: white;
+        color: #333;
         box-shadow: 0 10px 30px rgba(128, 161, 186, 0.3);
         margin: 30px 0;
         position: relative;
@@ -98,7 +98,7 @@ $unread_msgs_stmt->close();
     }
 
     .quick-stat {
-        background: rgba(255, 255, 255, 0.2);
+        background: whitesmoke;
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 15px;
@@ -109,7 +109,7 @@ $unread_msgs_stmt->close();
         overflow: hidden;
         cursor: pointer;
         text-decoration: none;
-        color: white;
+        color: black;
         display: block;
     }
 
@@ -120,7 +120,7 @@ $unread_msgs_stmt->close();
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(255, 247, 221, 0.2) 0%, transparent 100%);
+        background: linear-gradient(135deg, rgba(255, 247, 221, 0.62) 0%, transparent 100%);
         opacity: 0;
         transition: opacity var(--transition);
     }
@@ -140,7 +140,7 @@ $unread_msgs_stmt->close();
         font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 8px;
-        color: var(--light-color);
+        color: #333;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         position: relative;
         z-index: 1;
@@ -192,22 +192,22 @@ $unread_msgs_stmt->close();
     <div class="quick-stats-grid">
         <a href="patient_records.php" class="quick-stat">
             <div class="quick-stat-value"><?= $new_users ?></div>
-            <div class="quick-stat-label">New Users (30d)</div>
+            <div class="quick-stat-label">New Users (30d)<br><i class="bi bi-caret-down-fill"></i></div>
         </a>
         
         <a href="pending_appointments.php" class="quick-stat">
             <div class="quick-stat-value"><?= $pendingToday ?></div>
-            <div class="quick-stat-label">Pending Today</div>
+            <div class="quick-stat-label">Pending Today<br><i class="bi bi-caret-down-fill"></i></div>
         </a>
         
         <a href="approved_appointments.php" class="quick-stat">
             <div class="quick-stat-value"><?= $approved_today ?></div>
-            <div class="quick-stat-label">Approved Today</div>
+            <div class="quick-stat-label">Approved Today<br><i class="bi bi-caret-down-fill"></i></div>
         </a>
         
         <a href="admin_chats.php" class="quick-stat">
             <div class="quick-stat-value"><?= $unread_msgs ?></div>
-            <div class="quick-stat-label">Unread Messages</div>
+            <div class="quick-stat-label">Unread Messages<br><i class="bi bi-caret-down-fill"></i></div>
         </a>
     </div>
     
