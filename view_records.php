@@ -474,7 +474,7 @@ $appt->close();
                                     <p><strong>Location:</strong> <?= htmlspecialchars($a['location']) ?></p>
                                     <p><strong>Description:</strong> <?= htmlspecialchars($a['description'] ?: 'No description') ?></p>
                                     <p><strong>Dentist:</strong> <?= htmlspecialchars($a['dentist_name'] ?: 'Unassigned') ?></p>
-                                    <p><strong>Status:</strong> <span class="appointment-status-badge badge-<?= $statusSlug ?>"><?= $statusText ?></span></p>
+                                    <p><span class="appointment-status-badge badge-<?= $statusSlug ?>"><?= $statusText ?></span></p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
