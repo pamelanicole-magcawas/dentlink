@@ -86,7 +86,7 @@ $stmt->close();
 
 // Fetch appointments
 $appointments_sql = "
-SELECT a.*, d.name AS dentist_name
+SELECT a.*, d.name AS dentist_name, a.denial_reason
 FROM appointments a
 LEFT JOIN dentists d ON a.dentist_id = d.id
 WHERE a.user_id = ?
@@ -618,8 +618,9 @@ unset($_SESSION['success_message']);
                                     echo '<i class="bi bi-gender-male me-1"></i>';
                                 } elseif ($gender === 'female') {
                                     echo '<i class="bi bi-gender-female me-1"></i>';
+                                } elseif ($gender === 'prefer not to say') {
+                                    echo '<i class="bi bi-gender-ambiguous me-1"></i>';
                                 }
-                                // "Prefer not to say" or any other value will show no icon
                                 ?>
                             <?php endif; ?>
                             Gender
@@ -630,25 +631,25 @@ unset($_SESSION['success_message']);
                     </div>
                     <div class="col-md-4">
                         <div class="text-muted mb-1" style="font-size: 0.875rem;">
-                            <i class="bi bi-calendar-check me-1"></i>Registered
+                            <i class="bi bi-calendar-check me-1"></i> Registered
                         </div>
                         <div class="fw-semibold"><?= htmlspecialchars(date('M d, Y', strtotime($patient_info['created_at']))) ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="text-muted mb-1" style="font-size: 0.875rem;">
-                            <i class="bi bi-envelope me-1"></i>Email
+                            <i class="bi bi-envelope me-1"></i> Email
                         </div>
                         <div class="fw-semibold text-break"><?= htmlspecialchars($patient_info['email']) ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="text-muted mb-1" style="font-size: 0.875rem;">
-                            <i class="bi bi-telephone me-1"></i>Contact
+                            <i class="bi bi-telephone me-1"></i> Contact
                         </div>
                         <div class="fw-semibold"><?= htmlspecialchars($patient_info['phone']) ?></div>
                     </div>
                     <div class="col-md-4">
                         <div class="text-muted mb-1" style="font-size: 0.875rem;">
-                            <i class="bi bi-geo-alt me-1"></i>Address
+                            <i class="bi bi-geo-alt me-1"></i> Address
                         </div>
                         <div class="fw-semibold"><?= htmlspecialchars($patient_info['address']) ?></div>
                     </div>
@@ -683,6 +684,7 @@ unset($_SESSION['success_message']);
                         data-location="<?= htmlspecialchars($a['location']) ?>"
                         data-description="<?= htmlspecialchars($a['description'] ?: 'No description') ?>"
                         data-dentist="<?= htmlspecialchars($a['dentist_name'] ?: 'Unassigned') ?>"
+                        data-denial-reason="<?= htmlspecialchars($a['denial_reason'] ?? '') ?>"
                         data-status="<?= $statusText ?>"
                         data-status-slug="<?= $statusSlug ?>">
                         <span class="appointment-status-badge badge-<?= $statusSlug ?>"><?= $statusText ?></span>
@@ -691,10 +693,6 @@ unset($_SESSION['success_message']);
                             <div class="appointment-card-date"><i class="bi bi-calendar3"></i> <?= date('F j, Y', strtotime($a['date'])) ?></div>
                             <div class="appointment-card-time"><i class="bi bi-clock"></i> <?= date('h:i A', strtotime($a['start_time'])) ?></div>
                             <div class="appointment-card-desc"><?= htmlspecialchars($a['description'] ?: 'No description') ?></div>
-                            <div class="appointment-card-footer">
-                                <span><i class="bi bi-geo-alt"></i> <?= htmlspecialchars($a['location']) ?></span>
-                                <span><i class="bi bi-person"></i> <?= htmlspecialchars($a['dentist_name'] ?: 'Unassigned') ?></span>
-                            </div>
                         </div>
                     </div>
                 <?php endwhile; ?>
@@ -717,6 +715,14 @@ unset($_SESSION['success_message']);
                     <p><strong>Description:</strong> <span id="modalDescription"></span></p>
                     <p><strong>Dentist:</strong> <span id="modalDentist"></span></p>
                     <p><span id="modalStatus" class="appointment-status-badge"></span></p>
+                    <div id="denialReasonSection" style="display: none;">
+                        <div class="alert alert-danger mt-3 p-3" style="border-left: 4px solid #dc2626; background-color: #fee2e2; border-radius: 8px;">
+                            <p class="mb-0">
+                                <strong style="color: #991b1b;"><i class="bi bi-exclamation-triangle-fill me-1"></i> Remarks:</strong> 
+                                <span id="modalDenialReason" style="color: #7f1d1d;"></span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <div id="completeSection">
                     <div id="completeSection<?= $appt['id'] ?>">
@@ -965,6 +971,17 @@ unset($_SESSION['success_message']);
                 status.textContent = card.dataset.status;
                 status.className = 'appointment-status-badge badge-' + card.dataset.statusSlug;
 
+                // Handle denial reason
+                const denialReasonSection = document.getElementById('denialReasonSection');
+                const denialReason = card.dataset.denialReason;
+                
+                if (card.dataset.statusSlug === 'denied' && denialReason) {
+                    document.getElementById('modalDenialReason').textContent = denialReason;
+                    denialReasonSection.style.display = 'block';
+                } else {
+                    denialReasonSection.style.display = 'none';
+                }
+
                 // Render Complete Button if checked-in
                 const completeSection = document.getElementById('completeSection');
                 if (card.dataset.statusSlug === 'checked-in') {
@@ -1009,5 +1026,4 @@ unset($_SESSION['success_message']);
         });
     </script>
 </body>
-
 </html>
