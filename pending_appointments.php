@@ -241,43 +241,50 @@ function getDefaultDentist($conn, $location, $date)
 
             $('.deny').click(async function() {
                 const id = $(this).data('id');
+
                 const {
                     value: choice
                 } = await Swal.fire({
                     title: 'Deny Appointment?',
                     input: 'select',
                     inputOptions: {
-                        'conflict': 'Schedule conflict',
+                        'emergency': 'Emergency case taken first',
+                        'unavailable': 'Dentist unavailable',
+                        'no-show': 'Patient has a previous no-show record',
+                        'verification': 'Details could not be verified',
                         'policy': 'Policy violation',
-                        'info': 'Invalid information',
-                        'late': 'Outside clinic hours',
-                        'other': 'Other reason'
+                        'other': 'Other remarks'
                     },
-                    inputPlaceholder: 'Select reason',
+                    inputPlaceholder: 'Select remarks',
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444'
                 });
+
                 if (!choice) return;
-                let reason = {
-                    conflict: 'Schedule conflict.',
-                    policy: 'Policy violation.',
-                    info: 'Invalid information.',
-                    late: 'Outside clinic hours.'
+
+                let remarks = {
+                    'emergency': 'Emergency case taken first.',
+                    'unavailable': 'Dentist unavailable.',
+                    'no-show': 'Patient has a previous no-show record.',
+                    'verification': 'Details could not be verified.',
+                    'policy': 'Policy violation.'
                 } [choice];
+
                 if (choice === 'other') {
                     const {
                         value: custom
                     } = await Swal.fire({
-                        title: 'Enter reason',
+                        title: 'Enter remarks',
                         input: 'text',
                         showCancelButton: true
                     });
                     if (!custom) return;
-                    reason = custom;
+                    remarks = custom;
                 }
+
                 Swal.fire({
                     title: 'Confirm Denial',
-                    html: `<strong>Reason:</strong> ${reason}`,
+                    html: `<strong>Remarks:</strong> ${remarks}`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444',
@@ -286,9 +293,10 @@ function getDefaultDentist($conn, $location, $date)
                     if (r.isConfirmed) {
                         $.post('deny.php', {
                             id,
-                            reason
+                            remarks
                         }, () => {
-                            Swal.fire('Denied!', 'Appointment denied.', 'success').then(() => location.reload());
+                            Swal.fire('Denied!', 'Appointment denied.', 'success')
+                                .then(() => location.reload());
                         });
                     }
                 });
@@ -323,5 +331,4 @@ function getDefaultDentist($conn, $location, $date)
         });
     </script>
 </body>
-
 </html>
