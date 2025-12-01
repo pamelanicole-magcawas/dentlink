@@ -211,7 +211,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
             });
         <?php endif; ?>
     </script>
-
 </body>
-
 </html>
