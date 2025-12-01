@@ -726,8 +726,14 @@ while ($appt = $result->fetch_assoc()) {
                                             <?php if (!empty($appt['description'])): ?>
                                                 <p><strong>Description:</strong> <?= htmlspecialchars($appt['description']) ?></p>
                                             <?php endif; ?>
-                                            <div class="alert alert-danger mt-3">
-                                                This appointment has been <strong>denied</strong>. Please contact the clinic for more information.
+                                            <div class="mt-2 p-2" style="border-left: 4px solid #dc2626; background-color: #fee2e2; border-radius: 8px;">
+                                                <p class="mb-0">
+                                                    <strong style="color: #991b1b;"><i class="bi bi-exclamation-triangle-fill me-1"></i> Remarks:</strong> 
+                                                    <span style="color: #7f1d1d;"><?= htmlspecialchars($appt['denial_reason']) ?></span>
+                                                </p>
+                                            </div>
+                                            <div class="alert alert-danger mt-3 p-3" style="border-left: 4px solid #dc2626;">
+                                                <i class="bi bi-x-circle-fill me-2"></i>This appointment has been <strong>denied</strong>. Please contact the clinic for more information.
                                             </div>
                                         </div>
                                     </div>
@@ -834,5 +840,4 @@ while ($appt = $result->fetch_assoc()) {
         }
     </script>
 </body>
-
 </html>
