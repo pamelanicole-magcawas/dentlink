@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2025 at 03:29 PM
+-- Generation Time: Dec 01, 2025 at 04:59 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -49,6 +49,67 @@ CREATE TABLE `activity_logs` (
   `timestamp` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`id`, `user_id`, `activity`, `timestamp`) VALUES
+(87, 9, 'Logged in', '2025-11-24 22:51:46'),
+(88, 8, 'Logged in', '2025-11-24 22:52:08'),
+(89, 10, 'Logged in', '2025-11-25 08:50:59'),
+(90, 8, 'Logged in', '2025-11-25 08:51:58'),
+(91, 8, 'Visited page: Activity Logs', '2025-11-25 08:53:47'),
+(92, 9, 'Logged in', '2025-11-25 15:00:11'),
+(93, 9, 'Logged out', '2025-11-25 15:01:35'),
+(94, 8, 'Logged in', '2025-11-25 15:01:53'),
+(95, 8, 'Visited page: Activity Logs', '2025-11-25 15:03:10'),
+(96, 9, 'Logged in', '2025-11-25 19:58:46'),
+(97, 9, 'Logged out', '2025-11-25 20:01:44'),
+(98, 8, 'Logged in', '2025-11-25 20:01:51'),
+(99, 8, 'Visited page: Activity Logs', '2025-11-25 20:02:05'),
+(100, 8, 'Logged out', '2025-11-25 20:07:00'),
+(101, 9, 'Logged in', '2025-11-25 20:07:07'),
+(102, 9, 'Logged out', '2025-11-25 20:49:42'),
+(103, 8, 'Logged in', '2025-11-25 20:50:09'),
+(104, 8, 'Visited page: Activity Logs', '2025-11-25 21:29:41'),
+(105, 8, 'Logged out', '2025-11-25 21:31:14'),
+(106, 9, 'Logged in', '2025-11-25 21:31:20'),
+(107, 9, 'Logged out', '2025-11-25 21:33:36'),
+(108, 8, 'Logged in', '2025-11-25 21:33:44'),
+(109, 8, 'Visited page: Activity Logs', '2025-11-25 21:44:20'),
+(110, 8, 'Logged out', '2025-11-25 21:44:46'),
+(111, 9, 'Logged in', '2025-11-25 21:45:00'),
+(112, 9, 'Logged out', '2025-11-25 21:50:22'),
+(113, 9, 'Logged in', '2025-11-25 21:52:26'),
+(114, 9, 'Logged in', '2025-11-26 11:23:17'),
+(115, 9, 'Logged out', '2025-11-26 14:48:23'),
+(116, 9, 'Logged in', '2025-11-26 14:48:37'),
+(117, 8, 'Logged in', '2025-11-26 14:51:21'),
+(118, 8, 'Visited page: Activity Logs', '2025-11-26 21:43:08'),
+(119, 9, 'Logged in', '2025-11-26 23:12:30'),
+(120, 9, 'Logged out', '2025-11-26 23:12:34'),
+(121, 8, 'Logged in', '2025-11-26 23:12:51'),
+(122, 9, 'Logged out', '2025-11-27 00:39:26'),
+(123, 8, 'Logged out', '2025-11-27 00:39:41'),
+(124, 8, 'Logged in', '2025-11-27 00:39:53'),
+(125, 9, 'Logged in', '2025-11-27 19:35:29'),
+(126, 9, 'Logged out', '2025-11-27 19:35:52'),
+(127, 8, 'Logged in', '2025-11-27 19:36:09'),
+(128, 9, 'Logged in', '2025-11-27 19:45:47'),
+(129, 8, 'Visited page: Activity Logs', '2025-11-27 20:46:25'),
+(130, 8, 'Visited page: Activity Logs', '2025-11-27 20:46:28'),
+(131, 8, 'Visited page: Activity Logs', '2025-11-27 21:45:23'),
+(132, 8, 'Visited page: Activity Logs', '2025-11-27 22:31:32'),
+(133, 9, 'Logged in', '2025-12-01 08:38:52'),
+(134, 8, 'Logged in', '2025-12-01 08:40:47'),
+(135, 8, 'Logged out', '2025-12-01 08:48:42'),
+(136, 8, 'Logged in', '2025-12-01 08:48:54'),
+(137, 8, 'Visited page: Activity Logs', '2025-12-01 09:17:21'),
+(138, 8, 'Visited page: Activity Logs', '2025-12-01 09:42:54'),
+(139, 8, 'Visited page: Activity Logs', '2025-12-01 09:46:50'),
+(140, 9, 'Logged out', '2025-12-01 09:49:38'),
+(141, 10, 'Logged in', '2025-12-01 09:55:06');
+
 -- --------------------------------------------------------
 
 --
@@ -65,6 +126,7 @@ CREATE TABLE `appointments` (
   `start_time` time DEFAULT NULL,
   `description` text DEFAULT NULL,
   `status` enum('pending','approved','denied','checked-in','completed') DEFAULT 'pending',
+  `denial_reason` text DEFAULT NULL,
   `qr_code` varchar(100) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   `qr_code_url` varchar(255) DEFAULT NULL,
@@ -72,6 +134,14 @@ CREATE TABLE `appointments` (
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `dentist_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `appointments`
+--
+
+INSERT INTO `appointments` (`id`, `user_id`, `name`, `email`, `date`, `location`, `start_time`, `description`, `status`, `denial_reason`, `qr_code`, `created_at`, `qr_code_url`, `calendar_link`, `updated_at`, `dentist_id`) VALUES
+(14, 9, 'Jimae Zabdiel Austria', 'austriajimaezabdiel@gmail.com', '2025-11-29', 'Dental Clinic, Lipa City', '13:00:00', 'Ceramic Braces', 'checked-in', NULL, NULL, '2025-11-25 20:23:23', 'uploads/qr_appointment_14.png', 'https://www.google.com/calendar/event?eid=cmtzdDVnMGZtODdqcHE2MW1zNjI2ZWlhOW8gc2dkZW50YWxjbGluaWNjY0Bt', '2025-11-27 11:46:49', 2),
+(15, 9, 'Jimae Zabdiel Austria', 'austriajimaezabdiel@gmail.com', '2025-12-08', 'Dental Clinic, Lipa City', '10:00:00', 'Consultation Fee', 'completed', NULL, NULL, '2025-11-26 17:17:40', 'uploads/qr_appointment_15.png', 'https://www.google.com/calendar/event?eid=ZHJpamVmbWhycWV1ZHRwaHUycHNydjlhZjggc2dkZW50YWxjbGluaWNjY0Bt', '2025-11-26 09:21:14', 1);
 
 -- --------------------------------------------------------
 
@@ -163,10 +233,10 @@ CREATE TABLE `dentists` (
 --
 
 INSERT INTO `dentists` (`id`, `name`, `location`, `schedule_days`, `is_active`, `created_at`) VALUES
-(1, 'Dr. Sandy Granita', 'Dental Clinic, Lipa City', 'Mon-Fri', 1, '2025-11-21 14:50:31'),
-(2, 'Dr. Kristine Mae Bautista', 'Dental Clinic, Lipa City', 'Sat-Sun', 1, '2025-11-21 14:50:31'),
-(3, 'Dr. Patrick Del Rosario', 'Dental Clinic, San Pablo City', 'Mon-Fri', 1, '2025-11-21 14:50:31'),
-(4, 'Dr. Roselle V. Manalo', 'Dental Clinic, San Pablo City', 'Sat-Sun', 1, '2025-11-21 14:50:31');
+(1, 'Dr. Sandy Granita', '2nd Floor, CL Building, E Mayo St, Brgy. 4, Lipa City, 4217 Batangas', 'Mon-Fri', 1, '2025-11-21 14:50:31'),
+(2, 'Dr. Kristine Mae Bautista', '2nd Floor, CL Building, E Mayo St, Brgy. 4, Lipa City, 4217 Batangas', 'Sat-Sun', 1, '2025-11-21 14:50:31'),
+(3, 'Dr. Patrick Del Rosario', 'Sta. Rosa Commercial Complex, 468 Garnet Rd, Balibago, City of Santa Rosa, 4026 Laguna', 'Mon-Fri', 1, '2025-11-21 14:50:31'),
+(4, 'Dr. Roselle V. Manalo', 'Sta. Rosa Commercial Complex, 468 Garnet Rd, Balibago, City of Santa Rosa, 4026 Laguna', 'Sat-Sun', 1, '2025-11-21 14:50:31');
 
 -- --------------------------------------------------------
 
@@ -201,6 +271,13 @@ CREATE TABLE `reviews` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `reviews`
+--
+
+INSERT INTO `reviews` (`review_id`, `user_id`, `rating`, `review_text`, `created_at`) VALUES
+(10, 10, 5, 'great experience', '2025-12-01 01:55:35');
+
 -- --------------------------------------------------------
 
 --
@@ -229,7 +306,6 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `first_name`, `last_name`, `birthdate`, `email`, `phone`, `gender`, `address`, `role`, `profile_pic`, `password`, `created_at`) VALUES
 (7, 'Gizelle', 'Dayo', NULL, 'dayoangelagizelle@gmail.com', '09944683904', 'Female', '108 Purok 2 Mojon Tampoy, San Jose, Batangas', 'Patient', 'p_6917d183274804.69072716.jpg', '$2y$10$jszwCqYmPmssLcwWhR5fEeW61O6cWRkEGErtY8eg2RhGMq1.iZn0q', '2025-11-13 22:49:28'),
 (8, 'DentLink', 'Admin', NULL, 'sgdentalcliniccc@gmail.com', '09684270187', 'Female', '108 Purok 2 Mojon Tampoy, San Jose, Batangas', 'Admin', 'dentlink-log.jpg', '$2y$10$PBOjvnbkV4v2AQIxj/yK1uEZuZAL/4oUONEjhOWhGlGZUvFW.FLoG', '2025-11-15 00:38:21'),
-(9, 'Jimae Zabdiel', 'Austria', NULL, 'austriajimaezabdiel@gmail.com', '09709353043', 'Female', '085 Brgy. San Jose, Alitagtag, Batangas', 'Patient', 'IMG_6005.jpeg', '$2y$10$4sUPHDSA3vatR5FKiiwS8eyPBsHDmJvIL3JCfdmRlWRoig40rOuJi', '2025-11-21 01:34:54'),
 (10, 'Pamela', 'Magcawas', NULL, 'pamelanicolemagcawas@gmail.com', '09278457598', 'Female', 'Lipa City', 'Patient', 'logo-removebg-preview.png', '$2y$10$g34xVXhVAB.r.OcIxiQtle5zS8wiBdhREYUox4oycr/.5aTniZ/z2', '2025-11-23 05:03:12');
 
 --
@@ -311,19 +387,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=142;
 
 --
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `chat_messages`
 --
 ALTER TABLE `chat_messages`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=289;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=291;
 
 --
 -- AUTO_INCREMENT for table `chat_options`
@@ -347,13 +423,13 @@ ALTER TABLE `dentists`
 -- AUTO_INCREMENT for table `prescriptions`
 --
 ALTER TABLE `prescriptions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `review_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `review_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `users`
