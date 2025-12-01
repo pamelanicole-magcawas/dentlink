@@ -230,7 +230,7 @@
                             </div>
                             <div class="about-stat">
                                 <i class="bi bi-geo-alt"></i>
-                                <span>Convenient Location</span>
+                                <span>Convenient Locations</span>
                             </div>
                             <div class="about-stat">
                                 <i class="bi bi-clock-history"></i>
@@ -242,7 +242,7 @@
                 <div class="col-lg-6 order-lg-1">
                     <div class="about-image">
                         <div class="experience-badge">
-                            <h3>10+</h3>
+                            <h3>5+</h3>
                             <p>Years of Excellence</p>
                         </div>
                     </div>
