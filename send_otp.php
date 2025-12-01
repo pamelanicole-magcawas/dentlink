@@ -240,5 +240,4 @@ curl_close($curl);
         });
     </script>
 </body>
-
 </html>
