@@ -50,7 +50,6 @@ $result = $conn->query("SELECT a.*, d.name AS dentist_name
     </div>
 
     <div class="record-section">
-        <h4>Approved Appointments List</h4>
         <table id="appointmentsTable" class="display" style="width:100%">
             <thead>
                 <tr>
@@ -91,7 +90,5 @@ $result = $conn->query("SELECT a.*, d.name AS dentist_name
             });
         });
     </script>
-
 </body>
-
 </html>
