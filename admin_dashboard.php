@@ -64,8 +64,12 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-3" href="admin_chats.php">
-                        <i class="bi me-1"></i> Chat
+                    <a class="nav-link px-3" href="scan_qr.php">
+                        <i class="bi me-1"></i> Scan QR
+                    </a>
+                <li class="nav-item">
+                    <a class="nav-link px-3" href="#reviews">
+                        <i class="bi me-1"></i> Reviews
                     </a>
                 </li>
                 <li class="nav-item">
@@ -108,42 +112,6 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
 </section>
 
 <?php include 'analytics_widget.php'; ?>
-
-<!-- QUICK ACTIONS SECTION -->
-<section class="py-5 bg-light" style="margin-top: -1px;">
-    <div class="container">
-        <div class="row g-4 justify-content-center">
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card hover-card text-center shadow-sm border-0 h-100">
-                    <div class="card-body py-4">
-                        <div class="icon-circle bg-secondary-custom mb-3 mx-auto">
-                            <i class="bi bi-qr-code-scan text-white display-6"></i>
-                        </div>
-                        <h5 class="card-title fw-bold">Scan QR</h5>
-                        <p class="card-text text-muted">Scan patients' QR codes for appointment verification.</p>
-                        <a href="scan_qr.php" class="btn btn-outline-custom mt-2 rounded-pill">Scan Now</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card hover-card text-center shadow-sm border-0 h-100">
-                    <div class="card-body py-4">
-                        <div class="icon-circle bg-primary-custom mb-3 mx-auto">
-                            <i class="bi bi-chat-square-text text-white display-6"></i>
-                        </div>
-                        <h5 class="card-title fw-bold">Chat System</h5>
-                        <p class="card-text text-muted">Open the admin chat console to communicate with patients.</p>
-                        <a href="admin_chats.php" class="btn btn-outline-custom mt-2 rounded-pill">Admin Chats</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-
 
 <!-- Reviews Section - ADMIN DASHBOARD (View Only) -->
 <section id="reviews" class="py-5">
@@ -222,10 +190,10 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
 </section>
 
 <!-- Footer -->
-<footer class="text-white py-2" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);">
+<footer class="text-white" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%); padding: 20px 0;">
     <div class="container text-center">
-        <p style="margin-bottom: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
-        <p style="margin-top: 0;">All rights reserved.</p>
+        <p style="margin: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
+        <p style="margin: 0;">All rights reserved.</p>
     </div>
 </footer>
 
@@ -266,7 +234,5 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
         });
     });
 </script>
-
 </body>
-
 </html>
