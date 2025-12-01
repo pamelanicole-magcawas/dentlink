@@ -27,6 +27,7 @@ $stmt->close();
 //Fetch Appointments
 $appt = $conn->prepare("
     SELECT a.id, a.date, a.start_time, a.location, a.description, a.status,
+           a.denial_reason,
            d.name AS dentist_name
     FROM appointments a
     LEFT JOIN dentists d ON d.id = a.dentist_id
@@ -135,9 +136,9 @@ $appt->close();
             border-radius: 6px 6px 0 0;
         }
 
-        .appointment-card-body {
-            padding: 20px;
-            padding: 45px;
+        .appointment-card-body { 
+            padding: 20px; 
+            padding-top: 45px; 
         }
 
         .appointment-card-date {
@@ -453,10 +454,6 @@ $appt->close();
                             <div class="appointment-card-date"><i class="bi bi-calendar3"></i> <?= date('F j, Y', strtotime($a['date'])) ?></div>
                             <div class="appointment-card-time"><i class="bi bi-clock"></i> <?= date('h:i A', strtotime($a['start_time'])) ?></div>
                             <div class="appointment-card-desc"><?= htmlspecialchars($a['description'] ?: 'No description') ?></div>
-                            <div class="appointment-card-footer">
-                                <span><i class="bi bi-geo-alt"></i> <?= htmlspecialchars($a['location']) ?></span>
-                                <span><i class="bi bi-person"></i> <?= htmlspecialchars($a['dentist_name'] ?: 'Unassigned') ?></span>
-                            </div>
                         </div>
                     </div>
 
@@ -474,6 +471,16 @@ $appt->close();
                                     <p><strong>Location:</strong> <?= htmlspecialchars($a['location']) ?></p>
                                     <p><strong>Description:</strong> <?= htmlspecialchars($a['description'] ?: 'No description') ?></p>
                                     <p><strong>Dentist:</strong> <?= htmlspecialchars($a['dentist_name'] ?: 'Unassigned') ?></p>
+                                    
+                                    <?php if (strtolower($a['status']) === 'denied'): ?>
+                                        <div class="mt-2 p-2" style="border-left: 4px solid #dc2626; background-color: #fee2e2; border-radius: 8px;">
+                                            <p class="mb-0">
+                                                <strong style="color: #991b1b;"><i class="bi bi-exclamation-triangle-fill me-1"></i> Remarks:</strong> 
+                                                <span style="color: #7f1d1d;"><?= htmlspecialchars($a['denial_reason'] ?: 'N/A') ?></span>
+                                            </p>
+                                        </div>
+                                    <?php endif; ?>
+                                    
                                     <p><span class="appointment-status-badge badge-<?= $statusSlug ?>"><?= $statusText ?></span></p>
                                 </div>
                                 <div class="modal-footer">
@@ -565,5 +572,4 @@ $appt->close();
         });
     </script>
 </body>
-
 </html>
