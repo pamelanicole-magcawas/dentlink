@@ -15,9 +15,9 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-white sticky-top shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="dentlink-logo.png" alt="DentLink" width="40" class="me-2">
-                <span>DentLink</span>
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="#home" style="color: #80A1BA;">
+            <img src="dentlink-logo.png" alt="Logo" width="50" height="45" class="me-2">
+            <span style="font-size: 1.5rem;">DentLink</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -28,6 +28,7 @@
                     <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
                     <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
                     <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#reviews">Reviews</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
                 </ul>
                 <div class="nav-buttons">
@@ -77,7 +78,7 @@
                         </div>
                         <div class="floating-card card-2">
                             <i class="bi bi-clock"></i>
-                            <span>24/7 Support</span>
+                            <span>Business-hours support</span>
                         </div>
                         <div class="floating-card card-3">
                             <i class="bi bi-star-fill"></i>
@@ -94,8 +95,8 @@
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section id="services" class="services-section">
+<!-- Services Section -->
+<section id="services" class="services-section">
         <div class="container">
             <div class="section-header">
                 <span class="section-badge">Our Services</span>
@@ -105,30 +106,37 @@
             <div class="row g-4">
                 <div class="col-md-6 col-lg-4">
                     <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-emoji-smile"></i></div>
-                        <h4>General Dentistry</h4>
-                        <p>Regular checkups, cleanings, and preventive care to maintain optimal oral health.</p>
+                        <div class="service-icon"><i class="bi bi-clipboard-check"></i></div>
+                        <h4>General Dental Services</h4>
+                        <p>Essential dental care including consultations, cleanings, x-rays, fillings, and extractions for everyday oral health.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon"><i class="bi bi-capsule"></i></div>
+                        <h4>Endodontics & Surgery</h4>
+                        <p>Specialized treatments including root canals, surgical extractions, and gum procedures for complex dental issues.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon"><i class="bi bi-scissors"></i></div>
+                        <h4>Orthodontics</h4>
+                        <p>Braces and retainers to straighten teeth and correct bite issues for a perfect smile.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon"><i class="bi bi-person-badge"></i></div>
+                        <h4>Prosthodontics & Aesthetic Dentistry</h4>
+                        <p>Crowns, dentures, veneers, and cosmetic solutions to restore and enhance your smile.</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
                     <div class="service-card">
                         <div class="service-icon"><i class="bi bi-stars"></i></div>
-                        <h4>Cosmetic Dentistry</h4>
-                        <p>Teeth whitening, veneers, and smile makeovers for a confident, radiant smile.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-heart-pulse"></i></div>
-                        <h4>Orthodontics</h4>
-                        <p>Braces and aligners to straighten teeth and correct bite issues.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-bandaid"></i></div>
-                        <h4>Dental Surgery</h4>
-                        <p>Extractions, implants, and surgical procedures performed with precision.</p>
+                        <h4>Other Dental Services</h4>
+                        <p>Additional treatments including teeth whitening, bracket repairs, and crown re-cementation.</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
@@ -136,13 +144,6 @@
                         <div class="service-icon"><i class="bi bi-shield-plus"></i></div>
                         <h4>Emergency Care</h4>
                         <p>Immediate attention for dental emergencies and urgent oral health issues.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-clipboard2-pulse"></i></div>
-                        <h4>Dental X-Rays</h4>
-                        <p>Advanced imaging technology for accurate diagnosis and treatment planning.</p>
                     </div>
                 </div>
             </div>
@@ -343,71 +344,85 @@
     </div>
 </section>
 
-<!-- Contact Section -->
-<section id="contact" class="py-5 bg-light">
-    <div class="container">
-        <div class="text-center mb-5">
-        <span class="section-badge">Contact</span>
-            <h2 class="display-5 fw-bold mb-3">Contact Us</h2>
-            <p class="lead text-muted">Get in touch with us today</p>
+ <!-- Contact Section -->
+ <section id="contact" class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3" style="color: #80A1BA;">Contact Us</h2>
+                <p class="lead text-muted">Get in touch with us today</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100 text-center">
+                        <div class="card-body p-4">
+                            <div class="icon-circle mx-auto mb-3" style="background-color: rgba(128, 161, 186, 0.15);">
+                                <i class="bi bi-geo-alt-fill fs-1" style="color: #80A1BA;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Lipa City Clinic</h5>
+                            <p class="text-muted">2nd Floor, CL Building, E Mayo St,<br>Brgy. 4, Lipa City,<br>4217 Batangas</p>
+                            <a href="https://maps.google.com/?q=2nd+Floor+CL+Building+E+Mayo+St+Brgy+4+Lipa+City+Batangas" target="_blank" class="btn btn-outline-custom btn-sm rounded-pill">
+                                <i class="bi bi-map me-2"></i>Tap to Navigate
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100 text-center">
+                        <div class="card-body p-4">
+                            <div class="icon-circle mx-auto mb-3" style="background-color: rgba(128, 161, 186, 0.15);">
+                                <i class="bi bi-geo-alt-fill fs-1" style="color: #80A1BA;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Santa Rosa Clinic</h5>
+                            <p class="text-muted">Sta. Rosa Commercial Complex,<br>468 Garnet Rd, Balibago,<br>City of Santa Rosa, 4026 Laguna</p>
+                            <a href="https://maps.google.com/?q=Sta.+Rosa+Commercial+Complex+468+Garnet+Rd+Balibago+Santa+Rosa+Laguna" target="_blank" class="btn btn-outline-custom btn-sm rounded-pill">
+                                <i class="bi bi-map me-2"></i>Tap to Navigate
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100 text-center">
+                        <div class="card-body p-4">
+                            <div class="icon-circle mx-auto mb-3" style="background-color: rgba(145, 196, 195, 0.15);">
+                                <i class="bi bi-telephone-fill fs-1" style="color: #91C4C3;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Call Us</h5>
+                            <p class="text-muted mb-3">We're here to help you</p>
+                            <a href="tel:+639123456789" class="btn btn-outline-custom btn-sm rounded-pill">
+                                <i class="bi bi-telephone me-2"></i>Call Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100 text-center">
+                        <div class="card-body p-4">
+                            <div class="icon-circle mx-auto mb-3" style="background-color: rgba(180, 222, 189, 0.15);">
+                                <i class="bi bi-share-fill fs-1" style="color: #B4DEBD;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Follow Us</h5>
+                            <p class="text-muted mb-3">Stay connected with us</p>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #80A1BA; color: white;">
+                                    <i class="bi bi-facebook"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #91C4C3; color: white;">
+                                    <i class="bi bi-instagram"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #B4DEBD; color: white;">
+                                    <i class="bi bi-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="row g-4">
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-sm h-100 text-center">
-                    <div class="card-body p-4">
-                        <div class="icon-circle mx-auto mb-3" style="background-color: rgba(128, 161, 186, 0.15);">
-                            <i class="bi bi-geo-alt-fill fs-1" style="color: #80A1BA;"></i>
-                        </div>
-                        <h5 class="fw-bold mb-3">Visit Us</h5>
-                        <p class="text-muted">2nd Floor, CL Building, E Mayo St,<br>Brgy. 4, Lipa City,<br>4217 Batangas</p>
-                        <a href="https://maps.google.com/?q=2nd+Floor+CL+Building+E+Mayo+St+Brgy+4+Lipa+City+Batangas" target="_blank" class="btn btn-outline-custom btn-sm rounded-pill">
-                            <i class="bi bi-map me-2"></i>Tap to Navigate
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-sm h-100 text-center">
-                    <div class="card-body p-4">
-                        <div class="icon-circle mx-auto mb-3" style="background-color: rgba(145, 196, 195, 0.15);">
-                            <i class="bi bi-telephone-fill fs-1" style="color: #91C4C3;"></i>
-                        </div>
-                        <h5 class="fw-bold mb-3">Call Us</h5>
-                        <p class="text-muted mb-3">We're here to help you</p>
-                        <a href="tel:+639123456789" class="btn btn-outline-custom btn-sm rounded-pill">
-                            <i class="bi bi-telephone me-2"></i>Call Now
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-sm h-100 text-center">
-                    <div class="card-body p-4">
-                        <div class="icon-circle mx-auto mb-3" style="background-color: rgba(180, 222, 189, 0.15);">
-                            <i class="bi bi-share-fill fs-1" style="color: #B4DEBD;"></i>
-                        </div>
-                        <h5 class="fw-bold mb-3">Follow Us</h5>
-                        <p class="text-muted mb-3">Stay connected with us</p>
-                        <div class="d-flex justify-content-center gap-2">
-                            <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #80A1BA; color: white;">
-                                <i class="bi bi-facebook"></i>
-                            </a>
-                            <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #91C4C3; color: white;">
-                                <i class="bi bi-instagram"></i>
-                            </a>
-                            <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #B4DEBD; color: white;">
-                                <i class="bi bi-envelope"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
     <!-- CTA Section -->
     <section class="cta-section">
@@ -445,21 +460,25 @@
                         <li><a href="#services">Services</a></li>
                         <li><a href="#features">Features</a></li>
                         <li><a href="#about">About</a></li>
+                        <li><a href="#reviews">Reviews</a></li>
+                        <li><a href="#contact">Contact</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 mb-4">
                     <h5>Services</h5>
                     <ul>
-                        <li><a href="#">General Dentistry</a></li>
-                        <li><a href="#">Cosmetic Dentistry</a></li>
+                        <li><a href="#">General Dental Services</a></li>
+                        <li><a href="#">Endodontics & Surgery</a></li>
                         <li><a href="#">Orthodontics</a></li>
+                        <li><a href="#">Prosthodontics & Aesthetic Dentistry</a></li>
+                        <li><a href="#">Other Dental Services</a></li>
                         <li><a href="#">Emergency Care</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 mb-4">
                     <h5>Clinic Hours</h5>
                     <ul class="hours-list">
-                        <li><span>Monday - Sunday</span><span>8:00 AM - 5:00 PM</span></li>
+                        <li><span>Monday - Sunday</span><span>9:00 AM - 5:00 PM</span></li>
                     </ul>
                 </div>
             </div>
