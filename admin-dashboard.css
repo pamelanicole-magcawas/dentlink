@@ -1,7 +1,4 @@
-/* ============================
-   Admin Dashboard CSS
-=============================== */
-
+/* Admin Dashboard CSS Using Patient Dashboard Design System */
 html {
     scroll-behavior: smooth;
 }
@@ -22,9 +19,7 @@ body {
     --transition: 0.3s ease;
 }
 
-/* ============================
-   NAVBAR
-=============================== */
+/* NAVBAR */
 .navbar {
     transition: all 0.3s ease;
     z-index: 30;
@@ -54,14 +49,11 @@ body {
     border-radius: 2px;
 }
 
-/* ============================
-   HERO / HOME SECTION
-=============================== */
+/* HERO / HOME SECTION */
 .hero-section {
     background: linear-gradient(135deg, #B4DEBD 0%, #FFF7DD 100%);
     position: relative;
     overflow: hidden;
-    min-height: 70vh;
 }
 
 .hero-section::before {
@@ -72,7 +64,7 @@ body {
     right: 0;
     bottom: 0;
     background: url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600') center/cover;
-    opacity: 0.08;
+    opacity: 0.1;   
     z-index: 0;
 }
 
@@ -82,7 +74,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(180, 222, 189, 0.7) 0%, rgba(255, 247, 221, 0.7) 100%);
+    background: linear-gradient(135deg, rgba(180, 222, 189, 0.35) 0%, rgba(255, 247, 221, 0.35) 100%);
     z-index: 1;
 }
 
@@ -124,9 +116,7 @@ body {
     height: 120px;
 }
 
-/* ============================
-   QUICK ACTIONS & CARDS
-=============================== */
+/* QUICK ACTIONS & CARDS */
 .icon-circle {
     width: 80px;
     height: 80px;
@@ -152,9 +142,7 @@ body {
     overflow: hidden;
 }
 
-/* ============================
-   BUTTONS
-=============================== */
+/* BUTTONS */
 .btn-custom {
     background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);
     color: white;
@@ -181,9 +169,8 @@ body {
     transform: translateY(-2px);
 }
 
-/* ============================
-   REVIEWS SECTION STYLES ONLY
-=============================== */
+/* REVIEWS SECTION STYLES ONLY */
+/* Avatar Circle */
 .avatar-circle {
     width: 50px;
     height: 50px;
@@ -225,9 +212,13 @@ body {
     opacity: 0.3;
 }
 
-/* ============================
-   TEXT COLORS
-=============================== */
+/* Footer */
+footer {
+    background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);
+    padding: 20px 0;
+}
+
+/* TEXT COLORS */
 .text-primary-custom {
     color: #80A1BA !important;
 }
@@ -240,9 +231,7 @@ body {
     color: #B4DEBD !important;
 }
 
-/* ============================
-   BACKGROUND COLORS
-=============================== */
+/* BACKGROUND COLORS */
 .bg-primary-custom {
     background-color: #80A1BA !important;
 }
@@ -259,9 +248,7 @@ body {
     background-color: #FFF7DD !important;
 }
 
-/* ============================
-   CUSTOM SCROLLBAR
-=============================== */
+/* CUSTOM SCROLLBAR */
 ::-webkit-scrollbar {
     width: 10px;
 }
@@ -279,9 +266,7 @@ body {
     background: #6b8ba3;
 }
 
-/* ============================
-   LOADING ANIMATION
-=============================== */
+/* LOADING ANIMATION */
 @keyframes pulse {
     0%, 100% {
         opacity: 1;
@@ -295,9 +280,7 @@ body {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* ============================
-   SECTION SPACING
-=============================== */
+/* SECTION SPACING */
 section {
     scroll-margin-top: 70px;
 }
@@ -307,9 +290,7 @@ section#home {
     padding-bottom: 80px;
 }
 
-/* ============================
-   RESPONSIVE
-=============================== */
+/* RESPONSIVE */
 @media (max-width: 768px) {
     .hero-title {
         font-size: 2rem;
@@ -329,9 +310,7 @@ section#home {
     }
 }
 
-/* ============================
-   ADDITIONAL UTILITIES
-=============================== */
+/* ADDITIONAL UTILITIES */
 .welcome-admin {
     font-size: 1.25rem;
     color: #2b4f5f;
