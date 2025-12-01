@@ -168,7 +168,5 @@ if ($q) $options = $q->fetch_all(MYSQLI_ASSOC);
             xhr.send("query_id=" + encodeURIComponent(queryId));
         });
     </script>
-
 </body>
-
 </html>
