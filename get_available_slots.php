@@ -84,5 +84,4 @@ echo json_encode([
     'booked_count' => count($booked),
     'available_count' => count($slots_response)
 ]);
-
 ?>
