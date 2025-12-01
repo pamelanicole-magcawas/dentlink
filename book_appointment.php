@@ -198,8 +198,8 @@ $denied = $conn->query("SELECT * FROM appointments WHERE user_id = $user_id AND 
                         <label class="form-label">Location:</label>
                         <select name="location" class="form-select" required>
                             <option value="">--Select Location--</option>
-                            <option value="Dental Clinic, Lipa City">Lipa City</option>
-                            <option value="Dental Clinic, San Pablo City">San Pablo City</option>
+                            <option value="2nd Floor, CL Building, E Mayo St, Brgy. 4, Lipa City, 4217 Batangas">Lipa City</option>
+                            <option value="Sta. Rosa Commercial Complex, 468 Garnet Rd, Balibago, City of Santa Rosa, 4026 Laguna">Sta. Rosa</option>
                         </select>
                     </div>
 
@@ -605,5 +605,4 @@ $denied = $conn->query("SELECT * FROM appointments WHERE user_id = $user_id AND 
         </script>
     <?php endif; ?>
 </body>
-
 </html>
