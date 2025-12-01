@@ -25,10 +25,7 @@ body {
     overflow-x: hidden;
 }
 
-/* ==========================================
-   NAVBAR
-   ========================================== */
-
+/* NAVBAR */
 .navbar {
     padding: 15px 0;
     transition: all 0.3s ease;
@@ -57,7 +54,7 @@ body {
 
 .navbar .nav-link:hover,
 .navbar .nav-link.active {
-    color: var(--primary-color);
+    color: #80A1BA !important;
 }
 
 .btn-outline-nav {
