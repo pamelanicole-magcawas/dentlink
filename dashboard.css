@@ -68,7 +68,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(180, 222, 189, 0.7) 0%, rgba(255, 247, 221, 0.7) 100%);
+    background: linear-gradient(135deg, rgba(180, 222, 189, 0.35) 0%, rgba(255, 247, 221, 0.35) 100%);
     z-index: 1;
 }
 
@@ -269,6 +269,7 @@ body {
 /* Footer */
 footer {
     background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);
+    padding: 20px 0;
 }
 
 /* Buttons */
