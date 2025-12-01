@@ -139,7 +139,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         </div>
     </nav>
 
-    <!-- Hero Section - UPDATED -->
+    <!-- Hero Section -->
     <section id="home" class="hero-section position-relative">
         <div class="hero-overlay"></div>
         <div class="container">
@@ -637,13 +637,13 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
             </div>
 
             <div class="row g-4">
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="card border-0 shadow-sm h-100 text-center">
                         <div class="card-body p-4">
                             <div class="icon-circle mx-auto mb-3" style="background-color: rgba(128, 161, 186, 0.15);">
                                 <i class="bi bi-geo-alt-fill fs-1" style="color: #80A1BA;"></i>
                             </div>
-                            <h5 class="fw-bold mb-3">Visit Us</h5>
+                            <h5 class="fw-bold mb-3">Lipa City Clinic</h5>
                             <p class="text-muted">2nd Floor, CL Building, E Mayo St,<br>Brgy. 4, Lipa City,<br>4217 Batangas</p>
                             <a href="https://maps.google.com/?q=2nd+Floor+CL+Building+E+Mayo+St+Brgy+4+Lipa+City+Batangas" target="_blank" class="btn btn-outline-custom btn-sm rounded-pill">
                                 <i class="bi bi-map me-2"></i>Tap to Navigate
@@ -652,7 +652,22 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                     </div>
                 </div>
 
-                <div class="col-lg-4">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm h-100 text-center">
+                        <div class="card-body p-4">
+                            <div class="icon-circle mx-auto mb-3" style="background-color: rgba(128, 161, 186, 0.15);">
+                                <i class="bi bi-geo-alt-fill fs-1" style="color: #80A1BA;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Santa Rosa Clinic</h5>
+                            <p class="text-muted">Sta. Rosa Commercial Complex,<br>468 Garnet Rd, Balibago,<br>City of Santa Rosa, 4026 Laguna</p>
+                            <a href="https://maps.google.com/?q=Sta.+Rosa+Commercial+Complex+468+Garnet+Rd+Balibago+Santa+Rosa+Laguna" target="_blank" class="btn btn-outline-custom btn-sm rounded-pill">
+                                <i class="bi bi-map me-2"></i>Tap to Navigate
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
                     <div class="card border-0 shadow-sm h-100 text-center">
                         <div class="card-body p-4">
                             <div class="icon-circle mx-auto mb-3" style="background-color: rgba(145, 196, 195, 0.15);">
@@ -667,7 +682,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                     </div>
                 </div>
 
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="card border-0 shadow-sm h-100 text-center">
                         <div class="card-body p-4">
                             <div class="icon-circle mx-auto mb-3" style="background-color: rgba(180, 222, 189, 0.15);">
@@ -692,12 +707,12 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
             </div>
         </div>
     </section>
-
+    
     <!-- Footer -->
-    <footer class="text-white py-2" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);">
+    <footer class="text-white" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%); padding: 20px 0;">
         <div class="container text-center">
-            <p style="margin-bottom: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
-            <p style="margin-top: 0;">All rights reserved.</p>
+            <p style="margin: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
+            <p style="margin: 0;">All rights reserved.</p>
         </div>
     </footer>
 
@@ -820,5 +835,4 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         });
     </script>
 </body>
-
 </html>
