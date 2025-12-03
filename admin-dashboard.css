@@ -19,10 +19,9 @@ body {
     --transition: 0.3s ease;
 }
 
-/* NAVBAR */
+/* Navbar Styles */
 .navbar {
     transition: all 0.3s ease;
-    z-index: 30;
 }
 
 .navbar .nav-link {
@@ -47,6 +46,10 @@ body {
     height: 3px;
     background-color: #80A1BA;
     border-radius: 2px;
+}
+
+.navbar .nav-link.text-danger:hover {
+    color: #dc3545 !important;
 }
 
 /* HERO / HOME SECTION */
