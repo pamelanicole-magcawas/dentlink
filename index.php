@@ -1,6 +1,7 @@
 <?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,26 +11,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="landing.css">
 </head>
+
 <body>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-white sticky-top shadow-sm">
         <div class="container">
-        <a class="navbar-brand fw-bold d-flex align-items-center" href="#home" style="color: #80A1BA;">
-            <img src="dentlink-logo.png" alt="Logo" width="50" height="45" class="me-2">
-            <span style="font-size: 1.5rem;">DentLink</span>
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#home" style="color: #80A1BA;">
+                <img src="dentlink-logo.png" alt="Logo" width="50" height="45" class="me-2">
+                <span style="font-size: 1.5rem;">DentLink</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#reviews">Reviews</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#reviews">Reviews</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#contact">Contact</a></li>
                 </ul>
                 <div class="nav-buttons">
                     <a href="login.php" class="btn btn-outline-nav me-2">Login</a>
@@ -95,8 +97,8 @@
         </div>
     </section>
 
-<!-- Services Section -->
-<section id="services" class="services-section">
+    <!-- Services Section -->
+    <section id="services" class="services-section">
         <div class="container">
             <div class="section-header">
                 <span class="section-badge">Our Services</span>
@@ -252,100 +254,100 @@
     </section>
 
     <!-- Reviews Section -->
-<section id="reviews" class="py-5 bg-light">
-    <div class="container">
-        <div class="section-header">
-            <span class="section-badge">Reviews</span>
-            <h2>What Our Patients Say</h2>
-            <p>Real experiences from our valued patients</p>
-        </div>
+    <section id="reviews" class="py-5 bg-light">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Reviews</span>
+                <h2>What Our Patients Say</h2>
+                <p>Real experiences from our valued patients</p>
+            </div>
 
-        <!-- Reviews Display Only -->
-        <div class="row g-4" id="reviewsContainer">
-            <?php
-            // Include database connection
-            include 'db_connect.php';
-            
-            // Fetch all reviews from database (limit to 6 for landing page)
-            $reviews_sql = "SELECT r.rating, r.review_text, r.created_at, u.first_name 
+            <!-- Reviews Display Only -->
+            <div class="row g-4" id="reviewsContainer">
+                <?php
+                // Include database connection
+                include 'db_connect.php';
+
+                // Fetch all reviews from database (limit to 6 for landing page)
+                $reviews_sql = "SELECT r.rating, r.review_text, r.created_at, u.first_name 
                            FROM reviews r 
                            JOIN users u ON r.user_id = u.user_id 
                            ORDER BY r.created_at DESC 
                            LIMIT 6";
-            $reviews_result = $conn->query($reviews_sql);
+                $reviews_result = $conn->query($reviews_sql);
 
-            if ($reviews_result && $reviews_result->num_rows > 0):
-                while ($review = $reviews_result->fetch_assoc()):
-                    // Get first letter of first name
-                    $avatar_letter = strtoupper(substr($review['first_name'], 0, 1));
+                if ($reviews_result && $reviews_result->num_rows > 0):
+                    while ($review = $reviews_result->fetch_assoc()):
+                        // Get first letter of first name
+                        $avatar_letter = strtoupper(substr($review['first_name'], 0, 1));
 
-                    // Generate random color for avatar
-                    $colors = ['#80A1BA', '#91C4C3', '#B4DEBD'];
-                    $avatar_color = $colors[array_rand($colors)];
+                        // Generate random color for avatar
+                        $colors = ['#80A1BA', '#91C4C3', '#B4DEBD'];
+                        $avatar_color = $colors[array_rand($colors)];
 
-                    // Format date
-                    $review_date = date('F j, Y', strtotime($review['created_at'])); 
-            ?>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-sm h-100 review-card">
-                            <div class="card-body p-4">
-                                <div class="d-flex align-items-start mb-3">
-                                    <div class="avatar-circle text-white me-3" style="background-color: <?= $avatar_color ?>;">
-                                        <?= $avatar_letter ?>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1 fw-bold">Anonymous Patient</h6>
-                                        <div class="review-stars mb-1">
-                                            <?php
-                                            // Display stars based on rating
-                                            for ($i = 1; $i <= 5; $i++) {
-                                                if ($i <= $review['rating']) {
-                                                    echo '<i class="bi bi-star-fill" style="color: #FFD700;"></i>';
-                                                } else {
-                                                    echo '<i class="bi bi-star" style="color: #e0e0e0;"></i>';
-                                                }
-                                            }
-                                            ?>
+                        // Format date
+                        $review_date = date('F j, Y', strtotime($review['created_at']));
+                ?>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card border-0 shadow-sm h-100 review-card">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-start mb-3">
+                                        <div class="avatar-circle text-white me-3" style="background-color: <?= $avatar_color ?>;">
+                                            <?= $avatar_letter ?>
                                         </div>
-                                        <small class="text-muted"><?= $review_date ?></small>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fw-bold">Anonymous Patient</h6>
+                                            <div class="review-stars mb-1">
+                                                <?php
+                                                // Display stars based on rating
+                                                for ($i = 1; $i <= 5; $i++) {
+                                                    if ($i <= $review['rating']) {
+                                                        echo '<i class="bi bi-star-fill" style="color: #FFD700;"></i>';
+                                                    } else {
+                                                        echo '<i class="bi bi-star" style="color: #e0e0e0;"></i>';
+                                                    }
+                                                }
+                                                ?>
+                                            </div>
+                                            <small class="text-muted"><?= $review_date ?></small>
+                                        </div>
                                     </div>
+                                    <p class="text-muted mb-0">"<?= htmlspecialchars($review['review_text']) ?>"</p>
                                 </div>
-                                <p class="text-muted mb-0">"<?= htmlspecialchars($review['review_text']) ?>"</p>
+                            </div>
+                        </div>
+                    <?php
+                    endwhile;
+                else:
+                    ?>
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center empty-reviews">
+                                <i class="bi bi-chat-quote display-1 text-muted mb-3 d-block"></i>
+                                <h5 class="text-muted mb-2">No reviews yet</h5>
+                                <p class="text-muted mb-0">Be the first to experience our exceptional dental care!</p>
                             </div>
                         </div>
                     </div>
-            <?php
-                endwhile;
-            else:
-            ?>
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body text-center empty-reviews">
-                            <i class="bi bi-chat-quote display-1 text-muted mb-3 d-block"></i>
-                            <h5 class="text-muted mb-2">No reviews yet</h5>
-                            <p class="text-muted mb-0">Be the first to experience our exceptional dental care!</p>
-                        </div>
-                    </div>
+                <?php
+                endif;
+                $conn->close();
+                ?>
+            </div>
+
+            <!-- Call to Action -->
+            <?php if ($reviews_result && $reviews_result->num_rows > 0): ?>
+                <div class="text-center mt-5">
+                    <a href="login.php" class="btn btn-hero-primary">
+                        <i class="bi bi-calendar-check me-2"></i>Book Your Appointment
+                    </a>
                 </div>
-            <?php 
-            endif; 
-            $conn->close();
-            ?>
+            <?php endif; ?>
         </div>
+    </section>
 
-        <!-- Call to Action -->
-        <?php if ($reviews_result && $reviews_result->num_rows > 0): ?>
-        <div class="text-center mt-5">
-            <a href="login.php" class="btn btn-hero-primary">
-                <i class="bi bi-calendar-check me-2"></i>Book Your Appointment
-            </a>
-        </div>
-        <?php endif; ?>
-    </div>
-</section>
-
- <!-- Contact Section -->
- <section id="contact" class="py-5 bg-light">
+    <!-- Contact Section -->
+    <section id="contact" class="py-5 bg-light">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="display-5 fw-bold mb-3" style="color: #80A1BA;">Contact Us</h2>
@@ -391,7 +393,7 @@
                             </div>
                             <h5 class="fw-bold mb-3">Call Us</h5>
                             <p class="text-muted mb-3">We're here to help you</p>
-                            <a href="tel:+639123456789" class="btn btn-outline-custom btn-sm rounded-pill">
+                            <a href="tel:+639178881058" class="btn btn-outline-custom btn-sm rounded-pill">
                                 <i class="bi bi-telephone me-2"></i>Call Now
                             </a>
                         </div>
@@ -407,13 +409,13 @@
                             <h5 class="fw-bold mb-3">Follow Us</h5>
                             <p class="text-muted mb-3">Stay connected with us</p>
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #80A1BA; color: white;">
+                                <a href="https://www.facebook.com/share/17pAPyNDWG/?mibextid=wwXIfr" target="_blank" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #80A1BA; color: white;" title="SG Dental Clinic - Lipa City Branch">
                                     <i class="bi bi-facebook"></i>
                                 </a>
-                                <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #91C4C3; color: white;">
-                                    <i class="bi bi-instagram"></i>
+                                <a href="https://www.facebook.com/share/17pXfpRbSF/?mibextid=wwXIfr" target="_blank" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #6FA8A7; color: white;" title="SG Dental Clinic - Sta. Rosa Branch">
+                                    <i class="bi bi-facebook"></i>
                                 </a>
-                                <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #B4DEBD; color: white;">
+                                <a href="mailto:sgdentalclinic@gmail.com" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #B4DEBD; color: white;">
                                     <i class="bi bi-envelope"></i>
                                 </a>
                             </div>
@@ -480,26 +482,36 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Navbar scroll effect
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+        // Active nav link on scroll
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.navbar .nav-link');
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
         });
 
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+        // Active nav link on click
+        document.querySelectorAll('.navbar .nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                document.querySelectorAll('.navbar .nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
             });
         });
     </script>
 </body>
+
 </html>
