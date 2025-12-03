@@ -67,6 +67,7 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                     <a class="nav-link px-3" href="scan_qr.php">
                         <i class="bi me-1"></i> Scan QR
                     </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link px-3" href="#reviews">
                         <i class="bi me-1"></i> Reviews
@@ -214,25 +215,29 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
         });
     });
 
-    // Active nav link on scroll
-    window.addEventListener('scroll', () => {
-        let current = '';
-        const sections = document.querySelectorAll('section');
+    // Active nav link 
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPage = window.location.pathname.split('/').pop();
+        const navLinks = document.querySelectorAll('.navbar .nav-link');
 
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            if (pageYOffset >= sectionTop - 200) {
-                current = section.getAttribute('id');
-            }
-        });
+        navLinks.forEach(link => {
+            const linkPage = link.getAttribute('href');
 
-        document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${current}`) {
+            // Check if current page matches link
+            if (linkPage === currentPage ||
+                (currentPage === '' && linkPage === 'admin_dashboard.php') ||
+                (currentPage === 'admin_dashboard.php' && linkPage === 'admin_dashboard.php')) {
                 link.classList.add('active');
             }
+
+            // Add click listener
+            link.addEventListener('click', function() {
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
         });
     });
 </script>
 </body>
+
 </html>
