@@ -230,7 +230,7 @@
                             </div>
                             <div class="about-stat">
                                 <i class="bi bi-geo-alt"></i>
-                                <span>Convenient Location</span>
+                                <span>Convenient Locations</span>
                             </div>
                             <div class="about-stat">
                                 <i class="bi bi-clock-history"></i>
@@ -242,7 +242,7 @@
                 <div class="col-lg-6 order-lg-1">
                     <div class="about-image">
                         <div class="experience-badge">
-                            <h3>10+</h3>
+                            <h3>5+</h3>
                             <p>Years of Excellence</p>
                         </div>
                     </div>
@@ -453,26 +453,15 @@
                     </div>
                     <p>Your trusted partner in dental health. Modern care for modern smiles.</p>
                 </div>
-                <div class="col-lg-2 col-md-4 mb-4">
-                    <h5>Quick Links</h5>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#services">Services</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#reviews">Reviews</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
                 <div class="col-lg-3 col-md-4 mb-4">
                     <h5>Services</h5>
                     <ul>
-                        <li><a href="#">General Dental Services</a></li>
-                        <li><a href="#">Endodontics & Surgery</a></li>
-                        <li><a href="#">Orthodontics</a></li>
-                        <li><a href="#">Prosthodontics & Aesthetic Dentistry</a></li>
-                        <li><a href="#">Other Dental Services</a></li>
-                        <li><a href="#">Emergency Care</a></li>
+                        <li><a href="#services">General Dental Services</a></li>
+                        <li><a href="#services">Endodontics & Surgery</a></li>
+                        <li><a href="#services">Orthodontics</a></li>
+                        <li><a href="#services">Prosthodontics & Aesthetic Dentistry</a></li>
+                        <li><a href="#services">Other Dental Services</a></li>
+                        <li><a href="#services">Emergency Care</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 mb-4">
