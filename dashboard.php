@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db_connect.php'; 
+include 'db_connect.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -674,7 +674,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                             </div>
                             <h5 class="fw-bold mb-3">Call Us</h5>
                             <p class="text-muted mb-3">We're here to help you</p>
-                            <a href="tel:+639123456789" class="btn btn-outline-custom btn-sm rounded-pill">
+                            <a href="tel:+639178881058" class="btn btn-outline-custom btn-sm rounded-pill">
                                 <i class="bi bi-telephone me-2"></i>Call Now
                             </a>
                         </div>
@@ -690,13 +690,13 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                             <h5 class="fw-bold mb-3">Follow Us</h5>
                             <p class="text-muted mb-3">Stay connected with us</p>
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #80A1BA; color: white;">
+                                <a href="https://www.facebook.com/share/17pAPyNDWG/?mibextid=wwXIfr" target="_blank" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #80A1BA; color: white;" title="SG Dental Clinic - Lipa City Branch">
                                     <i class="bi bi-facebook"></i>
                                 </a>
-                                <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #91C4C3; color: white;">
-                                    <i class="bi bi-instagram"></i>
+                                <a href="https://www.facebook.com/share/17pXfpRbSF/?mibextid=wwXIfr" target="_blank" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #6FA8A7; color: white;" title="SG Dental Clinic - Sta. Rosa Branch">
+                                    <i class="bi bi-facebook"></i>
                                 </a>
-                                <a href="#" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #B4DEBD; color: white;">
+                                <a href="mailto:sgdentalclinic@gmail.com" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #B4DEBD; color: white;">
                                     <i class="bi bi-envelope"></i>
                                 </a>
                             </div>
@@ -706,12 +706,12 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
             </div>
         </div>
     </section>
-    
+
     <!-- Footer -->
-    <footer class="text-white" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%); padding: 20px 0;">
-        <div class="container text-center">
-            <p style="margin: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
-            <p style="margin: 0;">All rights reserved.</p>
+    <footer class="text-white text-center py-4" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);">
+        <div class="container">
+            <p class="mb-1">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
+            <p class="mb-0">All rights reserved.</p>
         </div>
     </footer>
 
@@ -834,4 +834,5 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         });
     </script>
 </body>
+
 </html>
