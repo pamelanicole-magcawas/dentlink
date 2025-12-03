@@ -6,9 +6,7 @@ $phone = "";
 $phoneErr = "";
 $step = "phone"; // default step
 
-// ----------------------------
-// 1. SEND OTP (from phone input)
-// ----------------------------
+// Send OTP
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["phone"])) {
 
     if (!empty($_POST["phone"])) {
@@ -56,9 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["phone"])) {
     }
 }
 
-// ----------------------------
-// 2. VERIFY OTP
-// ----------------------------
+// Verify OTP
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
     $enteredOtp = $_POST['otp1'] . $_POST['otp2'] . $_POST['otp3'] . $_POST['otp4'] . $_POST['otp5'] . $_POST['otp6'];
 
@@ -71,6 +67,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
         $step = "otp";
     }
 }
+
+if (isset($_SESSION['reset_user']['phone'])) {
+    $rawPhone = $_SESSION['reset_user']['phone'];
+    $maskedPhone = str_repeat('*', strlen($rawPhone) - 4) . substr($rawPhone, -4);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -99,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
     <?php elseif ($step === "otp"): ?>
         <div class="otp-card">
             <h3>Reset Password</h3>
-            <p>Enter the 6-digit code sent to <b><?= htmlspecialchars($_SESSION['reset_user']['phone']) ?></b></p>
+            <p>Enter the 6-digit code sent to <b><?= htmlspecialchars($maskedPhone) ?></b></p>
             <form method="POST">
                 <div class="otp-inputs">
                     <?php for ($i = 1; $i <= 6; $i++): ?>
@@ -135,19 +137,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
         </div>
     <?php endif; ?>
     <script>
-        // Countdown
-        <?php if ($step === "otp"): ?>
-            let remaining = <?= $_SESSION['reset_otp_expiration'] - time() ?>;
-            const countdownEl = document.getElementById("countdown");
-            const resendBtn = document.getElementById("resendBtn");
-            const timer = setInterval(() => {
-                let m = Math.floor(remaining / 60);
-                let s = remaining % 60;
-                countdownEl.textContent = `${m}:${s<10?'0'+s:s}`;
-                remaining--;
-                if (remaining < 0) {
+        let remaining = <?= $_SESSION['reset_otp_expiration'] - time() ?>;
+        const countdownEl = document.getElementById("countdown");
+        const resendBtn = document.getElementById("resendBtn");
+
+        resendBtn.disabled = true;
+
+        function startCountdown() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                if (remaining > 0) {
+                    let m = Math.floor(remaining / 60);
+                    let s = remaining % 60;
+                    countdownEl.textContent = `${m}:${s < 10 ? '0'+s : s}`;
+                    remaining--;
+                } else {
                     clearInterval(timer);
                     countdownEl.textContent = 'Expired';
+                    // Enable resend button only if resends < 3
+                    if (<?= $_SESSION['reset_resend'] ?> < 3) {
+                        resendBtn.disabled = false;
+                    }
                     Swal.fire({
                         icon: 'warning',
                         title: 'OTP Expired',
@@ -155,37 +165,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
                     });
                 }
             }, 1000);
+        }
 
-            // Auto-advance OTP inputs
-            document.querySelectorAll(".otp-inputs input").forEach((input, i, arr) => {
-                input.addEventListener("input", () => {
-                    if (input.value && i < arr.length - 1) arr[i + 1].focus();
-                });
-                input.addEventListener("keydown", e => {
-                    if (e.key === "Backspace" && !input.value && i > 0) arr[i - 1].focus();
-                });
-            });
+        // Start countdown immediately
+        startCountdown();
 
-            // Resend OTP
-            resendBtn.addEventListener("click", () => {
-                fetch("forgot_resend_otp.php", {
-                        method: "POST"
-                    })
-                    .then(r => r.json())
-                    .then(res => {
-                        Swal.fire({
-                            icon: res.status === 'success' ? 'success' : 'error',
-                            title: res.message,
-                            confirmButtonText: "OK"
-                        });
-
-                        if (res.status === 'success') {
-                            remaining = 300;
-                        }
+        // Resend OTP click
+        resendBtn.addEventListener("click", () => {
+            resendBtn.disabled = true; // disable immediately
+            fetch("forgot_reset_otp.php", {
+                    method: "POST"
+                })
+                .then(r => r.json())
+                .then(res => {
+                    Swal.fire({
+                        icon: res.status === 'success' ? 'success' : 'error',
+                        title: res.message,
+                        confirmButtonText: "OK"
                     });
-            });
-        <?php endif; ?>
 
+                    if (res.status === 'success') {
+                        remaining = 300; // reset 5 minutes
+                        startCountdown(); // restart countdown
+                    }
+                });
+        });
+
+        // Auto-advance OTP inputs
+        document.querySelectorAll(".otp-inputs input").forEach((input, i, arr) => {
+            input.addEventListener("input", () => {
+                if (input.value && i < arr.length - 1) arr[i + 1].focus();
+            });
+            input.addEventListener("keydown", e => {
+                if (e.key === "Backspace" && !input.value && i > 0) arr[i - 1].focus();
+            });
+        });
+
+        // SweetAlerts for OTP status on page load
         <?php if (isset($otpStatus) && $otpStatus === 'expired'): ?>
             Swal.fire({
                 icon: 'error',
@@ -212,4 +228,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp1'])) {
         <?php endif; ?>
     </script>
 </body>
+
 </html>

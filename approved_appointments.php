@@ -1,5 +1,12 @@
 <?php
+session_start(); 
+
 include 'db_connect.php';
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
+    header("Location: login.php");
+    exit();
+}
 
 // Fetch only approved appointments
 $result = $conn->query("SELECT a.*, d.name AS dentist_name 

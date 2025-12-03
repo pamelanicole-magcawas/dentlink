@@ -13,10 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $_SESSION['pending_user'];
     $entered_otp = $_POST['otp1'] . $_POST['otp2'] . $_POST['otp3'] . $_POST['otp4'] . $_POST['otp5'] . $_POST['otp6'];
 
-    if (!isset($_SESSION['otp']) || !isset($_SESSION['otp_expiration']) || time() > $_SESSION['otp_expiration']) {
-        $message = "OTP expired. Please resend.";
+     if (!isset($_SESSION['otp']) || time() > $_SESSION['otp_expiration']) {
+        $error = "OTP expired. Please resend.";
+        header("Location: send_otp.php?error=" . urlencode($error));
+        exit();
     } elseif ($entered_otp != $_SESSION['otp']) {
-        $message = "Invalid OTP. Try again.";
+        $error = "Invalid OTP. Try again.";
+        header("Location: send_otp.php?error=" . urlencode($error));
+        exit();
     } else {
 
         $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, phone, address, gender, password, role, profile_pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");

@@ -3,15 +3,9 @@ include 'db_config.php';
 include 'functions.php';
 header('Content-Type: application/json');
 
-// ------------------------------
-//  CLEAN JSON OUTPUT (CRITICAL)
-// ------------------------------
 error_reporting(E_ERROR | E_PARSE);  // Remove warnings/notices
 ob_clean();                         // Remove accidental output buffer
 
-// ------------------------------
-//  1. SECURITY CHECKS
-// ------------------------------
 if (empty($current_user_id) || $current_user_id == 0) {
     echo json_encode(['success' => false, 'error' => 'Not authenticated']);
     exit;
@@ -38,9 +32,7 @@ if ($role === 'Admin' && isset($_POST['target_id'])) {
     }
 }
 
-// ------------------------------
-//  2. GET OPTION DATA
-// ------------------------------
+//Get Option Data
 $stmt = $conn->prepare("
     SELECT button_label, response_text 
     FROM chat_options 
@@ -61,9 +53,7 @@ if (!$option) {
 $button_text = $option['button_label'];
 $response_token = $option['response_text'];
 
-// ------------------------------
-//  3. INSERT SENDER MESSAGE
-// ------------------------------
+
 $sender_type = ($role === 'Admin') ? 'Admin' : 'Patient';
 
 $stmt1 = $conn->prepare("
@@ -79,18 +69,12 @@ if (!$ok1) {
     exit;
 }
 
-// ------------------------------
-//  4. GET SYSTEM / FUNCTION RESPONSE
-// ------------------------------
 $response_text = getDynamicResponse($conn, $response_token, $conversation_user_id);
 
 if (!$response_text) {
     $response_text = "System Error: No response generated.";
 }
 
-// ------------------------------
-//  5. INSERT SYSTEM MESSAGE
-// ------------------------------
 $stmt2 = $conn->prepare("
     INSERT INTO chat_messages (user_id, sender_type, message_text, timestamp)
     VALUES (?, 'System', ?, NOW())
@@ -104,9 +88,6 @@ if (!$ok2) {
     exit;
 }
 
-// ------------------------------
-//  SUCCESS
-// ------------------------------
 echo json_encode([
     'success' => true,
     'response' => $response_text

@@ -1,5 +1,4 @@
 <?php
-// update_status.php
 header('Content-Type: application/json'); // ensure response is JSON
 
 require 'db_connect.php';

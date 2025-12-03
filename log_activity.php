@@ -1,10 +1,10 @@
 <?php
-require 'db_connect.php'; // $conn should be the mysqli object
+require 'db_connect.php'; 
 
 function logActivity($user_id, $activity) {
     global $conn;
 
-    $user_id = intval($user_id); // ensures it’s an integer
+    $user_id = intval($user_id); 
 
     // Optional: verify user exists
     $stmtCheck = $conn->prepare("SELECT user_id FROM users WHERE user_id = ?");

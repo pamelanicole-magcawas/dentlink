@@ -29,7 +29,7 @@ $email = $user['email'];
 $message = '';
 $alertScript = '';
 
-/* =================== HANDLE BOOKING =================== */
+// Handle Booking
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'book') {
     $date = $_POST['date'];
     $location = $_POST['location'];
@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         if ($limit_row['total'] >= 2) {
             $alertScript = swalAlertJs('warning', 'Booking Limit Reached!', 'You can only make 2 booking requests per day.');
         } else {
-            // Check conflicts (approved bookings) -- quote column names
+            // Check conflicts (approved bookings) 
             $conflict_sql = "SELECT * FROM appointments 
                              WHERE status = 'approved' 
                              AND `date` = ? 
@@ -99,7 +99,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
 }
 
-/* =================== HANDLE DELETE =================== */
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] === 'delete') {
     $id = intval($_POST['id']);
     $verify_sql = "SELECT * FROM appointments WHERE id = ? AND user_id = ? AND status != 'approved'";
@@ -131,13 +130,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
             }
         } else {
             $verify_stmt->close();
-            // nothing to delete or was approved
             $alertScript = swalAlertJs('warning', 'Cannot Delete', 'Appointment cannot be deleted (may be already approved or does not exist).');
         }
     }
 }
 
-// helper function to produce SweetAlert JS snippet (keeps code DRY)
 function swalAlertJs($icon, $title, $text)
 {
     $icon = addslashes($icon);

@@ -6,11 +6,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if ($_SESSION['role'] !== 'Admin') {
-    header("Location: dashboard.php");
-    exit();
-}
-
 require_once 'db_connect.php';
 
 $user_id = $_SESSION['user_id'];
@@ -354,16 +349,6 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                             </span>
                         </div>
 
-                        <!-- In Treatment Today -->
-                        <div class="stat-card stat-purple">
-                            <div class="stat-icon"><i class="bi bi-activity"></i></div>
-                            <div class="stat-value">${formatNumber(data.in_treatment_today)}</div>
-                            <div class="stat-label">In Treatment Today</div>
-                            <span class="stat-badge" style="background: rgba(167,139,250,0.15); color: #7c3aed;">
-                                Ongoing
-                            </span>
-                        </div>
-
                         <!-- Appointments This Week -->
                         <div class="stat-card stat-info">
                             <div class="stat-icon"><i class="bi bi-calendar-week"></i></div>
@@ -404,6 +389,16 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                             </span>
                         </div>
 
+                        <!-- Average Rating -->
+                        <div class="stat-card stat-warning">
+                            <div class="stat-icon"><i class="bi bi-star-fill"></i></div>
+                            <div class="stat-value">${data.average_rating} <small style="font-size: 1rem; color: #666;">/5</small></div>
+                            <div class="stat-label">Average Rating</div>
+                            <span class="stat-badge" style="background: rgba(251,191,36,0.15); color: #d97706;">
+                                ${formatNumber(data.total_reviews)} Reviews
+                            </span>
+                        </div>
+
                         <!-- Completion Rate -->
                         <div class="stat-card stat-success">
                             <div class="stat-icon"><i class="bi bi-graph-up-arrow"></i></div>
@@ -421,16 +416,6 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                             <div class="stat-label">Most Popular Service</div>
                             <span class="stat-badge" style="background: rgba(128,161,186,0.15); color: #80A1BA;">
                                 ${data.most_popular_service}
-                            </span>
-                        </div>
-
-                        <!-- Average Rating -->
-                        <div class="stat-card stat-warning">
-                            <div class="stat-icon"><i class="bi bi-star-fill"></i></div>
-                            <div class="stat-value">${data.average_rating} <small style="font-size: 1rem; color: #666;">/5</small></div>
-                            <div class="stat-label">Average Rating</div>
-                            <span class="stat-badge" style="background: rgba(251,191,36,0.15); color: #d97706;">
-                                ${formatNumber(data.total_reviews)} Reviews
                             </span>
                         </div>
                     `;

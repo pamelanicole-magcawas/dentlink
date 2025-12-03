@@ -1,7 +1,5 @@
 <?php
-// functions.php
-
-/** Fetch next approved appointment for the user (patient). */
+// Fetch next approved appointment for the user (patient).
 function getNextAppointment($conn, $user_id) {
     $sql = "SELECT DATE_FORMAT(date, '%W, %M %D, %Y') AS formatted_date,
                    TIME_FORMAT(start_time, '%h:%i %p') AS formatted_time,
@@ -31,7 +29,6 @@ function getNextAppointment($conn, $user_id) {
     return trim($msg);
 }
 
-/** Strict YYYY-MM-DD detection */
 function extractDateFromMessage($message) {
     $message = trim($message);
     if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $message)) {
@@ -43,7 +40,6 @@ function extractDateFromMessage($message) {
     return false;
 }
 
-/** Get available slots for a date (returns string) */
 function getAvailableSlots($conn, $date) {
     // Set timezone to local
     date_default_timezone_set('Asia/Manila');
@@ -84,7 +80,7 @@ function getAvailableSlots($conn, $date) {
     }
 
     if (empty($available)) {
-        return "❌ No slots available for " . date('M j, Y', strtotime($date)) . ".";
+        return "No slots available for " . date('M j, Y', strtotime($date)) . ".";
     }
 
     // Build message
@@ -95,7 +91,6 @@ function getAvailableSlots($conn, $date) {
     return $msg;
 }
 
-/** Interpret FUNC_ tokens or query static texts from chat_options */
 function getDynamicResponse($conn, $tokenOrQueryId, $user_id = null) {
     // If numeric, fetch by query_id
     if (is_numeric($tokenOrQueryId)) {

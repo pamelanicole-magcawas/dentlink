@@ -1,6 +1,9 @@
 <?php
-// analytics_widget.php - Include this in admin_dashboard.php
-// This provides a quick overview with link to full analytics
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
+    header("Location: login.php");
+    exit();
+}
 
 if (!isset($conn)) {
     require_once 'db_connect.php';

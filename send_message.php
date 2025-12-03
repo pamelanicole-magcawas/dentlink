@@ -1,5 +1,4 @@
 <?php
-// send_message.php - Save messages from both Patient and Admin
 header('Content-Type: application/json');
 include 'db_config.php';
 include 'functions.php';  
@@ -18,9 +17,7 @@ if (empty($message_text)) {
 
 $user_type = $current_user_type ?? ($_SESSION['role'] ?? 'Patient');
 
-/* ----------------------------------------------------
-   SAVE USER MESSAGE FIRST (Admin → Patient or Patient)
------------------------------------------------------*/
+/* Save User Message First*/
 
 if ($user_type === 'Admin') {
     
@@ -56,9 +53,7 @@ if (!$stmt->execute()) {
 $stmt->close();
 
 
-/* ----------------------------------------------------
-   AUTO SYSTEM REPLY: Check if patient message is a date
------------------------------------------------------*/
+/* AUTO SYSTEM REPLY: Check if patient message is a date */
 
 if ($user_type !== 'Admin') {  // Only patients trigger AI auto-response
 

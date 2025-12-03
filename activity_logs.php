@@ -3,9 +3,12 @@ session_start();
 require "db_connect.php";
 require "log_activity.php";
 
-if (isset($_SESSION['user_id'])) {
-    logActivity($_SESSION['user_id'], "Visited page: Activity Logs");
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
+    header("Location: login.php");
+    exit();
 }
+
+logActivity($_SESSION['user_id'], "Visited page: Activity Logs");
 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 ?>

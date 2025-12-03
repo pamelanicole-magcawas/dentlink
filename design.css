@@ -1,6 +1,4 @@
-/* =============================
-   GENERAL STYLES
-============================= */
+/* General Styles */
 body {
     font-family: 'Poppins', 'Segoe UI', sans-serif;
     color: #333;
@@ -13,16 +11,11 @@ h1, h2, h5, p, a {
     transition: color 0.4s ease, background-color 0.4s ease;
 }
 
-/* =============================
-   SECTION OFFSET FIX FOR NAVBAR
-============================= */
 section {
     scroll-margin-top: 100px;
 }
 
-/* =============================
-   HERO SECTION
-============================= */
+/* Hero Section */
 .hero {
     background: linear-gradient(to bottom right, #e8f1ff, #ffffff);
     height: 90vh;
@@ -39,9 +32,6 @@ section {
     color: #555;
 }
 
-/* =============================
-   ABOUT SECTION
-============================= */
 #about {
     background: linear-gradient(to bottom right, #f8faff, #eef3ff);
     padding: 80px 20px;
@@ -63,9 +53,7 @@ section {
     margin: 0 auto;
 }
 
-/* =============================
-   SERVICES
-============================= */
+/* Services */
 .service-card {
     border: none;
     border-radius: 15px;
@@ -83,9 +71,7 @@ section {
     color: #666 !important;
 }
 
-/* =============================
-   CONTACT SECTION (Light + Dark)
-============================= */
+/* Contact Section */
 #contact {
     background-color: #f8f9fa;
     color: #333;
@@ -124,9 +110,7 @@ section {
 }
 
 
-/* =============================
-   NAVBAR
-============================= */
+/* Navbar */
 .navbar {
     transition: all 0.4s ease;
 }
@@ -139,9 +123,7 @@ section {
     color: #0d6efd !important;
 }
 
-/* =============================
-   BUTTONS
-============================= */
+/* Buttons */
 .btn-primary {
     background-color: #0d6efd;
     border: none;
@@ -160,18 +142,14 @@ section {
     color: #fff;
 }
 
-/* =============================
-   FOOTER
-============================= */
+/* Footer */
 footer {
     background-color: #0d6efd;
     color: #fff;
     transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-/* =============================
-   ANIMATIONS
-============================= */
+/* Animations */
 .fade-in {
   opacity: 1;
   transform: translateY(0);
@@ -191,9 +169,7 @@ section {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* =============================
-   DARK MODE
-============================= */
+/* Dark Mode */
 .dark-mode {
     background-color: #121212;
     color: #eaeaea;
@@ -253,9 +229,7 @@ section {
     color: #eaeaea;
 }
 
-/* =============================
-   RESPONSIVE
-============================= */
+/* Responsive */
 @media (max-width: 768px) {
     .hero {
         height: auto;

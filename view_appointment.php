@@ -27,9 +27,7 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// ------------------------------
-// GROUP APPOINTMENTS BY STATUS
-// ------------------------------
+// Group Appointments
 $pending = [];
 $approvedArr = [];
 $checkedIn = [];

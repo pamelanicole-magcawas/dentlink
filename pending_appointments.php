@@ -1,7 +1,13 @@
 <?php
+session_start(); 
 include 'db_connect.php';
 require "log_activity.php";
 include 'schedule_helper.php';
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
+    header("Location: login.php");
+    exit();
+}
 
 // Fetch pending appointments
 $result = $conn->query("

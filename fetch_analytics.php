@@ -1,5 +1,4 @@
 <?php
-// fetch_analytics.php - API endpoint for dashboard analytics
 header('Content-Type: application/json');
 require_once 'db_connect.php';
 
@@ -151,26 +150,14 @@ try {
         SELECT COUNT(*) as count 
         FROM appointments 
         WHERE status = 'checked-in' 
-        AND date = ?
+        AND DATE(updated_at) = ?
     ");
     $stmt->bind_param("s", $today);
     $stmt->execute();
     $analytics['checked_in_today'] = $stmt->get_result()->fetch_assoc()['count'];
     $stmt->close();
 
-    // 14. In Treatment Today
-    $stmt = $conn->prepare("
-        SELECT COUNT(*) as count 
-        FROM appointments 
-        WHERE status = 'in-treatment' 
-        AND date = ?
-    ");
-    $stmt->bind_param("s", $today);
-    $stmt->execute();
-    $analytics['in_treatment_today'] = $stmt->get_result()->fetch_assoc()['count'];
-    $stmt->close();
-
-    // 15. Denied Appointments (All Time)
+    // 14. Denied Appointments (All Time)
     $stmt = $conn->prepare("
         SELECT COUNT(*) as count 
         FROM appointments 
@@ -180,7 +167,7 @@ try {
     $analytics['denied_appointments_total'] = $stmt->get_result()->fetch_assoc()['count'];
     $stmt->close();
 
-    // 16. Most Popular Service
+    // 15. Most Popular Service
     $stmt = $conn->prepare("
         SELECT description, COUNT(*) as count 
         FROM appointments 
@@ -195,7 +182,7 @@ try {
     $analytics['most_popular_service_count'] = $result ? $result['count'] : 0;
     $stmt->close();
 
-    // 17. Average Reviews Rating
+    // 16. Average Reviews Rating
     $stmt = $conn->prepare("
         SELECT AVG(rating) as avg_rating, COUNT(*) as total_reviews 
         FROM reviews
@@ -206,7 +193,7 @@ try {
     $analytics['total_reviews'] = $result['total_reviews'];
     $stmt->close();
 
-    // 18. Active Patients (logged in last 7 days)
+    // 17. Active Patients (logged in last 7 days)
     $stmt = $conn->prepare("
         SELECT COUNT(DISTINCT user_id) as count 
         FROM activity_logs 
@@ -217,7 +204,7 @@ try {
     $analytics['active_patients_week'] = $stmt->get_result()->fetch_assoc()['count'];
     $stmt->close();
 
-    // 19. Upcoming Appointments (Next 7 Days)
+    // 18. Upcoming Appointments (Next 7 Days)
     $next_week = date('Y-m-d', strtotime('+7 days'));
     $stmt = $conn->prepare("
         SELECT COUNT(*) as count 
@@ -230,7 +217,7 @@ try {
     $analytics['upcoming_appointments_week'] = $stmt->get_result()->fetch_assoc()['count'];
     $stmt->close();
 
-    // 20. Completion Rate (%)
+    // 19. Completion Rate (%)
     $stmt = $conn->prepare("
         SELECT 
             (SELECT COUNT(*) FROM appointments WHERE status = 'completed') as completed,

@@ -1,6 +1,4 @@
-/* ======================================================
-   GLOBAL CHAT (Messenger Style)
-====================================================== */
+/* GLOBAL CHAT (Messenger Style) */
 
 #chat-widget,
 .admin-chat-box {
@@ -23,9 +21,7 @@
     border: 1px solid #e0e0e0;
 }
 
-/* ======================================================
-   HEADER
-====================================================== */
+/* HEADER */
 .chat-header {
     padding: 14px 18px;
     background: #ffffff;
@@ -42,9 +38,7 @@
     color: #1877f2;
 }
 
-/* ======================================================
-   SCROLL AREA
-====================================================== */
+/* SCROLL AREA */
 #chat-window,
 .admin-chat-messages {
     flex: 1;
@@ -64,9 +58,7 @@
     border-radius: 10px;
 }
 
-/* ======================================================
-   MESSAGE BUBBLES (Messenger)
-====================================================== */
+/* MESSAGE BUBBLES (Messenger) */
 .message {
     max-width: 70%;
     padding: 10px 15px;
@@ -114,9 +106,7 @@
     clear: both;
 }
 
-/* ======================================================
-   QUICK OPTIONS
-====================================================== */
+/* QUICK OPTIONS */
 #message-options {
     padding: 12px;
     background: #ffffff;
@@ -142,9 +132,7 @@
     border-color: #8bb9ff;
 }
 
-/* ======================================================
-   INPUT AREA (Messenger)
-====================================================== */
+/* INPUT AREA (Messenger) */
 #chat-input-area,
 .admin-input-area {
     padding: 12px;
@@ -193,9 +181,7 @@
     background: #0f5ec7;
 }
 
-/* ======================================================
-   MOBILE RESPONSIVE
-====================================================== */
+/* MOBILE RESPONSIVE */
 @media (max-width: 650px) {
     #chat-widget {
         width: 92%;

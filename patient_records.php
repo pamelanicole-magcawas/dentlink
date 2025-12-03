@@ -2,6 +2,11 @@
 session_start();
 include 'db_connect.php';
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
+    header("Location: login.php");
+    exit();
+}
+
 function esc($v) { return htmlspecialchars($v, ENT_QUOTES, 'UTF-8'); }
 
 $uploads_dir = __DIR__ . '/upload';

@@ -31,6 +31,8 @@ curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 $response = curl_exec($curl);
 curl_close($curl);
+
+$error_message = isset($_GET['error']) ? urldecode($_GET['error']) : '';
 ?>
 
 <!DOCTYPE html>
@@ -148,7 +150,10 @@ curl_close($curl);
 <body>
     <div class="otp-card">
         <h3>Verify Your Phone</h3>
-        <p>Enter the 6-digit code sent to <b><?= htmlspecialchars($phone) ?></b></p>
+        <?php
+        $maskedPhone = str_repeat('*', strlen($phone) - 4) . substr($phone, -4);
+        ?>
+        <p>Enter the 6-digit code sent to <b><?= $maskedPhone ?></b></p>
 
         <form action="verify_otp.php" method="POST" id="otpForm">
             <input type="hidden" name="phone" value="<?= htmlspecialchars($phone) ?>">
@@ -170,72 +175,72 @@ curl_close($curl);
     </div>
 
     <script>
-        // Countdown 5-minutes
-        let remaining = 300;
+        let remaining = 300; // 5 minutes
         const countdownEl = document.getElementById("countdown");
         const resendBtn = document.getElementById("resendBtn");
 
-        const timer = setInterval(() => {
-            let minutes = Math.floor(remaining / 60);
-            let seconds = remaining % 60;
-            countdownEl.textContent = `${minutes}:${seconds < 10 ? "0"+seconds : seconds}`;
-            remaining--;
-            if (remaining < 0) {
-                clearInterval(timer);
-                document.getElementById("timerText").textContent = "OTP expired";
-                resendBtn.disabled = <?= $_SESSION['otp_resend_count'] >= 3 ? 'true' : 'false' ?>;
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'OTP Expired',
-                    text: 'Please request a new OTP.'
-                });
-            }
-        }, 1000);
+        <?php if($error_message): ?>
+            Swal.fire({icon:'error', title: '<?= $error_message ?>'});
+        <?php endif; ?>
 
-        // OTP input auto-advance/backspace
-        const inputs = document.querySelectorAll(".otp-inputs input");
-        inputs.forEach((input, i) => {
-            input.addEventListener('input', () => {
-                if (input.value.length === 1 && i < inputs.length - 1) inputs[i + 1].focus();
-            });
-            input.addEventListener('keydown', e => {
-                if (e.key === "Backspace" && !input.value && i > 0) inputs[i - 1].focus();
+        resendBtn.disabled = true;
+
+        function startCountdown() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                if (remaining > 0) {
+                    let minutes = Math.floor(remaining / 60);
+                    let seconds = remaining % 60;
+                    countdownEl.textContent = `${minutes}:${seconds < 10 ? "0"+seconds : seconds}`;
+                    remaining--;
+                } else {
+                    clearInterval(timer);
+                    countdownEl.textContent = "Expired";
+                    // Enable resend only if user hasn't reached limit
+                    if (<?= $_SESSION['otp_resend_count'] ?> < 3) {
+                        resendBtn.disabled = false;
+                    }
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'OTP Expired',
+                        text: 'You can resend a new OTP.'
+                    });
+                }
+            }, 1000);
+        }
+
+        let timer;
+        startCountdown();
+
+        // Resend OTP
+        resendBtn.addEventListener('click', () => {
+            resendBtn.disabled = true; // disable immediately to prevent spam
+            fetch('send_otp_ajax.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: '<?= $phone ?>' })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === 'success') {
+                    Swal.fire({ icon: 'success', title: 'OTP Sent', text: 'Check your phone for the new code.' });
+                    remaining = 300; // reset 5 minutes
+                    startCountdown();  // restart countdown
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: res.message });
+                    // Enable button if resend failed and user is under limit
+                    if (<?= $_SESSION['otp_resend_count'] ?> < 3) resendBtn.disabled = false;
+                }
             });
         });
 
-        // Resend OTP AJAX
-        resendBtn.addEventListener('click', () => {
-            if (<?= $_SESSION['otp_resend_count'] ?> >= 3) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Limit Reached',
-                    text: 'You have reached maximum resend attempts.'
-                });
-                return;
-            }
-            fetch('send_otp_ajax.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    phone: '<?= $phone ?>'
-                })
-            }).then(r => r.json()).then(res => {
-                if (res.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'OTP Sent',
-                        text: 'Check your phone for the new code.'
-                    });
-                    remaining = 300;
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: res.message
-                    });
-                }
+        // Auto-advance OTP inputs
+        document.querySelectorAll(".otp-inputs input").forEach((input, i, arr) => {
+            input.addEventListener("input", () => {
+                if (input.value && i < arr.length - 1) arr[i + 1].focus();
+            });
+            input.addEventListener("keydown", e => {
+                if (e.key === "Backspace" && !input.value && i > 0) arr[i - 1].focus();
             });
         });
     </script>

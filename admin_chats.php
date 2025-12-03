@@ -1,6 +1,11 @@
 <?php
 include 'db_config.php';
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
+    header("Location: login.php");
+    exit();
+}
+
 $sql = "SELECT DISTINCT 
             u.user_id, 
             u.first_name, 

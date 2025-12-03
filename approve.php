@@ -1,5 +1,4 @@
 <?php
-// approve.php
 require_once 'db_connect.php';
 date_default_timezone_set('Asia/Manila');
 

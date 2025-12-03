@@ -1,5 +1,12 @@
 <?php
+session_start();
 include 'db_connect.php';
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
+    header("Location: login.php");
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -365,31 +372,31 @@ include 'db_connect.php';
                 }
 
                 echo "<div class='summary-grid'>
-        <div class='summary-box'>
-            <div class='summary-box-title'><i class='bi bi-people-fill'></i> User Statistics</div>
-            <p><i class='bi bi-people-fill'></i> Total Users <span class='stat-value'>$total_users</span></p>
-            <p><i class='bi bi-gender-male'></i> Male Users <span class='stat-value'>$male_users</span></p>
-            <p><i class='bi bi-gender-female'></i> Female Users <span class='stat-value'>$female_users</span></p>
-        </div>
-    </div>";
+                    <div class='summary-box'>
+                        <div class='summary-box-title'><i class='bi bi-people-fill'></i> User Statistics</div>
+                        <p><i class='bi bi-people-fill'></i> Total Users <span class='stat-value'>$total_users</span></p>
+                        <p><i class='bi bi-gender-male'></i> Male Users <span class='stat-value'>$male_users</span></p>
+                        <p><i class='bi bi-gender-female'></i> Female Users <span class='stat-value'>$female_users</span></p>
+                    </div>
+                </div>";
 
                 echo "<div class='chart-container'>
-        <h4><i class='bi bi-pie-chart-fill'></i> User Gender Distribution</h4>
-        <div class='chart-wrapper'>
-            <canvas id='genderChart'></canvas>
-        </div>
-    </div>
-    <script>
-    const genderCtx = document.getElementById('genderChart').getContext('2d');
-    new Chart(genderCtx, {
-        type: 'pie',
-        data: {
-            labels: ['Male', 'Female'],
-            datasets: [{ data: [$male_users, $female_users], backgroundColor: ['#80A1BA', '#91C4C3'], borderWidth: 3, borderColor: '#fff' }]
-        },
-        options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{ size:14, family:'Poppins' } } } } }
-    });
-    </script>";
+                        <h4><i class='bi bi-pie-chart-fill'></i> User Gender Distribution</h4>
+                            <div class='chart-wrapper'>
+                                <canvas id='genderChart'></canvas>
+                            </div>
+                    </div>
+                <script>
+                    const genderCtx = document.getElementById('genderChart').getContext('2d');
+                    new Chart(genderCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Male', 'Female'],
+                            datasets: [{ data: [$male_users, $female_users], backgroundColor: ['#80A1BA', '#91C4C3'], borderWidth: 3, borderColor: '#fff' }]
+                        },
+                        options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{ size:14, family:'Poppins' } } } } }
+                    });
+                </script>";
             }
 
             // SERVICES REPORT
@@ -426,26 +433,26 @@ include 'db_connect.php';
                 $service_data_json = json_encode($service_data);
 
                 echo "<div class='summary-grid'>
-                <div class='summary-box'>
-                    <div class='summary-box-title'><i class='bi bi-clipboard-pulse'></i> Service Statistics</div>
-                    <p><i class='bi bi-list-task'></i> Total Procedures <span class='stat-value'>" . array_sum($service_data) . "</span></p>
-                    <p><i class='bi bi-award-fill'></i> Top Service <span class='stat-value'>$top_service</span></p>
-                    <p><i class='bi bi-geo-alt-fill'></i> Top Location <span class='stat-value'>$top_location</span></p>
-                </div>
-              </div>";
+                    <div class='summary-box'>
+                        <div class='summary-box-title'><i class='bi bi-clipboard-pulse'></i> Service Statistics</div>
+                        <p><i class='bi bi-list-task'></i> Total Procedures <span class='stat-value'>" . array_sum($service_data) . "</span></p>
+                        <p><i class='bi bi-award-fill'></i> Top Service <span class='stat-value'>$top_service</span></p>
+                        <p><i class='bi bi-geo-alt-fill'></i> Top Location <span class='stat-value'>$top_location</span></p>
+                    </div>
+                </div>";
 
                 echo "<div class='chart-container'>
-                <h4><i class='bi bi-bar-chart-fill'></i> Top Services / Most Chosen Procedures</h4>
-                <div class='chart-wrapper'><canvas id='servicesChart'></canvas></div>
-              </div>
-              <script>
-              const servicesCtx = document.getElementById('servicesChart').getContext('2d');
-              new Chart(servicesCtx, {
-                  type: 'bar',
-                  data: { labels: $service_labels_json, datasets: [{ label:'Number of Appointments', data: $service_data_json, backgroundColor:'#80A1BA', borderColor:'#91C4C3', borderWidth:2, borderRadius:8 }] },
-                  options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ font:{ family:'Poppins' } } }, x:{ ticks:{ font:{ family:'Poppins' } } } } }
-              });
-              </script>";
+                        <h4><i class='bi bi-bar-chart-fill'></i> Top Services / Most Chosen Procedures</h4>
+                    <div class='chart-wrapper'><canvas id='servicesChart'></canvas></div>
+                </div>
+                <script>
+                const servicesCtx = document.getElementById('servicesChart').getContext('2d');
+                new Chart(servicesCtx, {
+                    type: 'bar',
+                    data: { labels: $service_labels_json, datasets: [{ label:'Number of Appointments', data: $service_data_json, backgroundColor:'#80A1BA', borderColor:'#91C4C3', borderWidth:2, borderRadius:8 }] },
+                    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ font:{ family:'Poppins' } } }, x:{ ticks:{ font:{ family:'Poppins' } } } } }
+                });
+                </script>";
             }
 
             // APPOINTMENTS REPORT
@@ -466,36 +473,70 @@ include 'db_connect.php';
                 $stmt->execute();
                 $appts = $stmt->get_result();
 
-                $total = $approved = $pending = $denied = 0;
+                $total = $approved = $pending = $denied = $checked_in = $completed = 0;
+
                 while ($a = $appts->fetch_assoc()) {
                     $total++;
-                    if ($a['status'] == "approved") $approved++;
-                    if ($a['status'] == "pending") $pending++;
-                    if ($a['status'] == "denied") $denied++;
+                    switch ($a['status']) {
+                        case "approved":
+                            $approved++;
+                            break;
+                        case "pending":
+                            $pending++;
+                            break;
+                        case "denied":
+                            $denied++;
+                            break;
+                        case "checked-in":
+                            $checked_in++;
+                            break;
+                        case "completed":
+                            $completed++;
+                            break;
+                    }
                 }
 
                 echo "<div class='summary-grid'>
-                <div class='summary-box'>
-                    <div class='summary-box-title'><i class='bi bi-calendar-check'></i> Appointment Statistics</div>
-                    <p><i class='bi bi-calendar-check-fill'></i> Total Appointments <span class='stat-value'>$total</span></p>
-                    <p><i class='bi bi-check-circle-fill'></i> Approved <span class='stat-value'>$approved</span></p>
-                    <p><i class='bi bi-clock-fill'></i> Pending <span class='stat-value'>$pending</span></p>
-                    <p><i class='bi bi-x-circle-fill'></i> Denied <span class='stat-value'>$denied</span></p>
-                </div>
-              </div>";
+                    <div class='summary-box'>
+                        <div class='summary-box-title'><i class='bi bi-calendar-check'></i> Appointment Statistics</div>
+                        <p><i class='bi bi-calendar-check-fill'></i> Total Appointments <span class='stat-value'>$total</span></p>
+                        <p><i class='bi bi-check-circle-fill'></i> Approved <span class='stat-value'>$approved</span></p>
+                        <p><i class='bi bi-clock-fill'></i> Pending <span class='stat-value'>$pending</span></p>
+                        <p><i class='bi bi-x-circle-fill'></i> Denied <span class='stat-value'>$denied</span></p>
+                        <p><i class='bi bi-door-open-fill'></i> Checked In <span class='stat-value'>$checked_in</span></p>
+                        <p><i class='bi bi-check-square-fill'></i> Completed <span class='stat-value'>$completed</span></p>
+                    </div>
+                </div>";
 
                 echo "<div class='chart-container'>
-                <h4><i class='bi bi-pie-chart-fill'></i> Appointment Status Breakdown</h4>
-                <div class='chart-wrapper'><canvas id='appointmentsChart'></canvas></div>
-              </div>
-              <script>
-              const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
-              new Chart(appointmentsCtx, {
-                  type:'doughnut',
-                  data:{ labels:['Approved','Pending','Denied'], datasets:[{ data:[$approved,$pending,$denied], backgroundColor:['#80A1BA','#91C4C3','#B4DEBD'], borderWidth:3, borderColor:'#fff' }]},
-                  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{ size:14, family:'Poppins' } } } } }
-              });
-              </script>";
+                    <h4><i class='bi bi-pie-chart-fill'></i> Appointment Status Breakdown</h4>
+                    <div class='chart-wrapper'><canvas id='appointmentsChart'></canvas></div>
+                </div>
+                <script>
+                const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
+                new Chart(appointmentsCtx, {
+                    type:'doughnut',
+                    data:{
+                        labels:['Approved','Pending','Denied','Checked In','Completed'],
+                        datasets:[{
+                            data:[$approved,$pending,$denied,$checked_in,$completed],
+                            backgroundColor:['#80A1BA','#91C4C3','#B4DEBD','#FACC15','#059669'],
+                            borderWidth:3,
+                            borderColor:'#fff'
+                        }]
+                    },
+                    options:{
+                        responsive:true,
+                        maintainAspectRatio:false,
+                        plugins:{
+                            legend:{
+                                position:'bottom',
+                                labels:{ font:{ size:14, family:'Poppins' } }
+                            }
+                        }
+                    }
+                });
+                </script>";
             }
 
             // REVIEWS REPORT
@@ -525,28 +566,28 @@ include 'db_connect.php';
                 $ratings_json = json_encode(array_values($rating_counts));
 
                 echo "<div class='summary-grid'>
-                <div class='summary-box'>
-                    <div class='summary-box-title'><i class='bi bi-star-fill'></i> Reviews Statistics</div>
-                    <p><i class='bi bi-star-half'></i> Average Rating <span class='stat-value'>$average_rating</span></p>
-                    <p><i class='bi bi-chat-text'></i> Total Reviews <span class='stat-value'>$total_reviews</span></p>
-                </div>
-              </div>";
+                    <div class='summary-box'>
+                        <div class='summary-box-title'><i class='bi bi-star-fill'></i> Reviews Statistics</div>
+                        <p><i class='bi bi-star-half'></i> Average Rating <span class='stat-value'>$average_rating</span></p>
+                        <p><i class='bi bi-chat-text'></i> Total Reviews <span class='stat-value'>$total_reviews</span></p>
+                    </div>
+                </div>";
 
                 echo "<div class='chart-container'>
-                <h4><i class='bi bi-bar-chart-fill'></i> Rating Distribution</h4>
-                <div class='chart-wrapper'><canvas id='reviewsChart'></canvas></div>
-              </div>
-              <script>
-              const reviewsCtx = document.getElementById('reviewsChart').getContext('2d');
-              new Chart(reviewsCtx,{
-                  type:'bar',
-                  data:{
-                      labels:['1 Star','2 Star','3 Star','4 Star','5 Star'],
-                      datasets:[{ label:'Number of Reviews', data:$ratings_json, backgroundColor:'#91C4C3', borderColor:'#80A1BA', borderWidth:2, borderRadius:8 }]
-                  },
-                  options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ font:{ family:'Poppins' } } }, x:{ ticks:{ font:{ family:'Poppins' } } } } }
-              });
-              </script>";
+                    <h4><i class='bi bi-bar-chart-fill'></i> Rating Distribution</h4>
+                    <div class='chart-wrapper'><canvas id='reviewsChart'></canvas></div>
+                </div>
+                <script>
+                const reviewsCtx = document.getElementById('reviewsChart').getContext('2d');
+                new Chart(reviewsCtx,{
+                    type:'bar',
+                    data:{
+                        labels:['1 Star','2 Star','3 Star','4 Star','5 Star'],
+                        datasets:[{ label:'Number of Reviews', data:$ratings_json, backgroundColor:'#91C4C3', borderColor:'#80A1BA', borderWidth:2, borderRadius:8 }]
+                    },
+                    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ font:{ family:'Poppins' } } }, x:{ ticks:{ font:{ family:'Poppins' } } } } }
+                });
+                </script>";
             }
         }
         ?>
