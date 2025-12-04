@@ -54,8 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $check = getimagesize($_FILES["profile_pic"]["tmp_name"]);
         if ($check === false) {
             $errors['profile_pic'] = "File is not a valid image";
-        } elseif ($_FILES["profile_pic"]["size"] > 900000) {
-            $errors['profile_pic'] = "File too large. Maximum 900KB";
+        } elseif ($_FILES["profile_pic"]["size"] > 2000000) {
+            $errors['profile_pic'] = "File too large. Max 2MB";
         } elseif (!in_array($imageFileType, ['jpg', 'jpeg', 'png'])) {
             $errors['profile_pic'] = "Only JPG, JPEG, PNG allowed";
         } else {
