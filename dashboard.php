@@ -678,7 +678,6 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                             <label for="feedback" class="form-label">Your Feedback <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="feedback" name="feedback" rows="4" minlength="5" maxlength="200" required placeholder="Share your experience (5-200 characters)"></textarea>
                             <div class="d-flex justify-content-between mt-1">
-                                <small class="text-muted">Minimum 5 characters</small>
                                 <small class="text-muted"><span id="charCount">0</span>/200</small>
                             </div>
                         </div>
