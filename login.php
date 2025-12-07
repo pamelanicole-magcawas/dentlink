@@ -53,11 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 header("Location: " . ($user['role'] === 'Admin' ? "admin_dashboard.php" : "dashboard.php"));
                 exit;
-
             } else {
                 $passwordErr = "Incorrect password";
             }
-
         } else {
             $emailErr = "Email not registered";
         }
@@ -87,8 +85,27 @@ $conn->close();
             <img src="dentlink-logo.png" alt="DentLink Logo">
             <p class="mt-3"><strong>DentLink: Dental Clinic Digital Appointment and Patient Records Management System</strong></p>
             <div class="info-box mt-3">
-                <p><strong>DentLink</strong> simplifies dental appointment scheduling and patient record management. Patients can book online, check time slots, and get email notifications.</p>
-                <p>The system ensures accurate record-keeping by tracking treatment histories and identifying new or returning patients for reliable dental services.</p>
+                <p class="mb-3">DentLink makes dental care simple and convenient with our modern booking system.</p>
+
+                <div class="mb-2">
+                    <strong><i class="bi bi-mouse"></i> Easy Online Booking</strong>
+                    <p class="mb-0">Book appointments anytime, anywhere with just a few clicks.</p>
+                </div>
+
+                <div class="mb-2">
+                    <strong><i class="bi bi-bell"></i> Appointment Reminders</strong>
+                    <p class="mb-0">Never miss an appointment with automated email notifications.</p>
+                </div>
+
+                <div class="mb-2">
+                    <strong><i class="bi bi-chat-dots"></i> Live Chat Support</strong>
+                    <p class="mb-0">Connect with our staff instantly through our chat system.</p>
+                </div>
+
+                <div class="mb-2">
+                    <strong><i class="bi bi-qr-code"></i> QR Code Check-in</strong>
+                    <p class="mb-0">Fast and contactless check-in with your unique QR code.</p>
+                </div>
             </div>
         </div>
 
@@ -103,17 +120,18 @@ $conn->close();
 
                 <form method="POST" action="">
                     <div class="mb-3">
-                        <input type="email" name="email" class="form-control <?= !empty($emailErr) ? 'is-invalid' : '' ?>" placeholder="Email Address" value="<?= htmlspecialchars($email); ?>">
-                        <?php if (!empty($emailErr)) : ?>
-                            <div class="invalid-feedback"><?= $emailErr; ?></div>
-                        <?php endif; ?>
+                        <input type="email" name="email"
+                            class="form-control <?= !empty($emailErr) ? 'is-invalid' : '' ?>"
+                            placeholder="Email Address"
+                            value="<?= htmlspecialchars($email); ?>">
+                        <div class="invalid-feedback"><?= $emailErr; ?></div>
                     </div>
 
                     <div class="mb-3">
-                        <input type="password" name="password" class="form-control <?= !empty($passwordErr) ? 'is-invalid' : '' ?>" placeholder="Password">
-                        <?php if (!empty($passwordErr)) : ?>
-                            <div class="invalid-feedback"><?= $passwordErr; ?></div>
-                        <?php endif; ?>
+                        <input type="password" name="password"
+                            class="form-control <?= !empty($passwordErr) ? 'is-invalid' : '' ?>"
+                            placeholder="Password">
+                        <div class="invalid-feedback"><?= $passwordErr; ?></div>
                     </div>
 
                     <div class="d-grid mb-3">
@@ -134,5 +152,64 @@ $conn->close();
         </div>
     </div>
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            $("input[name='email']").on("input", function() {
+                let value = $(this).val().trim();
+                let errorBox = $(this).siblings(".invalid-feedback");
+
+                if (value === "") {
+                    $(this).removeClass("is-valid").addClass("is-invalid");
+                    errorBox.text("Please enter your email");
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    $(this).removeClass("is-valid").addClass("is-invalid");
+                    errorBox.text("Invalid email format");
+                } else {
+                    $(this).removeClass("is-invalid").addClass("is-valid");
+                    errorBox.text(""); 
+                }
+            });
+
+            $("input[name='password']").on("input", function() {
+                let value = $(this).val();
+                let errorBox = $(this).siblings(".invalid-feedback");
+
+                if (value === "") {
+                    $(this).removeClass("is-valid").addClass("is-invalid");
+                    errorBox.text("Please enter your password");
+                } else if (value.length < 5 || value.length > 15) {
+                    $(this).removeClass("is-valid").addClass("is-invalid");
+                    errorBox.text("Password must be 5–15 characters long");
+                } else {
+                    $(this).removeClass("is-invalid").addClass("is-valid");
+                    errorBox.text(""); 
+                }
+            });
+
+            // Prevent submit if invalid
+            $("form").on("submit", function(e) {
+                let email = $("input[name='email']");
+                let password = $("input[name='password']");
+                let hasError = false;
+
+                if (email.val().trim() === "" || email.hasClass("is-invalid")) {
+                    email.addClass("is-invalid");
+                    hasError = true;
+                }
+
+                if (password.val().trim() === "" || password.hasClass("is-invalid")) {
+                    password.addClass("is-invalid");
+                    hasError = true;
+                }
+
+                if (hasError) e.preventDefault();
+            });
+
+        });
+    </script>
 </body>
+
 </html>

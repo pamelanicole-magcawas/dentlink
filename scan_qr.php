@@ -15,7 +15,7 @@
 <body class="admin-page">
 
     <a href="admin_dashboard.php" class="btn-back-dashboard">
-        <i class="bi bi-arrow-left"></i> Back to Dashboard
+        <i class="bi bi-arrow-left"></i> Back
     </a>
 
     <div class="admin-page-header" style="max-width: 700px; margin: 0 auto 25px auto;">

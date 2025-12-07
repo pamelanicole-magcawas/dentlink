@@ -36,8 +36,8 @@ if ($q) $options = $q->fetch_all(MYSQLI_ASSOC);
                     <i class="bi bi-chat-dots-fill"></i>
                 </div>
                 <div class="chat-header-info">
-                    <p class="chat-header-title">Chat with Admin</p>
-                    <p class="chat-header-subtitle">We're here to help!</p>
+                    <p class="chat-header-title">Smilo</p>
+                    <p class="chat-header-subtitle">We're here to help you!</p>
                 </div>
             </div>
 

@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($address)) $errors['address'] = "Address is required";
 
     if (empty($gender)) $errors['gender'] = "Please select your gender";
-    elseif (!in_array($gender, ['Male', 'Female', 'Prefer not to say'])) 
-    $errors['gender'] = "Invalid selection";
+    elseif (!in_array($gender, ['Male', 'Female', 'Prefer not to say']))
+        $errors['gender'] = "Invalid selection";
 
     if (empty($password)) $errors['password'] = "Password is required";
     elseif (!preg_match("/^.{5,15}$/", $password)) $errors['password'] = "Password must be 5–15 characters";
@@ -123,9 +123,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="left-side d-flex flex-column justify-content-center align-items-center text-center p-5">
             <img src="dentlink-logo.png" alt="DentLink Logo">
             <p class="mt-3"><strong>DentLink: Dental Clinic Digital Appointment and Patient Records Management System</strong></p>
-            <div class="info-box mt-3">
-                <p><strong>DentLink</strong> simplifies dental appointment scheduling and patient record management. Patients can book online, check time slots, and get email notifications.</p>
-                <p>The system ensures accurate record-keeping by tracking treatment histories and identifying new or returning patients for reliable dental services.</p>
+            <p class="mt-3"><strong>DentLink: Dental Clinic Digital Appointment and Patient Records Management System</strong></p>
+                        <div class="info-box mt-3">
+                <p class="mb-3">DentLink makes dental care simple and convenient with our modern booking system.</p>
+                
+                <div class="mb-2">
+                    <strong><i class="bi bi-mouse"></i> Easy Online Booking</strong>
+                    <p class="mb-0">Book appointments anytime, anywhere with just a few clicks.</p>
+                </div>
+                
+                <div class="mb-2">
+                    <strong><i class="bi bi-bell"></i> Appointment Reminders</strong>
+                    <p class="mb-0">Never miss an appointment with automated email notifications.</p>
+                </div>
+                
+                <div class="mb-2">
+                    <strong><i class="bi bi-chat-dots"></i> Live Chat Support</strong>
+                    <p class="mb-0">Connect with our staff instantly through our chat system.</p>
+                </div>
+                
+                <div class="mb-2">
+                    <strong><i class="bi bi-qr-code"></i> QR Code Check-in</strong>
+                    <p class="mb-0">Fast and contactless check-in with your unique QR code.</p>
+                </div>
             </div>
         </div>
 
@@ -204,12 +224,119 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         const fileInput = document.getElementById('profile_pic');
         const fileChosen = document.getElementById('file-chosen');
 
         fileInput.addEventListener('change', function() {
             fileChosen.textContent = this.files[0] ? this.files[0].name : "No file chosen";
+        });
+
+        $(document).ready(function() {
+
+            // Show chosen file name
+            $("#profile_pic").on("change", function() {
+                $("#file-chosen").text(this.files[0] ? this.files[0].name : "No file chosen");
+            });
+
+            // Main validation function
+            function validateField(field) {
+                let value = field.val().trim();
+                let name = field.attr("name");
+                let errorBox = field.siblings(".invalid-feedback");
+
+                // Create error box if missing (Bootstrap requires it)
+                if (errorBox.length === 0) {
+                    field.after('<div class="invalid-feedback"></div>');
+                    errorBox = field.siblings(".invalid-feedback");
+                }
+
+                // Reset error
+                field.removeClass("is-invalid");
+                errorBox.text("");
+
+                // FIRST NAME & LAST NAME
+                if (name === "first_name" || name === "last_name") {
+                    if (value === "") return setError("This field is required");
+                    if (!/^[a-zA-Z-' ]+$/.test(value)) return setError("Only letters and spaces allowed");
+                }
+
+                // EMAIL
+                if (name === "email") {
+                    if (value === "") return setError("Email is required");
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return setError("Invalid email format");
+                }
+
+                // PHONE
+                if (name === "phone") {
+                    if (!/^[0-9]{11}$/.test(value))
+                        return setError("Phone number must be exactly 11 digits");
+                }
+
+                // ADDRESS
+                if (name === "address") {
+                    if (value === "") return setError("Address is required");
+                }
+
+                // GENDER (select)
+                if (name === "gender") {
+                    if (value === "") return setError("Please select your gender");
+                }
+
+                // PASSWORD
+                if (name === "password") {
+                    if (value.length < 5 || value.length > 15)
+                        return setError("Password must be 5–15 characters");
+                }
+
+                // CONFIRM PASSWORD
+                if (name === "confirm_password") {
+                    let password = $("input[name='password']").val();
+                    if (value !== password) return setError("Passwords do not match");
+                }
+
+                // PROFILE PIC (live front-end check)
+                if (name === "profile_pic") {
+                    let file = field[0].files[0];
+                    if (!file) return setError("Please upload a profile picture");
+
+                    let fileType = file.type;
+                    let fileSize = file.size;
+
+                    if (!["image/jpeg", "image/png", "image/jpg"].includes(fileType))
+                        return setError("Only JPG, JPEG, PNG allowed");
+
+                    if (fileSize > 2 * 1024 * 1024)
+                        return setError("File too large. Max 2MB");
+                }
+
+                // No error
+                function setError(msg) {
+                    field.addClass("is-invalid");
+                    errorBox.text(msg);
+                    return false;
+                }
+
+                return true;
+            }
+
+            // Live validation (every input & select)
+            $("input, select").on("input change", function() {
+                validateField($(this));
+            });
+
+            // Validate all fields before submit
+            $("form").on("submit", function(e) {
+                let hasError = false;
+
+                $("input, select").each(function() {
+                    if (!validateField($(this))) hasError = true;
+                });
+
+                if (hasError) e.preventDefault();
+            });
+
         });
     </script>
 </body>

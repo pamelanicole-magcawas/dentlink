@@ -390,13 +390,24 @@ while ($appt = $result->fetch_assoc()) {
 <body>
     <div class="container-fluid">
         <a href="dashboard.php" class="btn-back-dashboard">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
+            <i class="bi bi-arrow-left"></i> Back
         </a>
 
         <div class="page-header mb-4">
             <h1><i class="bi bi-calendar-check"></i> My Appointments</h1>
-            <p class="text-muted mb-0">Welcome, <strong><?= htmlspecialchars($full_name) ?></strong></p>
             <small class="text-muted">Click an appointment card to view full details</small>
+        </div>
+
+        <div class="mb-4">
+            <label for="statusFilter" class="form-label fw-bold">Filter by Status:</label>
+            <select id="statusFilter" class="form-select" style="max-width: 250px; background-color: #f8f9fa; color: #212529; border: 2px solid #6c757d;">
+                <option value="all" selected>All</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="checked-in">Checked-In</option>
+                <option value="completed">Completed</option>
+                <option value="denied">Denied</option>
+            </select>
         </div>
 
         <?php if (!empty($pending) || !empty($approvedArr) || !empty($checkedIn) || !empty($completed) || !empty($deniedArr)): ?>
@@ -726,7 +737,7 @@ while ($appt = $result->fetch_assoc()) {
                                             <?php endif; ?>
                                             <div class="mt-2 p-2" style="border-left: 4px solid #dc2626; background-color: #fee2e2; border-radius: 8px;">
                                                 <p class="mb-0">
-                                                    <strong style="color: #991b1b;"><i class="bi bi-exclamation-triangle-fill me-1"></i> Remarks:</strong> 
+                                                    <strong style="color: #991b1b;"><i class="bi bi-exclamation-triangle-fill me-1"></i> Remarks:</strong>
                                                     <span style="color: #7f1d1d;"><?= htmlspecialchars($appt['denial_reason']) ?></span>
                                                 </p>
                                             </div>
@@ -836,6 +847,27 @@ while ($appt = $result->fetch_assoc()) {
                 navigator.clipboard.writeText(qrUrl).then(() => alert('QR code link copied!')).catch(() => alert('QR code link: ' + qrUrl));
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const filter = document.getElementById('statusFilter');
+            const sections = document.querySelectorAll('.status-section');
+
+            filter.addEventListener('change', function() {
+                const value = this.value.toLowerCase();
+
+                sections.forEach(section => {
+                    // Check section class: 'pending', 'approved', etc.
+                    if (value === 'all') {
+                        section.style.display = 'block';
+                    } else if (section.classList.contains(value)) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+        });
     </script>
 </body>
+
 </html>

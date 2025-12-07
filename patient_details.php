@@ -570,7 +570,7 @@ unset($_SESSION['success_message']);
 <body class="admin-records-page">
 
     <a href="patient_records.php" class="btn-back-dashboard">
-        <i class="bi bi-arrow-left"></i> Back to Dashboard
+        <i class="bi bi-arrow-left"></i> Back
     </a>
 
     <?php if ($success_message): ?>

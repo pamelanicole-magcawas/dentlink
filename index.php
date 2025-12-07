@@ -27,9 +27,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link px-3" href="#home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#services">Services</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#features">Features</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#services">Services</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#reviews">Reviews</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#contact">Contact</a></li>
                 </ul>
@@ -96,6 +95,57 @@
             </svg>
         </div>
     </section>
+    
+    <!-- About Section -->
+    <section id="about" class="about-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Text Content -->
+                <div class="col-lg-6 order-lg-2">
+                    <div class="about-content">
+                        <span class="section-badge">About DentLink</span>
+                        <h2>Your Trusted Dental Partner</h2>
+                        <p class="mb-4">At DentLink, we combine state-of-the-art dental technology with a patient-centered approach to deliver exceptional care. Our experienced team of dental professionals is dedicated to helping you achieve and maintain optimal oral health in a comfortable, welcoming environment.</p>
+                        <p class="mb-4">We believe that everyone deserves a healthy, beautiful smile. Whether you need routine preventive care, cosmetic enhancements, or complex restorative treatments, we're here to guide you every step of the way with personalized treatment plans tailored to your unique needs.</p>
+
+                        <div class="row g-3 mt-4">
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill fs-4 me-3" style="color: #B4DEBD;"></i>
+                                    <span>Experienced Dentists</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill fs-4 me-3" style="color: #B4DEBD;"></i>
+                                    <span>Modern Equipment</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill fs-4 me-3" style="color: #B4DEBD;"></i>
+                                    <span>Comfortable Environment</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-check-circle-fill fs-4 me-3" style="color: #B4DEBD;"></i>
+                                    <span>Affordable Rates</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Content -->
+                <div class="col-lg-6 order-lg-1">
+                    <div class="about-image" style="height: 300px; width: 100%; overflow: hidden;">
+                        <img src="dental.jpg" alt="Dental Clinic" class="img-fluid rounded shadow" style="object-fit: cover; width: 100%; height: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Services Section -->
     <section id="services" class="services-section">
@@ -146,107 +196,6 @@
                         <div class="service-icon"><i class="bi bi-shield-plus"></i></div>
                         <h4>Emergency Care</h4>
                         <p>Immediate attention for dental emergencies and urgent oral health issues.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="features-content">
-                        <span class="section-badge">Why Choose Us</span>
-                        <h2>Smart Appointment Management</h2>
-                        <p>DentLink makes dental care simple and convenient with our modern booking system.</p>
-                        <div class="feature-list">
-                            <div class="feature-item">
-                                <div class="feature-icon"><i class="bi bi-calendar-check"></i></div>
-                                <div>
-                                    <h5>Easy Online Booking</h5>
-                                    <p>Book appointments anytime, anywhere with just a few clicks.</p>
-                                </div>
-                            </div>
-                            <div class="feature-item">
-                                <div class="feature-icon"><i class="bi bi-bell"></i></div>
-                                <div>
-                                    <h5>Appointment Reminders</h5>
-                                    <p>Never miss an appointment with automated email notifications.</p>
-                                </div>
-                            </div>
-                            <div class="feature-item">
-                                <div class="feature-icon"><i class="bi bi-chat-dots"></i></div>
-                                <div>
-                                    <h5>Live Chat Support</h5>
-                                    <p>Connect with our staff instantly through our chat system.</p>
-                                </div>
-                            </div>
-                            <div class="feature-item">
-                                <div class="feature-icon"><i class="bi bi-qr-code"></i></div>
-                                <div>
-                                    <h5>QR Code Check-in</h5>
-                                    <p>Fast and contactless check-in with your unique QR code.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="features-image">
-                        <div class="feature-card main-card">
-                            <div class="card-header-mock">
-                                <span class="dot red"></span>
-                                <span class="dot yellow"></span>
-                                <span class="dot green"></span>
-                            </div>
-                            <div class="card-body-mock">
-                                <div class="mock-calendar"></div>
-                                <div class="mock-appointment">
-                                    <i class="bi bi-check-circle-fill text-success"></i>
-                                    <span>Appointment Confirmed</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="about-section">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6 order-lg-2">
-                    <div class="about-content">
-                        <span class="section-badge">About DentLink</span>
-                        <h2>Your Trusted Dental Partner</h2>
-                        <p>DentLink is a modern dental clinic management system designed to provide seamless healthcare experiences. Our platform connects patients with expert dentists, making dental care accessible and convenient.</p>
-                        <p>With state-of-the-art facilities and a team of experienced professionals, we're committed to delivering the highest quality dental care in a comfortable environment.</p>
-                        <div class="about-stats">
-                            <div class="about-stat">
-                                <i class="bi bi-award"></i>
-                                <span>Certified Professionals</span>
-                            </div>
-                            <div class="about-stat">
-                                <i class="bi bi-geo-alt"></i>
-                                <span>Convenient Locations</span>
-                            </div>
-                            <div class="about-stat">
-                                <i class="bi bi-clock-history"></i>
-                                <span>Flexible Hours</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 order-lg-1">
-                    <div class="about-image">
-                        <div class="experience-badge">
-                            <h3>5+</h3>
-                            <p>Years of Excellence</p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -414,9 +363,6 @@
                                 </a>
                                 <a href="https://www.facebook.com/share/17pXfpRbSF/?mibextid=wwXIfr" target="_blank" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #6FA8A7; color: white;" title="SG Dental Clinic - Sta. Rosa Branch">
                                     <i class="bi bi-facebook"></i>
-                                </a>
-                                <a href="mailto:sgdentalclinic@gmail.com" class="btn btn-sm rounded-circle social-btn" style="width: 40px; height: 40px; padding: 8px; background-color: #B4DEBD; color: white;">
-                                    <i class="bi bi-envelope"></i>
                                 </a>
                             </div>
                         </div>

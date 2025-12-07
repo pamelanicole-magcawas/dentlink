@@ -423,7 +423,7 @@ $appt->close();
 <body>
 
     <a href="dashboard.php" class="btn-back-dashboard">
-        <i class="bi bi-arrow-left"></i> Back to Dashboard
+        <i class="bi bi-arrow-left"></i> Back 
     </a>
 
     <h2 class="page-title">My Records</h2>
