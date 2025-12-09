@@ -189,6 +189,37 @@ while ($appt = $result->fetch_assoc()) {
             color: #5A6C7D;
         }
 
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(128, 161, 186, 0.1);
+        }
+
+        .filter-section label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-section select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px 16px;
+            transition: all 0.3s ease;
+            max-width: 300px;
+        }
+
+        .filter-section select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(128, 161, 186, 0.25);
+            outline: none;
+        }
+
         /* Status Strips – Pastel Theme */
         .status-strip.status-pending {
             background: linear-gradient(135deg, #F3D9AA 0%, #E7C892 100%);
@@ -398,10 +429,13 @@ while ($appt = $result->fetch_assoc()) {
             <small class="text-muted">Click an appointment card to view full details</small>
         </div>
 
-        <div class="mb-4">
-            <label for="statusFilter" class="form-label fw-bold">Filter by Status:</label>
-            <select id="statusFilter" class="form-select" style="max-width: 250px; background-color: #f8f9fa; color: #212529; border: 2px solid #6c757d;">
-                <option value="all" selected>All</option>
+        <div class="filter-section">
+            <label for="statusFilter">
+                <i class="bi bi-funnel"></i>
+                Filter by Status
+            </label>
+            <select id="statusFilter" class="form-select">
+                <option value="all" selected>All Appointments</option>
                 <option value="pending">Pending</option>
                 <option value="approved">Approved</option>
                 <option value="checked-in">Checked-In</option>
