@@ -40,7 +40,150 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
     <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="admin-dashboard.css">
+    <style>
+        .activity-logs-section {
+            padding: 40px 0;
+            background: #f8f9fa;
+        }
+        
+        .activity-mini-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .activity-mini-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.3s ease;
+        }
+        
+        .activity-mini-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        
+        .activity-mini-card .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .activity-mini-card .info h6 {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .activity-mini-card .info .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #212529;
+            margin: 0;
+        }
+        
+        .recent-logs-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .recent-logs-table .table-header {
+            background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .recent-logs-table .table-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .recent-logs-table table {
+            width: 100%;
+            margin: 0;
+        }
+        
+        .recent-logs-table table thead th {
+            background: #f8f9fa;
+            padding: 15px;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+            font-size: 0.9rem;
+        }
+        
+        .recent-logs-table table tbody td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+        
+        .recent-logs-table table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .view-all-btn {
+            background: white;
+            color: #80A1BA;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .view-all-btn:hover {
+            background: rgba(255,255,255,0.9);
+            transform: translateX(5px);
+        }
+        
+        .activity-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .activity-badge.login {
+            background: #d1fae5;
+            color: #22c55e;
+        }
+        
+        .activity-badge.logout {
+            background: #fee2e2;
+            color: #000000;
+        }
+        
+        .activity-badge.action {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+    </style>
 </head>
 
 <body>
@@ -164,6 +307,73 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                     <a href="reports.php" class="action-btn">
                         <i class="bi bi-file-earmark-bar-graph"></i> Generate Reports
                     </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACTIVITY LOGS SECTION -->
+        <section class="activity-logs-section">
+            <div class="container">
+                <div class="text-center mb-4">
+                    <h2 class="display-6 fw-bold mb-2" style="color: #80A1BA;">Recent Activity</h2>
+                    <p class="text-muted">Quick overview of system activities</p>
+                </div>
+
+                <!-- Mini Summary Cards -->
+                <div class="activity-mini-cards">
+                    <div class="activity-mini-card">
+                        <div class="icon" style="background: linear-gradient(135deg, #80A1BA, #91C4C3);">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div class="info">
+                            <h6>Active Users</h6>
+                            <p class="value" id="mini-active-users">0</p>
+                        </div>
+                    </div>
+                    <div class="activity-mini-card">
+                        <div class="icon" style="background: linear-gradient(135deg, #4ade80, #22c55e);">
+                            <i class="bi bi-activity"></i>
+                        </div>
+                        <div class="info">
+                            <h6>Today's Activities</h6>
+                            <p class="value" id="mini-today-activities">0</p>
+                        </div>
+                    </div>
+                    <div class="activity-mini-card">
+                        <div class="icon" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                        </div>
+                        <div class="info">
+                            <h6>Recent Logins</h6>
+                            <p class="value" id="mini-recent-logins">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Logs Table -->
+                <div class="recent-logs-table">
+                    <div class="table-header">
+                        <h5><i class="bi bi-clock-history me-2"></i>Latest Activity Logs</h5>
+                        <a href="activity_logs.php" class="view-all-btn">
+                            View All <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Activity</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-logs-body">
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted">
+                                    <i class="bi bi-hourglass-split"></i> Loading recent activities...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
@@ -367,7 +577,94 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
                 .catch(error => console.error('Error loading charts:', error));
         }
 
-        document.addEventListener('DOMContentLoaded', loadCharts);
+        // Load Activity Logs
+        function loadRecentActivityLogs() {
+            $.ajax({
+                url: 'fetch_activity_logs.php',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    // Update summary cards
+                    $('#mini-active-users').text(data.totalActiveUsers || 0);
+                    $('#mini-today-activities').text(data.todayActivities || 0);
+                    $('#mini-recent-logins').text(data.recentLogins || 0);
+
+                    // Parse the HTML from allLogs and limit to 5 rows
+                    if (data.allLogs && data.allLogs.trim() !== '') {
+                        const tempDiv = $('<div>').html(data.allLogs);
+                        const rows = tempDiv.find('tr');
+                        
+                        if (rows.length > 0) {
+                            let html = '';
+                            rows.slice(0, 5).each(function(index) {
+                                const tds = $(this).find('td');
+                                if (tds.length >= 4) {
+                                    const userName = tds.eq(1).text().trim();
+                                    const activity = tds.eq(2).text().trim();
+                                    const timestamp = tds.eq(3).text().trim();
+                                    
+                                    const activityType = activity.toLowerCase().includes('login') ? 'login' : 
+                                                       activity.toLowerCase().includes('logout') ? 'logout' : 'action';
+                                    
+                                    html += `
+                                        <tr>
+                                            <td><strong>${userName}</strong></td>
+                                            <td><span class="activity-badge ${activityType}">${activity}</span></td>
+                                            <td><small class="text-muted">${timestamp}</small></td>
+                                        </tr>
+                                    `;
+                                }
+                            });
+                            
+                            if (html !== '') {
+                                $('#recent-logs-body').html(html);
+                            } else {
+                                $('#recent-logs-body').html(`
+                                    <tr>
+                                        <td colspan="3" class="text-center py-3 text-muted">
+                                            <i class="bi bi-inbox"></i> No recent activities
+                                        </td>
+                                    </tr>
+                                `);
+                            }
+                        } else {
+                            $('#recent-logs-body').html(`
+                                <tr>
+                                    <td colspan="3" class="text-center py-3 text-muted">
+                                        <i class="bi bi-inbox"></i> No recent activities
+                                    </td>
+                                </tr>
+                            `);
+                        }
+                    } else {
+                        $('#recent-logs-body').html(`
+                            <tr>
+                                <td colspan="3" class="text-center py-3 text-muted">
+                                    <i class="bi bi-inbox"></i> No recent activities
+                                </td>
+                            </tr>
+                        `);
+                    }
+                },
+                error: function() {
+                    $('#recent-logs-body').html(`
+                        <tr>
+                            <td colspan="3" class="text-center py-3 text-danger">
+                                <i class="bi bi-exclamation-triangle"></i> Failed to load activities
+                            </td>
+                        </tr>
+                    `);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCharts();
+            loadRecentActivityLogs();
+            
+            // Refresh activity logs every 30 seconds
+            setInterval(loadRecentActivityLogs, 30000);
+        });
     </script>
 
 </body>
