@@ -171,7 +171,7 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
         <!-- Footer -->
         <footer class="text-white" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%); padding: 20px 0;">
             <div class="container text-center">
-                <p style="margin: 0;">&copy; 2025 DentLink: Dental Clinic Management System</p>
+                <p style="margin: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
                 <p style="margin: 0;">All rights reserved.</p>
             </div>
         </footer>
