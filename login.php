@@ -168,8 +168,9 @@ $conn->close();
                     $(this).removeClass("is-valid").addClass("is-invalid");
                     errorBox.text("Invalid email format");
                 } else {
-                    $(this).removeClass("is-invalid").addClass("is-valid");
-                    errorBox.text(""); 
+                    $(this).removeClass("is-invalid");
+                    // removed: .addClass("is-valid")
+                    errorBox.text("");
                 }
             });
 
@@ -184,12 +185,12 @@ $conn->close();
                     $(this).removeClass("is-valid").addClass("is-invalid");
                     errorBox.text("Password must be 5–15 characters long");
                 } else {
-                    $(this).removeClass("is-invalid").addClass("is-valid");
-                    errorBox.text(""); 
+                    $(this).removeClass("is-invalid");
+                    // removed: .addClass("is-valid")
+                    errorBox.text("");
                 }
             });
 
-            // Prevent submit if invalid
             $("form").on("submit", function(e) {
                 let email = $("input[name='email']");
                 let password = $("input[name='password']");

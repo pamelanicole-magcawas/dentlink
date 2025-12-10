@@ -790,6 +790,30 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                 });
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+
+            navLinks.forEach(link => {
+                const linkPage = link.getAttribute('href');
+
+                // Check if current page matches link
+                if (linkPage === currentPage ||
+                    (currentPage === '' && linkPage === 'dashboard.php') ||
+                    (currentPage === 'dashboard.php' && linkPage === 'dashboard.php')) {
+                    link.classList.add('active');
+                }
+
+                // Add click listener
+                link.addEventListener('click', function() {
+                    if (!this.classList.contains('dropdown-toggle')) {
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+        });
     </script>
 </body>
 

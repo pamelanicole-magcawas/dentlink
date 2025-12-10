@@ -163,7 +163,7 @@ $denied = $conn->query("SELECT * FROM appointments WHERE user_id = $user_id AND 
 <body>
     <div class="container-fluid">
         <a href="dashboard.php" class="btn-back-dashboard">
-            <i class="bi bi-arrow-left"></i> Back to Dashboard
+            <i class="bi bi-arrow-left"></i> Back
         </a>
 
         <div class="page-header">

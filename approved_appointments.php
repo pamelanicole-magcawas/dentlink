@@ -1,5 +1,5 @@
 <?php
-session_start(); 
+session_start();
 
 include 'db_connect.php';
 
@@ -32,11 +32,23 @@ $result = $conn->query("SELECT a.*, d.name AS dentist_name
             display: inline-block;
         }
 
+        .calendar-wrapper {
+            margin-bottom: 40px;
+        }
+
         .calendar-wrapper iframe {
             width: 100%;
             height: 400px;
             border: 0;
             margin-bottom: 20px;
+        }
+
+        .record-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(128, 161, 186, 0.12);
+            padding: 20px;
+            overflow-x: auto;
         }
     </style>
 </head>
@@ -98,4 +110,5 @@ $result = $conn->query("SELECT a.*, d.name AS dentist_name
         });
     </script>
 </body>
+
 </html>
