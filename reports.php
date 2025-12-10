@@ -6,7 +6,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
     header("Location: login.php");
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +14,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
 <head>
     <meta charset="UTF-8">
     <title>Reports</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -153,10 +152,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
             box-shadow: 0 4px 12px rgba(128, 161, 186, 0.25);
         }
 
-        .btn-back-dashboard i {
-            font-size: 1.1rem;
-        }
-
         .btn {
             padding: 12px 32px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
@@ -177,10 +172,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
-        }
-
-        .btn:active {
-            transform: translateY(0);
         }
 
         .report-header {
@@ -255,15 +246,16 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
             font-size: 18px;
         }
 
-        .chart-container {
+        .table-container {
             background: var(--white);
             padding: 30px;
             border-radius: var(--radius);
             margin-bottom: 30px;
             box-shadow: var(--shadow-sm);
+            overflow-x: auto;
         }
 
-        .chart-container h4 {
+        .table-container h4 {
             font-size: 20px;
             font-weight: 600;
             color: var(--primary);
@@ -275,9 +267,66 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
             gap: 10px;
         }
 
-        .chart-wrapper {
-            position: relative;
-            height: 400px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-approved {
+            background: rgba(74, 222, 128, 0.2);
+            color: #059669;
+        }
+
+        .status-pending {
+            background: rgba(251, 191, 36, 0.2);
+            color: #d97706;
+        }
+
+        .status-denied {
+            background: rgba(248, 113, 113, 0.2);
+            color: #dc2626;
+        }
+
+        .status-completed {
+            background: rgba(74, 222, 128, 0.2);
+            color: #059669;
+        }
+
+        .status-checked-in {
+            background: rgba(96, 165, 250, 0.2);
+            color: #2563eb;
         }
 
         @media (max-width: 768px) {
@@ -287,7 +336,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
 
             .page-header,
             .filter-section,
-            .chart-container {
+            .table-container {
                 padding: 20px;
             }
 
@@ -303,8 +352,16 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
                 grid-template-columns: 1fr;
             }
 
-            .chart-wrapper {
-                height: 300px;
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            td, th {
+                padding: 10px;
             }
         }
     </style>
@@ -312,12 +369,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
 
 <body>
     <div class="container">
-        <a href="analytics.php" class="btn-back-dashboard">
-            <i class="bi bi-arrow-left"></i> Back
+        <a href="admin_dashboard.php" class="btn-back-dashboard">
+            <i class="bi bi-arrow-left"></i> Back 
         </a>
 
         <div class="page-header">
-            <h2><i class="bi bi-graph-up-arrow"></i> Reports Dashboard</h2>
+            <h2><i class="bi bi-graph-up-arrow"></i> Reports</h2>
         </div>
 
         <div class="filter-section">
@@ -342,7 +399,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
                     </select>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="btn"><i class="bi bi-bar-chart-fill"></i> Generate Report</button>
+                    <button type="submit" class="btn"><i class="bi bi-table"></i> Generate Report</button>
                 </div>
             </form>
         </div>
@@ -354,19 +411,27 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
             $type = $_GET['report_type'];
 
             echo "<div class='report-header'>
-            <h3><i class='bi bi-clipboard-data'></i> " . strtoupper($type) . " REPORT: $from to $to</h3>
-          </div>";
+                <h3><i class='bi bi-table'></i> " . strtoupper($type) . " REPORT: $from to $to</h3>
+            </div>";
 
-            // USERS REPORT
+            // USERS TABLE REPORT
             if ($type == "users" || $type == "overview") {
-                $sql_users = $conn->prepare("SELECT user_id, gender FROM users WHERE DATE(created_at) BETWEEN ? AND ?");
+                $sql_users = $conn->prepare("
+                    SELECT user_id, first_name, last_name, email, gender, phone, created_at 
+                    FROM users 
+                    WHERE role = 'Patient' 
+                    AND DATE(created_at) BETWEEN ? AND ?
+                    ORDER BY created_at DESC
+                ");
                 $sql_users->bind_param("ss", $from, $to);
                 $sql_users->execute();
-                $users = $sql_users->get_result();
+                $users_result = $sql_users->get_result();
 
                 $total_users = $male_users = $female_users = 0;
-                while ($u = $users->fetch_assoc()) {
+                $users_data = [];
+                while ($u = $users_result->fetch_assoc()) {
                     $total_users++;
+                    $users_data[] = $u;
                     if ($u['gender'] == 'Male') $male_users++;
                     if ($u['gender'] == 'Female') $female_users++;
                 }
@@ -380,103 +445,119 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
                     </div>
                 </div>";
 
-                echo "<div class='chart-container'>
-                        <h4><i class='bi bi-pie-chart-fill'></i> User Gender Distribution</h4>
-                            <div class='chart-wrapper'>
-                                <canvas id='genderChart'></canvas>
-                            </div>
-                    </div>
-                <script>
-                    const genderCtx = document.getElementById('genderChart').getContext('2d');
-                    new Chart(genderCtx, {
-                        type: 'pie',
-                        data: {
-                            labels: ['Male', 'Female'],
-                            datasets: [{ data: [$male_users, $female_users], backgroundColor: ['#80A1BA', '#91C4C3'], borderWidth: 3, borderColor: '#fff' }]
-                        },
-                        options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{ size:14, family:'Poppins' } } } } }
-                    });
-                </script>";
+                echo "<div class='table-container'>
+                    <h4><i class='bi bi-table'></i> Users List</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Gender</th>
+                                <th>Registered</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
+                        
+                foreach ($users_data as $user) {
+                    $registered_date = date('M d, Y', strtotime($user['created_at']));
+                    echo "<tr>
+                        <td>{$user['user_id']}</td>
+                        <td>{$user['first_name']} {$user['last_name']}</td>
+                        <td>{$user['email']}</td>
+                        <td>{$user['phone']}</td>
+                        <td>{$user['gender']}</td>
+                        <td>$registered_date</td>
+                    </tr>";
+                }
+                
+                echo "</tbody>
+                    </table>
+                </div>";
             }
 
-            // SERVICES REPORT
+            // SERVICES TABLE REPORT
             if ($type == "services" || $type == "overview") {
                 $sql_services = $conn->prepare("
-            SELECT description AS service, COUNT(*) AS total, location
-            FROM appointments
-            WHERE `date` BETWEEN ? AND ?
-            GROUP BY description, location
-            ORDER BY total DESC
-        ");
+                    SELECT description AS service, location, COUNT(*) AS total, status
+                    FROM appointments
+                    WHERE `date` BETWEEN ? AND ?
+                    GROUP BY description, location, status
+                    ORDER BY total DESC
+                ");
                 $sql_services->bind_param("ss", $from, $to);
                 $sql_services->execute();
                 $services_result = $sql_services->get_result();
 
                 $service_labels = [];
                 $service_data = [];
-                $locations = [];
-                $top_service = '';
-
+                $services_table = [];
                 while ($s = $services_result->fetch_assoc()) {
                     $service_labels[] = $s['service'];
                     $service_data[] = $s['total'];
-                    $locations[$s['service']] = $s['location'];
-                    if (!$top_service) $top_service = $s['service'];
+                    $services_table[] = $s;
                 }
 
-                if (empty($top_service)) {
-                    $top_service = 'N/A';
-                }
-                $top_location = isset($locations[$top_service]) ? $locations[$top_service] : 'N/A';
-
-                $service_labels_json = json_encode($service_labels);
-                $service_data_json = json_encode($service_data);
+                $total_services = array_sum($service_data);
+                $top_service = count($services_table) > 0 ? $services_table[0]['service'] : 'N/A';
 
                 echo "<div class='summary-grid'>
                     <div class='summary-box'>
                         <div class='summary-box-title'><i class='bi bi-clipboard-pulse'></i> Service Statistics</div>
-                        <p><i class='bi bi-list-task'></i> Total Procedures <span class='stat-value'>" . array_sum($service_data) . "</span></p>
+                        <p><i class='bi bi-list-task'></i> Total Procedures <span class='stat-value'>$total_services</span></p>
                         <p><i class='bi bi-award-fill'></i> Top Service <span class='stat-value'>$top_service</span></p>
-                        <p><i class='bi bi-geo-alt-fill'></i> Top Location <span class='stat-value'>$top_location</span></p>
                     </div>
                 </div>";
 
-                echo "<div class='chart-container'>
-                        <h4><i class='bi bi-bar-chart-fill'></i> Top Services / Most Chosen Procedures</h4>
-                    <div class='chart-wrapper'><canvas id='servicesChart'></canvas></div>
-                </div>
-                <script>
-                const servicesCtx = document.getElementById('servicesChart').getContext('2d');
-                new Chart(servicesCtx, {
-                    type: 'bar',
-                    data: { labels: $service_labels_json, datasets: [{ label:'Number of Appointments', data: $service_data_json, backgroundColor:'#80A1BA', borderColor:'#91C4C3', borderWidth:2, borderRadius:8 }] },
-                    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ font:{ family:'Poppins' } } }, x:{ ticks:{ font:{ family:'Poppins' } } } } }
-                });
-                </script>";
+                echo "<div class='table-container'>
+                    <h4><i class='bi bi-table'></i> Services Report</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Location</th>
+                                <th>Total Appointments</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
+
+                foreach ($services_table as $service) {
+                    $status_class = 'status-' . strtolower($service['status']);
+                    echo "<tr>
+                        <td>{$service['service']}</td>
+                        <td>{$service['location']}</td>
+                        <td>{$service['total']}</td>
+                        <td><span class='status-badge $status_class'>{$service['status']}</span></td>
+                    </tr>";
+                }
+
+                echo "</tbody>
+                    </table>
+                </div>";
             }
 
-            // APPOINTMENTS REPORT
+            // APPOINTMENTS TABLE REPORT
             if ($type == "appointments" || $type == "overview") {
                 $stmt = $conn->prepare("
-                    SELECT a.*, u.gender, d.name AS dentist
+                    SELECT a.id, a.date, a.description, a.status, u.first_name, u.last_name
                     FROM appointments a
                     LEFT JOIN users u ON a.user_id = u.user_id
-                    LEFT JOIN dentists d ON d.id = a.dentist_id
                     WHERE a.`date` BETWEEN ? AND ?
-                    ");
-
-                if (!$stmt) {
-                    die("Prepare failed: " . $conn->error);
-                }
+                    ORDER BY a.date DESC
+                ");
 
                 $stmt->bind_param("ss", $from, $to);
                 $stmt->execute();
-                $appts = $stmt->get_result();
+                $appts_result = $stmt->get_result();
 
                 $total = $approved = $pending = $denied = $checked_in = $completed = 0;
+                $appts_data = [];
 
-                while ($a = $appts->fetch_assoc()) {
+                while ($a = $appts_result->fetch_assoc()) {
                     $total++;
+                    $appts_data[] = $a;
                     switch ($a['status']) {
                         case "approved":
                             $approved++;
@@ -499,99 +580,112 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
                 echo "<div class='summary-grid'>
                     <div class='summary-box'>
                         <div class='summary-box-title'><i class='bi bi-calendar-check'></i> Appointment Statistics</div>
-                        <p><i class='bi bi-calendar-check-fill'></i> Total Appointments <span class='stat-value'>$total</span></p>
+                        <p><i class='bi bi-calendar-check-fill'></i> Total <span class='stat-value'>$total</span></p>
                         <p><i class='bi bi-check-circle-fill'></i> Approved <span class='stat-value'>$approved</span></p>
                         <p><i class='bi bi-clock-fill'></i> Pending <span class='stat-value'>$pending</span></p>
                         <p><i class='bi bi-x-circle-fill'></i> Denied <span class='stat-value'>$denied</span></p>
-                        <p><i class='bi bi-door-open-fill'></i> Checked In <span class='stat-value'>$checked_in</span></p>
-                        <p><i class='bi bi-check-square-fill'></i> Completed <span class='stat-value'>$completed</span></p>
                     </div>
                 </div>";
 
-                echo "<div class='chart-container'>
-                    <h4><i class='bi bi-pie-chart-fill'></i> Appointment Status Breakdown</h4>
-                    <div class='chart-wrapper'><canvas id='appointmentsChart'></canvas></div>
-                </div>
-                <script>
-                const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
-                new Chart(appointmentsCtx, {
-                    type:'doughnut',
-                    data:{
-                        labels:['Approved','Pending','Denied','Checked In','Completed'],
-                        datasets:[{
-                            data:[$approved,$pending,$denied,$checked_in,$completed],
-                            backgroundColor:['#80A1BA','#91C4C3','#B4DEBD','#FACC15','#059669'],
-                            borderWidth:3,
-                            borderColor:'#fff'
-                        }]
-                    },
-                    options:{
-                        responsive:true,
-                        maintainAspectRatio:false,
-                        plugins:{
-                            legend:{
-                                position:'bottom',
-                                labels:{ font:{ size:14, family:'Poppins' } }
-                            }
-                        }
-                    }
-                });
-                </script>";
+                echo "<div class='table-container'>
+                    <h4><i class='bi bi-table'></i> Appointments List</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient Name</th>
+                                <th>Service</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
+
+                foreach ($appts_data as $apt) {
+                    $status_class = 'status-' . str_replace(' ', '-', strtolower($apt['status']));
+                    $apt_date = date('M d, Y', strtotime($apt['date']));
+                    $patient_name = $apt['first_name'] . ' ' . $apt['last_name'];
+                    echo "<tr>
+                        <td>{$apt['id']}</td>
+                        <td>$patient_name</td>
+                        <td>{$apt['description']}</td>
+                        <td>$apt_date</td>
+                        <td><span class='status-badge $status_class'>{$apt['status']}</span></td>
+                    </tr>";
+                }
+
+                echo "</tbody>
+                    </table>
+                </div>";
             }
 
-            // REVIEWS REPORT
+            // REVIEWS TABLE REPORT
             if ($type == "reviews" || $type == "overview") {
                 $stmt = $conn->prepare("
-            SELECT rating, COUNT(*) AS count
-            FROM reviews
-            WHERE DATE(created_at) BETWEEN ? AND ?
-            GROUP BY rating
-            ORDER BY rating ASC
-        ");
+                    SELECT r.review_id, r.rating, r.review_text, r.created_at, u.first_name
+                    FROM reviews r
+                    JOIN users u ON r.user_id = u.user_id
+                    WHERE DATE(r.created_at) BETWEEN ? AND ?
+                    ORDER BY r.created_at DESC
+                ");
+
                 $stmt->bind_param("ss", $from, $to);
                 $stmt->execute();
                 $reviews_result = $stmt->get_result();
 
                 $total_reviews = 0;
-                $rating_counts = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+                $reviews_data = [];
+                $avg_rating = 0;
+
                 while ($r = $reviews_result->fetch_assoc()) {
-                    $rating_counts[$r['rating']] = $r['count'];
-                    $total_reviews += $r['count'];
+                    $total_reviews++;
+                    $reviews_data[] = $r;
+                    $avg_rating += $r['rating'];
                 }
 
-                $average_rating = $total_reviews ?
-                    round(array_sum(array_map(fn($rate, $count) => $rate * $count, array_keys($rating_counts), $rating_counts)) / $total_reviews, 2)
-                    : 0;
-
-                $ratings_json = json_encode(array_values($rating_counts));
+                $avg_rating = $total_reviews > 0 ? round($avg_rating / $total_reviews, 1) : 0;
 
                 echo "<div class='summary-grid'>
                     <div class='summary-box'>
                         <div class='summary-box-title'><i class='bi bi-star-fill'></i> Reviews Statistics</div>
-                        <p><i class='bi bi-star-half'></i> Average Rating <span class='stat-value'>$average_rating</span></p>
-                        <p><i class='bi bi-chat-text'></i> Total Reviews <span class='stat-value'>$total_reviews</span></p>
+                        <p><i class='bi bi-chat-quote'></i> Total Reviews <span class='stat-value'>$total_reviews</span></p>
+                        <p><i class='bi bi-star-fill'></i> Average Rating <span class='stat-value'>$avg_rating / 5</span></p>
                     </div>
                 </div>";
 
-                echo "<div class='chart-container'>
-                    <h4><i class='bi bi-bar-chart-fill'></i> Rating Distribution</h4>
-                    <div class='chart-wrapper'><canvas id='reviewsChart'></canvas></div>
-                </div>
-                <script>
-                const reviewsCtx = document.getElementById('reviewsChart').getContext('2d');
-                new Chart(reviewsCtx,{
-                    type:'bar',
-                    data:{
-                        labels:['1 Star','2 Star','3 Star','4 Star','5 Star'],
-                        datasets:[{ label:'Number of Reviews', data:$ratings_json, backgroundColor:'#91C4C3', borderColor:'#80A1BA', borderWidth:2, borderRadius:8 }]
-                    },
-                    options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ font:{ family:'Poppins' } } }, x:{ ticks:{ font:{ family:'Poppins' } } } } }
-                });
-                </script>";
+                echo "<div class='table-container'>
+                    <h4><i class='bi bi-table'></i> Reviews List</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Rating</th>
+                                <th>Review</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
+
+                foreach ($reviews_data as $review) {
+                    $review_date = date('M d, Y', strtotime($review['created_at']));
+                    $stars = str_repeat('⭐', $review['rating']);
+                    echo "<tr>
+                        <td>{$review['first_name']}</td>
+                        <td>$stars ({$review['rating']}/5)</td>
+                        <td>" . substr($review['review_text'], 0, 100) . "...</td>
+                        <td>$review_date</td>
+                    </tr>";
+                }
+
+                echo "</tbody>
+                    </table>
+                </div>";
             }
         }
         ?>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

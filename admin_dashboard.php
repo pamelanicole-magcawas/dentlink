@@ -13,9 +13,8 @@ if ($_SESSION['role'] !== 'Admin') {
 
 require_once 'db_connect.php';
 
-// Fetch admin's first name from database
 $user_id = $_SESSION['user_id'];
-$user_sql = "SELECT first_name FROM users WHERE user_id = ?";
+$user_sql = "SELECT first_name, last_name FROM users WHERE user_id = ?";
 $user_stmt = $conn->prepare($user_sql);
 $user_stmt->bind_param("i", $user_id);
 $user_stmt->execute();
@@ -24,10 +23,10 @@ $user_result = $user_stmt->get_result();
 if ($user_result->num_rows > 0) {
     $user_data = $user_result->fetch_assoc();
     $_SESSION['first_name'] = $user_data['first_name'];
+    $_SESSION['last_name'] = $user_data['last_name'];
 }
 $user_stmt->close();
 
-// Set display name (fallback to 'Admin' if first_name not available)
 $admin_name = $_SESSION['first_name'] ?? 'Admin';
 ?>
 
@@ -40,220 +39,337 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
     <title>DentLink - Admin Dashboard</title>
     <link rel="stylesheet" href="bootstrap-5.3.3-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href ="admin_dashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="admin-dashboard.css">
 </head>
 
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
+
+    <aside class="sidebar">
         <div class="logo">
-            <img src="dentlink-logo.png" alt="DentLink Logo" style="background-color: #f0f0f0;">
+            <img src="dentlink-logo.png" alt="DentLink Logo">
             <h4>DentLink</h4>
         </div>
 
-        <nav class="nav flex-column sidebar-nav">
-            <a class="nav-link active" href="admin_dashboard.php">
-                <i class="bi bi-house-door-fill"></i>
-                <span>Dashboard</span>
+        <nav class="sidebar-nav">
+            <a href="admin_dashboard.php" class="nav-link active">
+                <i class="bi bi-house-door"></i> <span>Dashboard</span>
             </a>
-            
-            <!-- Appointments Dropdown -->
-            <div class="appointments-dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-calendar-check"></i>
-                    <span>Appointments</span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="pending_appointments.php">
-                        <i class="bi bi-clock-history me-2"></i>Pending
-                    </a></li>
-                    <li><a class="dropdown-item" href="approved_appointments.php">
-                        <i class="bi bi-check-circle me-2"></i>Approved
-                    </a></li>
-                </ul>
-            </div>
-
-            <a class="nav-link" href="patient_records.php">
-                <i class="bi bi-folder2-open"></i>
-                <span>Patient Records</span>
+            <a href="pending_appointments.php" class="nav-link">
+                <i class="bi bi-calendar-check"></i> <span>Pending Appointments</span>
             </a>
-            <a class="nav-link" href="admin_chats.php">
-                <i class="bi bi-chat-dots-fill"></i>
-                <span>Messages</span>
+            <a href="patient_records.php" class="nav-link">
+                <i class="bi bi-folder2-open"></i> <span>Patient Records</span>
             </a>
-            <a class="nav-link" href="#reviews">
-                <i class="bi bi-star-fill"></i>
-                <span>Reviews</span>
+            <a href="scan_qr.php" class="nav-link">
+                <i class="bi bi-qr-code-scan"></i> <span>QR Scanner</span>
+            </a>
+            <a href="admin_chats.php" class="nav-link">
+                <i class="bi bi-chat-dots"></i> <span>Messages</span>
             </a>
         </nav>
 
-        <!-- Profile Section -->
         <div class="profile-section">
-            <button class="profile-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="upload/<?= htmlspecialchars($_SESSION['profile_pic'] ?? 'default-avatar.png'); ?>" alt="Profile">
+            <button class="profile-btn" onclick="document.getElementById('logoutForm').submit();">
+                <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
                 <div class="profile-info">
                     <div class="profile-name"><?php echo htmlspecialchars($_SESSION['first_name']); ?></div>
+                    <small style="opacity: 0.8;">Admin</small>
                 </div>
+                <i class="bi bi-box-arrow-right"></i>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-            </ul>
         </div>
-    </div>
+    </aside>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Top Header -->
-        <div class="top-header">
-            <div class="user-greeting">
-                Welcome, <?php echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']); ?>! 👋
-            </div>
-            <div class="top-actions">
-                <a href="scan_qr.php" class="btn btn-scan">
-                    <i class="bi bi-qr-code-scan"></i>
-                    <span>Scan QR</span>
-                </a>
-                <a href="activity_logs.php" class="btn btn-logs">
-                    <i class="bi bi-clock-history"></i>
-                    <span>Activity Logs</span>
-                </a>
-            </div>
-        </div>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
 
-        <!-- Welcome Section -->
-        <section class="welcome-section">
-            <div class="welcome-content">
-                <div class="welcome-header">
-                    <h1>Admin Dashboard</h1>
-                    <p>Manage your clinic operations efficiently from this administrative dashboard. Monitor appointments, patient records, and communications all in one place.</p>
+        <!-- HERO SECTION -->
+        <section id="home" class="hero-section position-relative">
+            <div class="hero-overlay"></div>
+            <div class="container">
+                <div class="row align-items-center py-5" style="min-height: 60vh;">
+                    <div class="col-lg-10 mx-auto text-center position-relative" style="z-index: 2;">
+                        <h1 class="display-3 fw-bold mb-4 hero-title text-dark">
+                            DentLink Management System
+                        </h1>
+                        <p class="lead mb-5 hero-subtitle text-dark">
+                            Monitor real-time analytics, manage appointments, and oversee patient records efficiently.
+                        </p>
+                    </div>
                 </div>
+            </div>
+            <div class="smile-curve">
+                <svg viewBox="0 0 1440 120" width="100%" height="120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0C240 80 480 120 720 120C960 120 1200 80 1440 0V120H0V0Z" fill="#f8f9fa" />
+                </svg>
             </div>
         </section>
 
-        <!-- Analytics Widget -->
-        <section class="analytics-section">
-            <?php include 'analytics_widget.php'; ?>
-        </section>
-
-        <!-- Reviews Section -->
-        <section id="reviews" class="reviews-section">
-            <div class="reviews-content">
-                <div class="section-title">
-                    <h2>Patient Reviews</h2>
-                    <p>What our patients say about us</p>
+        <!-- CHARTS SECTION -->
+        <section class="charts-section">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="display-5 fw-bold mb-3" style="color: #80A1BA;">Dashboard Analytics</h2>
+                    <p class="lead text-muted">Real-time metrics and visualizations</p>
                 </div>
 
-                <!-- Reviews Display -->
-                <div class="row g-4" id="reviewsContainer">
-                    <?php
-                    // Fetch all reviews from database
-                    $reviews_sql = "SELECT r.rating, r.review_text, r.created_at, u.first_name 
-                                   FROM reviews r 
-                                   JOIN users u ON r.user_id = u.user_id 
-                                   ORDER BY r.created_at DESC";
-                    $reviews_result = $conn->query($reviews_sql);
-
-                    if ($reviews_result && $reviews_result->num_rows > 0):
-                        while ($review = $reviews_result->fetch_assoc()):
-                            // Get first letter of first name
-                            $avatar_letter = strtoupper(substr($review['first_name'], 0, 1));
-
-                            // Generate random color for avatar
-                            $colors = ['#80A1BA', '#91C4C3', '#B4DEBD'];
-                            $avatar_color = $colors[array_rand($colors)];
-
-                            // Format date
-                            $review_date = date('F j, Y', strtotime($review['created_at']));
-                    ?>
-                            <div class="col-lg-4 col-md-6">
-                                <div class="card border-0 shadow-sm h-100 review-card">
-                                    <div class="card-body p-4">
-                                        <div class="d-flex align-items-start mb-3">
-                                            <div class="avatar-circle text-white me-3" style="background-color: <?= $avatar_color ?>;">
-                                                <?= $avatar_letter ?>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-1 fw-bold">Anonymous Patient</h6>
-                                                <div class="review-stars mb-1">
-                                                    <?php
-                                                    // Display stars based on rating
-                                                    for ($i = 1; $i <= 5; $i++) {
-                                                        if ($i <= $review['rating']) {
-                                                            echo '<i class="bi bi-star-fill" style="color: #FFD700;"></i>';
-                                                        } else {
-                                                            echo '<i class="bi bi-star" style="color: #e0e0e0;"></i>';
-                                                        }
-                                                    }
-                                                    ?>
-                                                </div>
-                                                <small class="text-muted"><?= $review_date ?></small>
-                                            </div>
-                                        </div>
-                                        <p class="text-muted mb-0 ms-0">"<?= htmlspecialchars($review['review_text']) ?>"</p>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php
-                        endwhile;
-                    else:
-                        ?>
-                        <div class="col-12">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center empty-reviews">
-                                    <i class="bi bi-chat-quote display-1 text-muted mb-3 d-block"></i>
-                                    <h5 class="text-muted mb-2">No reviews yet</h5>
-                                    <p class="text-muted mb-0">Waiting for patient feedback</p>
-                                </div>
+                <div class="row g-4">
+                    <!-- Appointments Status Chart -->
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h5><i class="bi bi-graph-up me-2"></i>Appointments Overview</h5>
+                            <div class="chart-wrapper">
+                                <canvas id="appointmentsChart"></canvas>
                             </div>
                         </div>
-                    <?php endif; ?>
+                    </div>
+
+                    <!-- User Statistics Chart -->
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h5><i class="bi bi-bar-chart me-2"></i>Services Distribution</h5>
+                            <div class="chart-wrapper">
+                                <canvas id="servicesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completion Rate Chart -->
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h5><i class="bi bi-pie-chart me-2"></i>Completion Rate</h5>
+                            <div class="chart-wrapper">
+                                <canvas id="completionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Appointments Trend -->
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <h5><i class="bi bi-graph-up me-2"></i>Monthly Trend</h5>
+                            <div class="chart-wrapper">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Bar -->
+                <div class="action-bar">
+                    <a href="analytics.php" class="action-btn">
+                        <i class="bi bi-graph-up"></i> Full Analytics
+                    </a>
+                    <a href="reports.php" class="action-btn">
+                        <i class="bi bi-file-earmark-bar-graph"></i> Generate Reports
+                    </a>
                 </div>
             </div>
         </section>
-    </div>
+
+        <!-- Footer -->
+        <footer class="text-white" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%); padding: 20px 0;">
+            <div class="container text-center">
+                <p style="margin: 0;">&copy; 2025 DentLink: Dental Clinic Management System</p>
+                <p style="margin: 0;">All rights reserved.</p>
+            </div>
+        </footer>
+    </main>
+
+
+    <!-- Logout form for profile button -->
+    <form id="logoutForm" action="logout.php" method="POST" style="display: none;"></form>
 
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+        let appointmentsChartInstance, servicesChartInstance, completionChartInstance, trendChartInstance;
 
-        // Active nav link 
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentPage = window.location.pathname.split('/').pop();
-            const navLinks = document.querySelectorAll('.sidebar .nav-link');
-
-            navLinks.forEach(link => {
-                const linkPage = link.getAttribute('href');
-
-                // Check if current page matches link
-                if (linkPage === currentPage ||
-                    (currentPage === '' && linkPage === 'admin_dashboard.php') ||
-                    (currentPage === 'admin_dashboard.php' && linkPage === 'admin_dashboard.php')) {
-                    link.classList.add('active');
-                }
-
-                // Add click listener
-                link.addEventListener('click', function() {
-                    if (!this.classList.contains('dropdown-toggle')) {
-                        navLinks.forEach(l => l.classList.remove('active'));
-                        this.classList.add('active');
+        function loadCharts() {
+            fetch('fetch_analytics.php')
+                .then(response => response.json())
+                .then(result => {
+                    if (!result.success) {
+                        throw new Error(result.error || 'Failed to load analytics');
                     }
-                });
-            });
-        });
+
+                    const data = result.data;
+
+                    // Appointments Status Chart
+                    const appointmentsCtx = document.getElementById('appointmentsChart').getContext('2d');
+                    if (appointmentsChartInstance) {
+                        appointmentsChartInstance.destroy();
+                    }
+                    appointmentsChartInstance = new Chart(appointmentsCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Pending', 'Approved', 'Completed', 'Denied'],
+                            datasets: [{
+                                data: [
+                                    data.pending_appointments_total,
+                                    data.approved_appointments_total,
+                                    data.completed_appointments_total,
+                                    data.denied_appointments_total
+                                ],
+                                backgroundColor: ['#fbbf24', '#60a5fa', '#4ade80', '#f87171'],
+                                borderColor: '#ffffff',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        font: {
+                                            size: 14,
+                                            family: 'Poppins'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Services Distribution Chart
+                    const servicesCtx = document.getElementById('servicesChart').getContext('2d');
+                    if (servicesChartInstance) {
+                        servicesChartInstance.destroy();
+                    }
+                    servicesChartInstance = new Chart(servicesCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Week', 'Month', 'Total'],
+                            datasets: [{
+                                label: 'Appointments',
+                                data: [
+                                    data.appointments_this_week,
+                                    data.appointments_this_month,
+                                    data.approved_appointments_total
+                                ],
+                                backgroundColor: ['#80A1BA', '#91C4C3', '#B4DEBD'],
+                                borderRadius: 8,
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        font: {
+                                            family: 'Poppins'
+                                        }
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        font: {
+                                            family: 'Poppins'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Completion Rate Chart
+                    const completionCtx = document.getElementById('completionChart').getContext('2d');
+                    if (completionChartInstance) {
+                        completionChartInstance.destroy();
+                    }
+                    completionChartInstance = new Chart(completionCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Completed', 'In Progress'],
+                            datasets: [{
+                                data: [
+                                    data.completion_rate,
+                                    (100 - data.completion_rate)
+                                ],
+                                backgroundColor: ['#4ade80', '#e5e7eb'],
+                                borderColor: '#ffffff',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        font: {
+                                            size: 14,
+                                            family: 'Poppins'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Trend Chart
+                    const trendCtx = document.getElementById('trendChart').getContext('2d');
+                    if (trendChartInstance) {
+                        trendChartInstance.destroy();
+                    }
+                    trendChartInstance = new Chart(trendCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Active Patients', 'New Users', 'Checked In'],
+                            datasets: [{
+                                label: 'Count',
+                                data: [
+                                    data.active_patients_week,
+                                    data.new_users,
+                                    data.checked_in_today
+                                ],
+                                borderColor: '#80A1BA',
+                                backgroundColor: 'rgba(128, 161, 186, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4,
+                                pointBackgroundColor: '#80A1BA',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
+                                pointRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        font: {
+                                            family: 'Poppins'
+                                        }
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        font: {
+                                            family: 'Poppins'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading charts:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', loadCharts);
     </script>
+
 </body>
 
 </html>

@@ -222,7 +222,7 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
 <body class="analytics-page">
 
     <a href="admin_dashboard.php" class="btn-back-dashboard">
-        <i class="bi bi-arrow-left"></i> Back to Dashboard
+        <i class="bi bi-arrow-left"></i> Back
     </a>
 
     <div class="analytics-header">
@@ -230,16 +230,6 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
             <div>
                 <h2><i class="bi bi-graph-up me-2"></i>Analytics Dashboard</h2>
                 <p class="text-muted mb-0">Real-time system metrics and insights</p>
-            </div>
-            <div class="header-actions">
-                <a href="reports.php" class="reports-btn">
-                    <i class="bi bi-file-earmark-bar-graph"></i>
-                    Generate Reports
-                </a>
-                <button class="refresh-btn" onclick="loadAnalytics()">
-                    <i class="bi bi-arrow-clockwise"></i>
-                    Refresh
-                </button>
             </div>
         </div>
         <p class="text-muted small mt-2 mb-0">Last updated: <span id="lastUpdated">Loading...</span></p>
