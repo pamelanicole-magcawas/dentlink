@@ -219,6 +219,80 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
             font-size: 0.95rem;
         }
 
+        /* Floating Chat Button */
+        .floating-chat-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(145, 196, 195, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+            text-decoration: none;
+        }
+
+        .floating-chat-btn:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 6px 30px rgba(145, 196, 195, 0.6);
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+        }
+
+        .floating-chat-btn i {
+            font-size: 1.5rem;
+        }
+
+        .floating-chat-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            animation: pulse 2s infinite;
+            z-index: -1;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Badge for notifications (optional) */
+        .chat-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
         /* Main Content */
         .main-content {
             margin-left: var(--sidebar-width);
@@ -455,6 +529,17 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
             .services-section {
                 padding: 40px 20px;
             }
+
+            .floating-chat-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 55px;
+                height: 55px;
+            }
+
+            .floating-chat-btn i {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
@@ -484,10 +569,6 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                 <i class="bi bi-grid-3x3-gap"></i>
                 <span>Services</span>
             </a>
-            <a class="nav-link" href="chat.php">
-                <i class="bi bi-chat-dots-fill"></i>
-                <span>Chat Support</span>
-            </a>
         </nav>
 
         <!-- Profile Section -->
@@ -507,6 +588,13 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
             </ul>
         </div>
     </div>
+
+    <!-- Floating Chat Button -->
+    <a href="chat.php" class="floating-chat-btn" title="Chat Support">
+        <i class="bi bi-chat-dots-fill"></i>
+        <!-- Optional: Add notification badge -->
+        <!-- <span class="chat-badge">3</span> -->
+    </a>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -784,6 +872,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                 bootstrap.Modal.getInstance(document.getElementById('feedbackModal')).hide();
                 feedbackTextarea.value = '';
                 ratingInput.value = '0';
+                charCount.textContent = '0';
                 stars.forEach(s => {
                     s.classList.remove('bi-star-fill');
                     s.classList.add('bi-star');
@@ -791,6 +880,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
             });
         });
 
+        // Active navigation link
         document.addEventListener('DOMContentLoaded', function() {
             const currentPage = window.location.pathname.split('/').pop();
             const navLinks = document.querySelectorAll('.sidebar .nav-link');
