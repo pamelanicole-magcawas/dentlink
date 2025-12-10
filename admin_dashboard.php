@@ -212,14 +212,6 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
         </section>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p style="margin: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
-            <p style="margin: 0;">All rights reserved.</p>
-        </div>
-    </footer>
-
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
