@@ -40,7 +40,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--light) 100%);
+            background: linear-gradient(135deg, #e8f4f0 0%, #f5f0e8 100%);
             min-height: 100vh;
             padding: 40px 20px;
             color: var(--text-dark);

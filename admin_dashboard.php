@@ -26,8 +26,6 @@ if ($user_result->num_rows > 0) {
     $_SESSION['last_name'] = $user_data['last_name'];
 }
 $user_stmt->close();
-
-$admin_name = $_SESSION['first_name'] ?? 'Admin';
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +39,7 @@ $admin_name = $_SESSION['first_name'] ?? 'Admin';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="admin-dashboard.css">
+    <link rel="stylesheet" href="admin_dashboard.css">
     <style>
         .activity-logs-section {
             padding: 40px 0;
