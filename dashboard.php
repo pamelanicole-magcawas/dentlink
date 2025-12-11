@@ -269,7 +269,6 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                 transform: translate(-50%, -50%) scale(1);
                 opacity: 1;
             }
-
             100% {
                 transform: translate(-50%, -50%) scale(1.5);
                 opacity: 0;
@@ -641,7 +640,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         </div>
 
         <nav class="nav flex-column sidebar-nav">
-            <a class="nav-link active" href="dashboard.php">
+            <a class="nav-link active" href="#home">
                 <i class="bi bi-house-door-fill"></i>
                 <span>Home</span>
             </a>
@@ -684,8 +683,6 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
     <!-- Floating Chat Button -->
     <a href="chat.php" class="floating-chat-btn" title="Chat Support">
         <i class="bi bi-chat-dots-fill"></i>
-        <!-- Optional: Add notification badge -->
-        <!-- <span class="chat-badge">3</span> -->
     </a>
 
     <!-- Main Content -->
@@ -708,7 +705,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         </div>
 
         <!-- Welcome Section -->
-        <section class="welcome-section">
+        <section id="home" class="welcome-section min-vh-100 py-5 d-flex flex-column justify-content-center">
             <div class="welcome-content">
                 <div class="welcome-header">
                     <h1>Welcome to DentLink</h1>
@@ -721,7 +718,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         </section>
 
         <!-- Services Section -->
-        <section id="services" class="services-section">
+        <section id="services" class="services-sectionmin-vh-100 py-5 d-flex flex-column justify-content-center">
             <div class="services-content">
                 <div class="section-title">
                     <h2>Our Services</h2>
@@ -831,7 +828,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         </section>
 
         <!-- Reviews Section -->
-        <section id="reviews" class="reviews-section">
+        <section id="reviews" class="reviews-section min-vh-100 py-5 d-flex flex-column justify-content-center">
             <div class="reviews-content">
                 <div class="section-title">
                     <h2>Patient Reviews</h2>
@@ -916,54 +913,30 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <?php
-                    // Check if user has already submitted a review today
-                    $user_id = $_SESSION['user_id'];
-                    $check_sql = "SELECT COUNT(*) as count FROM reviews 
-                              WHERE user_id = ? AND DATE(created_at) = CURDATE()";
-                    $check_stmt = $conn->prepare($check_sql);
-                    $check_stmt->bind_param("i", $user_id);
-                    $check_stmt->execute();
-                    $check_result = $check_stmt->get_result();
-                    $check_data = $check_result->fetch_assoc();
-                    $can_review = $check_data['count'] == 0;
-                    $check_stmt->close();
-
-                    if ($can_review):
-                    ?>
-                        <form id="feedbackForm" action="submit_review.php" method="POST">
-                            <div class="mb-3">
-                                <label class="form-label">Rating <span class="text-danger">*</span></label>
-                                <div class="star-rating d-flex justify-content-center mb-2" style="font-size: 2rem; gap: 5px;">
-                                    <i class="bi bi-star" data-rating="1" style="color: #FFD700; cursor: pointer;"></i>
-                                    <i class="bi bi-star" data-rating="2" style="color: #FFD700; cursor: pointer;"></i>
-                                    <i class="bi bi-star" data-rating="3" style="color: #FFD700; cursor: pointer;"></i>
-                                    <i class="bi bi-star" data-rating="4" style="color: #FFD700; cursor: pointer;"></i>
-                                    <i class="bi bi-star" data-rating="5" style="color: #FFD700; cursor: pointer;"></i>
-                                </div>
-                                <input type="hidden" name="rating" id="rating" value="0" required>
-                                <small class="text-muted">Click on the stars to rate</small>
+                    <form id="feedbackForm">
+                        <div class="mb-3">
+                            <label class="form-label">Rating <span class="text-danger">*</span></label>
+                            <div class="star-rating d-flex justify-content-center mb-2" style="font-size: 2rem; gap: 5px;">
+                                <i class="bi bi-star" data-rating="1" style="color: #FFD700; cursor: pointer;"></i>
+                                <i class="bi bi-star" data-rating="2" style="color: #FFD700; cursor: pointer;"></i>
+                                <i class="bi bi-star" data-rating="3" style="color: #FFD700; cursor: pointer;"></i>
+                                <i class="bi bi-star" data-rating="4" style="color: #FFD700; cursor: pointer;"></i>
+                                <i class="bi bi-star" data-rating="5" style="color: #FFD700; cursor: pointer;"></i>
                             </div>
-                            <div class="mb-3">
-                                <label for="feedback" class="form-label">Your Feedback <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="feedback" name="feedback" rows="4" minlength="5" maxlength="200" required placeholder="Share your experience (5-200 characters)"></textarea>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <small class="text-muted"><span id="charCount">0</span>/200</small>
-                                </div>
-                            </div>
-                        </form>
-                    <?php else: ?>
-                        <div class="alert alert-info mb-0 text-center">
-                            <i class="bi bi-info-circle me-2"></i>
-                            You've already submitted a review today. You can submit another review tomorrow.
+                            <input type="hidden" name="rating" id="rating" value="0" required>
                         </div>
-                    <?php endif; ?>
+                        <div class="mb-3">
+                            <label for="feedback" class="form-label">Your Feedback <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="feedback" name="feedback" rows="4" minlength="5" maxlength="200" required placeholder="Share your experience (5-200 characters)"></textarea>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted"><span id="charCount">0</span>/200</small>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <?php if ($can_review): ?>
-                        <button type="button" class="btn btn-primary" id="submitFeedback" style="background-color: var(--primary-color); border: none;">Submit Feedback</button>
-                    <?php endif; ?>
+                    <button type="button" class="btn btn-primary" id="submitFeedback" style="background-color: var(--primary-color); border: none;">Submit Feedback</button>
                 </div>
             </div>
         </div>
@@ -1027,10 +1000,10 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
             });
         }
 
-        // Submit feedback via AJAX
+        // Submit feedback
         document.getElementById('submitFeedback').addEventListener('click', function() {
             const rating = ratingInput.value;
-            const feedback = feedbackTextarea.value.trim();
+            const feedback = feedbackTextarea.value;
 
             if (rating === '0') {
                 Swal.fire({
@@ -1052,62 +1025,22 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                 return;
             }
 
-            if (feedback.length > 200) {
-                Swal.fire({
-                    title: 'Feedback Too Long',
-                    text: 'Review must not exceed 200 characters.',
-                    icon: 'warning',
-                    confirmButtonColor: '#80A1BA'
+            // Submit to server (implement your submission logic)
+            Swal.fire({
+                title: 'Success!',
+                text: 'Thank you for your feedback!',
+                icon: 'success',
+                confirmButtonColor: '#B4DEBD'
+            }).then(() => {
+                bootstrap.Modal.getInstance(document.getElementById('feedbackModal')).hide();
+                feedbackTextarea.value = '';
+                ratingInput.value = '0';
+                charCount.textContent = '0';
+                stars.forEach(s => {
+                    s.classList.remove('bi-star-fill');
+                    s.classList.add('bi-star');
                 });
-                return;
-            }
-
-            // Prepare form data
-            const formData = new FormData();
-            formData.append('rating', rating);
-            formData.append('review', feedback);
-
-            fetch('submit_review.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: data.message,
-                            icon: 'success',
-                            confirmButtonColor: '#B4DEBD'
-                        }).then(() => {
-                            // Reset form and close modal
-                            bootstrap.Modal.getInstance(document.getElementById('feedbackModal')).hide();
-                            feedbackTextarea.value = '';
-                            ratingInput.value = '0';
-                            charCount.textContent = '0';
-                            stars.forEach(s => {
-                                s.classList.remove('bi-star-fill');
-                                s.classList.add('bi-star');
-                            });
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Oops!',
-                            text: data.message,
-                            icon: 'error',
-                            confirmButtonColor: '#B4DEBD'
-                        });
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Something went wrong. Please try again later.',
-                        icon: 'error',
-                        confirmButtonColor: '#B4DEBD'
-                    });
-                });
+            });
         });
 
         // Active navigation link
