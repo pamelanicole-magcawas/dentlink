@@ -273,44 +273,6 @@ $denied = $conn->query("SELECT * FROM appointments WHERE user_id = $user_id AND 
                     </button>
                 </form>
             </div>
-
-            <div class="sidebar">
-                <h5><i class="bi bi-hourglass-split text-warning"></i> Pending Requests</h5>
-                <?php if ($pending && $pending->num_rows > 0): ?>
-                    <?php while ($p = $pending->fetch_assoc()): ?>
-                        <div class="appointment-item" data-id="<?= $p['id'] ?>">
-                            <h6><?= htmlspecialchars($p['description']) ?></h6>
-                            <p class="mb-1 small">
-                                <?= htmlspecialchars($p['date']) ?> @ <?= date("h:i A", strtotime($p['start_time'])) ?>
-                            </p>
-                            <p class="mb-2 small"><?= htmlspecialchars($p['location']) ?></p>
-                            <button type="button" class="delete-btn swal-delete-btn" data-id="<?= $p['id'] ?>">
-                                <i class="bi bi-trash"></i> Delete Request
-                            </button>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <p class="text-muted text-center">No pending requests.</p>
-                <?php endif; ?>
-
-                <h5 class="mt-4"><i class="bi bi-x-circle text-danger"></i> Denied Requests</h5>
-                <?php if ($denied && $denied->num_rows > 0): ?>
-                    <?php while ($d = $denied->fetch_assoc()): ?>
-                        <div class="appointment-item" data-id="<?= $d['id'] ?>">
-                            <h6 class="text-danger"><?= htmlspecialchars($d['description']) ?></h6>
-                            <p class="mb-1 small">
-                                <?= htmlspecialchars($d['date']) ?> @ <?= date("h:i A", strtotime($d['start_time'])) ?>
-                            </p>
-                            <p class="mb-2 small"><?= htmlspecialchars($d['location']) ?></p>
-                            <button type="button" class="delete-btn swal-delete-btn" data-id="<?= $d['id'] ?>">
-                                <i class="bi bi-trash"></i> Delete Request
-                            </button>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <p class="text-muted text-center">No denied requests.</p>
-                <?php endif; ?>
-            </div>
         </div>
     </div>
 
