@@ -196,9 +196,20 @@ $user_stmt->close();
             <a href="admin_dashboard.php" class="nav-link active">
                 <i class="bi bi-house-door"></i> <span>Dashboard</span>
             </a>
-            <a href="pending_appointments.php" class="nav-link">
-                <i class="bi bi-calendar-check"></i> <span>Pending Appointments</span>
-            </a>
+            <div class="appointments-dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="pending_appointments.php">
+                        <i class="bi bi-clock-history me-2"></i>Pending
+                    </a></li>
+                    <li><a class="dropdown-item" href="approved_appointments.php">
+                        <i class="bi bi-check-circle me-2"></i>Approved
+                    </a></li>
+                </ul>
+            </div>
             <a href="patient_records.php" class="nav-link">
                 <i class="bi bi-folder2-open"></i> <span>Patient Records</span>
             </a>
