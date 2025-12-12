@@ -269,6 +269,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                 transform: translate(-50%, -50%) scale(1);
                 opacity: 1;
             }
+
             100% {
                 transform: translate(-50%, -50%) scale(1.5);
                 opacity: 0;
@@ -640,7 +641,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         </div>
 
         <nav class="nav flex-column sidebar-nav">
-            <a class="nav-link active" href="#home">
+            <a class="nav-link active" href="dashboard.php">
                 <i class="bi bi-house-door-fill"></i>
                 <span>Home</span>
             </a>
@@ -705,7 +706,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         </div>
 
         <!-- Welcome Section -->
-        <section id="home" class="welcome-section min-vh-100 py-5 d-flex flex-column justify-content-center">
+        <section class="welcome-section min-vh-100 py-5 d-flex flex-column justify-content-center">
             <div class="welcome-content">
                 <div class="welcome-header">
                     <h1>Welcome to DentLink</h1>
@@ -718,7 +719,7 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
         </section>
 
         <!-- Services Section -->
-        <section id="services" class="services-sectionmin-vh-100 py-5 d-flex flex-column justify-content-center">
+        <section id="services" class="services-section min-vh-100 py-5 d-flex flex-column justify-content-center">
             <div class="services-content">
                 <div class="section-title">
                     <h2>Our Services</h2>
@@ -900,6 +901,13 @@ $user_first_name = $_SESSION['first_name'] ?? 'User';
                 </div>
             </div>
         </section>
+
+        <footer class="text-white" style="background: linear-gradient(135deg, #80A1BA 0%, #91C4C3 100%); padding: 20px 0;">
+            <div class="container text-center">
+                <p style="margin: 0;">&copy; 2025 DentLink: Dental Clinic Digital Appointment and Patient Records Management System</p>
+                <p style="margin: 0;">All rights reserved.</p>
+            </div>
+        </footer>
     </div>
 
     <!-- Feedback Modal -->
